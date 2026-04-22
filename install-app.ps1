@@ -1,3 +1,4 @@
+$AppJs = @'
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 import { LabsPage, LabViewer } from "./Labs";
@@ -94,10 +95,10 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
         <p style={{color:T.muted,fontSize:15}}>Continue your IT career journey</p>
       </div>
       <div style={{display:"flex",gap:16,marginBottom:32,flexWrap:"wrap"}}>
-        <StatCard icon="Ã¢â€”Ë†" value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
+        <StatCard icon="◈" value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
         <StatCard icon="H" value={totalHours.toFixed(1)} label="Hours" color={T.violet} sub="studied"/>
-        <StatCard icon="Ã°Å¸â€Â¥" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
-        <StatCard icon="Ã°Å¸Ââ€ " value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
+        <StatCard icon="🔥" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
+        <StatCard icon="🏆" value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
       </div>
       <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:32}}>
         <h2 style={{color:T.text,fontSize:18,fontWeight:700,marginBottom:20}}>Track Progress</h2>
@@ -127,7 +128,7 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
           </div>
         ) : (
           <div style={{display:"grid",gap:12}}>
-            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start Ã¢â€ â€™</span></div>))}
+            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start →</span></div>))}
           </div>
         )}
       </div>
@@ -140,7 +141,7 @@ function SimpleTracksPage({ modules, onStudyClick }) {
     <div>
       <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Career Tracks</h1>
       <p style={{ color: T.muted, marginBottom: 32 }}>Choose a module to begin</p>
-      {modules.length === 0 ? <div style={{ background: T.card, padding: 40, borderRadius: 12, textAlign: 'center' }}><div style={{ fontSize: 48 }}>Ã°Å¸â€œÅ¡</div><h3 style={{ color: T.text }}>No Modules Available</h3></div> : (
+      {modules.length === 0 ? <div style={{ background: T.card, padding: 40, borderRadius: 12, textAlign: 'center' }}><div style={{ fontSize: 48 }}>📚</div><h3 style={{ color: T.text }}>No Modules Available</h3></div> : (
         <div style={{ display: 'grid', gap: 16 }}>
           {modules.map(mod => (
             <div key={mod.id} style={{ background: T.card, padding: 24, borderRadius: 12, border: '1px solid '+T.border, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -189,7 +190,7 @@ function QuizViewer({ moduleId, user, onComplete }) {
   const handleSubmit = () => { const correct = questions.filter(q => answers[q.id] === q.correct_answer).length; const pct = Math.round((correct / questions.length) * 100); setResults({ score: correct, total: questions.length, pct, passed: pct >= (quiz?.passing_score || 70) }); setSubmitted(true); };
   if (loading) return <div style={{color:T.muted}}>Loading quiz...</div>;
   if (!quiz || questions.length === 0) return <div style={{color:T.muted}}>No quiz available for this module yet.</div>;
-  if (submitted && results) { return (<div style={{textAlign:'center',padding:40}}><div style={{fontSize:64,marginBottom:16}}>{results.passed ? 'Ã°Å¸Å½â€°' : 'Ã°Å¸Ëœâ€¦'}</div><h2 style={{color:results.passed?T.success:T.danger}}>{results.passed ? 'Quiz Passed!' : 'Quiz Failed'}</h2><div style={{fontSize:48,fontWeight:900,color:results.passed?T.success:T.danger,margin:'16px 0'}}>{results.pct}%</div><p style={{color:T.muted}}>{results.score} of {results.total} correct (need {quiz.passing_score}% to pass)</p><button onClick={onComplete} style={{marginTop:24,padding:'12px 24px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{results.passed ? 'Continue' : 'Try Again'}</button></div>); }
+  if (submitted && results) { return (<div style={{textAlign:'center',padding:40}}><div style={{fontSize:64,marginBottom:16}}>{results.passed ? '🎉' : '😅'}</div><h2 style={{color:results.passed?T.success:T.danger}}>{results.passed ? 'Quiz Passed!' : 'Quiz Failed'}</h2><div style={{fontSize:48,fontWeight:900,color:results.passed?T.success:T.danger,margin:'16px 0'}}>{results.pct}%</div><p style={{color:T.muted}}>{results.score} of {results.total} correct (need {quiz.passing_score}% to pass)</p><button onClick={onComplete} style={{marginTop:24,padding:'12px 24px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{results.passed ? 'Continue' : 'Try Again'}</button></div>); }
   const q = questions[currentIdx];
   const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
   return (
@@ -205,7 +206,7 @@ function CourseResources({ moduleId }) {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => { supabase.from('course_resources').select('*').eq('module_id', moduleId).then(({ data }) => { setResources(data || []); setLoading(false); }); }, [moduleId]);
-  const getIcon = (type) => { switch(type) { case 'video': return 'Ã°Å¸Å½Â¬'; case 'pdf': return 'Ã°Å¸â€œâ€ž'; case 'article': return 'Ã°Å¸â€œÂ°'; case 'link': return 'Ã°Å¸â€â€”'; case 'code': return 'Ã°Å¸â€™Â»'; default: return 'Ã°Å¸â€œÂ'; } };
+  const getIcon = (type) => { switch(type) { case 'video': return '🎬'; case 'pdf': return '📄'; case 'article': return '📰'; case 'link': return '🔗'; case 'code': return '💻'; default: return '📁'; } };
   if (loading) return <div style={{color:T.muted}}>Loading resources...</div>;
   if (resources.length === 0) return <div style={{color:T.muted}}>No resources available for this module yet.</div>;
   return (<div><h3 style={{color:T.text,marginBottom:16}}>Additional Resources</h3><div style={{display:'grid',gap:12}}>{resources.map(r => (<a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:16,padding:16,background:T.card,border:'1px solid '+T.border,borderRadius:8,textDecoration:'none'}}><span style={{fontSize:24}}>{getIcon(r.resource_type)}</span><div style={{flex:1}}><h4 style={{color:T.text,margin:0}}>{r.title}</h4><p style={{color:T.muted,margin:'4px 0 0',fontSize:13}}>{r.description}</p></div><span style={{color:T.sub,fontSize:11,textTransform:'uppercase'}}>{r.resource_type}</span></a>))}</div></div>);
@@ -218,7 +219,7 @@ function ModuleStudyPage({ moduleId, user, onBack }) {
   if (!mod) return <div style={{color:T.muted}}>Loading...</div>;
   return (
     <div>
-      <button onClick={onBack} style={{background:'transparent',border:'none',color:T.cyan,cursor:'pointer',marginBottom:16,fontSize:14}}>Ã¢â€ Â Back to Modules</button>
+      <button onClick={onBack} style={{background:'transparent',border:'none',color:T.cyan,cursor:'pointer',marginBottom:16,fontSize:14}}>← Back to Modules</button>
       <h1 style={{color:T.text,marginBottom:8}}>{mod.name}</h1>
       <p style={{color:T.muted,marginBottom:24}}>{mod.description}</p>
       <div style={{display:'flex',gap:8,marginBottom:24}}>{['lessons','quiz','resources'].map(t=><button key={t} onClick={()=>setTab(t)} style={{padding:'10px 20px',background:tab===t?dim(T.cyan,0.1):'transparent',border:'1px solid '+(tab===t?T.cyan:T.border),borderRadius:8,color:tab===t?T.cyan:T.muted,cursor:'pointer',textTransform:'capitalize',fontWeight:tab===t?600:400}}>{t}</button>)}</div>
@@ -230,13 +231,13 @@ function ModuleStudyPage({ moduleId, user, onBack }) {
 }
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard", icon: "#" },
-  { id: "tracks", label: "Career Tracks", icon: ">" },
-  { id: "paths", label: "Learning Paths", icon: "P" },
-  { id: "labs", label: "Labs", icon: "L" },
-  { id: "badges", label: "Badges", icon: "B" },
-  { id: "certs", label: "Certifications", icon: "C" },
-  { id: "profile", label: "Profile", icon: "U" },
+  { id: "dashboard", label: "Dashboard", icon: "📊" },
+  { id: "tracks", label: "Career Tracks", icon: "🎯" },
+  { id: "paths", label: "Learning Paths", icon: "📍" },
+  { id: "labs", label: "Labs", icon: "🧪" },
+  { id: "badges", label: "Badges", icon: "🏆" },
+  { id: "certs", label: "Certifications", icon: "📜" },
+  { id: "profile", label: "Profile", icon: "👤" },
 ];
 
 export default function App() {
@@ -310,7 +311,7 @@ export default function App() {
         </div>
         {NAV.map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
         <div style={{ flex: 1 }} />
-        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
+        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>🚪</span> Sign Out</button>
         <div style={{ padding: "14px 18px", borderTop: '1px solid ' + T.border, marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: T.bg }}>{initials}</div>
           <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
@@ -319,4 +320,19 @@ export default function App() {
       <main style={{ flex: 1, overflow: "auto", padding: "24px 32px" }}><div style={{ maxWidth: 1000 }}>{renderPage()}</div></main>
     </div>
   );
+}
+'@
+
+# Write App.js
+$AppJs | Set-Content -Path "src\App.js" -Encoding UTF8
+Write-Host "✅ App.js created!" -ForegroundColor Green
+
+# Verify
+$size = (Get-Item "src\App.js").Length
+Write-Host "File size: $size bytes" -ForegroundColor Cyan
+
+if ($size -gt 20000 -and $size -lt 35000) {
+    Write-Host "✅ App.js looks correct!" -ForegroundColor Green
+} else {
+    Write-Host "⚠️ File size unexpected - please check" -ForegroundColor Yellow
 }

@@ -1,0 +1,676 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "./supabase";
+
+const T = {
+  bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
+  border:"#1c2d44",borderHi:"#263c58",
+  cyan:"#00e5ff",violet:"#a78bfa",rose:"#fb7185",emerald:"#34d399",
+  amber:"#fbbf24",sky:"#38bdf8",pink:"#ff6b9d",fuchsia:"#d946ef",
+  text:"#e8edf5",sub:"#94a3b8",muted:"#64748b",dim:"#475569",
+  success:"#10b981",warning:"#f59e0b",danger:"#ef4444",
+};
+const dim=(c,a=0.10)=>c+Math.round(a*255).toString(16).padStart(2,'0');
+const TRACK_COLORS={"t1t2":T.cyan,"t2t3":T.violet,"security":T.rose,"network":T.emerald,"cloud":T.amber,"aisec":T.pink};
+const TRACK_ICONS={"t1t2":"▲","t2t3":"◆","security":"◎","network":"⬡","cloud":"☁","aisec":"⚡"};
+
+const Bar=({pct,color=T.cyan,h=4})=>(
+  <div style={{width:"100%",height:h,borderRadius:h,background:T.border,overflow:"hidden"}}>
+    <div style={{width:`${Math.min(pct||0,100)}%`,height:"100%",borderRadius:h,background:color,transition:"width 0.5s"}}/>
+  </div>
+);
+const Tag=({children,color=T.cyan,s})=>(
+  <span style={{display:"inline-block",padding:s?"1px 7px":"2px 10px",fontSize:s?10:11,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color,background:dim(color,0.12),border:`1px solid ${dim(color,0.25)}`,borderRadius:4}}>{children}</span>
+);
+const Stat=({icon,value,label,color=T.cyan,sub})=>(
+  <div style={{padding:"18px 16px",background:T.card,border:`1px solid ${T.border}`,borderRadius:12,flex:1,minWidth:0}}>
+    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+      <span style={{fontSize:16,color}}>{icon}</span>
+      <span style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.05em",fontWeight:600}}>{label}</span>
+    </div>
+    <div style={{fontSize:26,fontWeight:900,color,fontFamily:"'JetBrains Mono',monospace",lineHeight:1}}>{value}</div>
+    {sub&&<div style={{fontSize:12,color:T.muted,marginTop:4}}>{sub}</div>}
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// MODULE STUDY MODAL
+// ─────────────────────────────────────────────
+// ============================================================================
+// TIERSHIFT ACADEMY: COURSE MATERIAL COMPONENTS
+// ============================================================================
+// Add these components to your App.js for complete course functionality
+
+// ============================================================================
+// LESSONS VIEWER COMPONENT
+// ============================================================================
+function LessonsViewer({ moduleId, onComplete }) {
+  const [lessons, setLessons] = useState([]);
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [userProgress, setUserProgress] = useState({});
+
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('lessons')
+          .select('*')
+          .eq('module_id', moduleId)
+          .order('lesson_number', { ascending: true });
+
+        if (error) throw error;
+        setLessons(data || []);
+
+        // Fetch user progress
+        const { data: progress } = await supabase
+          .from('lesson_progress')
+          .select('*')
+          .eq('lesson_id', data?.[0]?.id);
+
+        setUserProgress(progress?.[0] || {});
+      } catch (err) {
+        console.error('Error fetching lessons:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLessons();
+  }, [moduleId]);
+
+  const currentLesson = lessons[currentLessonIndex];
+
+  const handleMarkComplete = async () => {
+    if (!currentLesson) return;
+
+    try {
+      const { error } = await supabase.from('lesson_progress').upsert({
+        user_id: user?.id,
+        lesson_id: currentLesson.id,
+        completed: true,
+        progress_percentage: 100,
+        completed_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      // Move to next lesson
+      if (currentLessonIndex < lessons.length - 1) {
+        setCurrentLessonIndex(currentLessonIndex + 1);
+      } else {
+        onComplete?.();
+      }
+    } catch (err) {
+      console.error('Error marking lesson complete:', err);
+    }
+  };
+
+  if (loading) return <div className="page-loading">Loading lessons...</div>;
+  if (!currentLesson) return <div className="page-loading">No lessons found</div>;
+
+  return (
+    <div className="lessons-container">
+      <div className="lessons-sidebar">
+        <h3>Lessons</h3>
+        <div className="lessons-list">
+          {lessons.map((lesson, idx) => (
+            <div
+              key={lesson.id}
+              className={`lesson-item ${idx === currentLessonIndex ? 'active' : ''}`}
+              onClick={() => setCurrentLessonIndex(idx)}
+            >
+              <span className="lesson-number">{lesson.lesson_number}</span>
+              <span className="lesson-title">{lesson.title}</span>
+              {userProgress.completed && <span className="checkmark">✓</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="lessons-content">
+        <div className="lesson-header">
+          <h2>{currentLesson.title}</h2>
+          <p className="lesson-description">{currentLesson.description}</p>
+          <span className="lesson-duration">⏱️ {currentLesson.duration_minutes} minutes</span>
+        </div>
+
+        <div className="lesson-body">
+          <div dangerouslySetInnerHTML={{ __html: currentLesson.content }} />
+        </div>
+
+        <div className="lesson-footer">
+          <button
+            className="btn-secondary"
+            onClick={() => setCurrentLessonIndex(Math.max(0, currentLessonIndex - 1))}
+            disabled={currentLessonIndex === 0}
+          >
+            ← Previous
+          </button>
+
+          <button
+            className="btn-primary"
+            onClick={handleMarkComplete}
+          >
+            {currentLessonIndex === lessons.length - 1 ? 'Complete Module' : 'Mark Complete & Next'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// QUIZ COMPONENT
+// ============================================================================
+function QuizViewer({ moduleId, user, onComplete }) {
+  const [quiz, setQuiz] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      try {
+        const { data: quizData, error: quizError } = await supabase
+          .from('quizzes')
+          .select('*')
+          .eq('module_id', moduleId)
+          .single();
+
+        if (quizError) throw quizError;
+        setQuiz(quizData);
+
+        const { data: questionsData, error: questionsError } = await supabase
+          .from('quiz_questions')
+          .select('*')
+          .eq('quiz_id', quizData.id)
+          .order('question_number', { ascending: true });
+
+        if (questionsError) throw questionsError;
+        setQuestions(questionsData || []);
+      } catch (err) {
+        console.error('Error fetching quiz:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuiz();
+  }, [moduleId]);
+
+  const handleAnswerSelect = (answer) => {
+    setUserAnswers({
+      ...userAnswers,
+      [questions[currentQuestionIndex].id]: answer,
+    });
+  };
+
+  const handleSubmitQuiz = async () => {
+    const correct = questions.filter(q => {
+      return userAnswers[q.id] === q.correct_answer;
+    }).length;
+
+    const percentage = Math.round((correct / questions.length) * 100);
+    const passed = percentage >= (quiz?.passing_score || 70);
+
+    const result = {
+      score: correct,
+      total: questions.length,
+      percentage,
+      passed,
+      answers: userAnswers,
+    };
+
+    setResults(result);
+    setSubmitted(true);
+
+    // Save attempt to database
+    try {
+      await supabase.from('user_quiz_attempts').insert({
+        user_id: user?.id,
+        quiz_id: quiz.id,
+        attempt_number: 1, // Simplified
+        score: correct,
+        percentage,
+        passed,
+        answers: Object.entries(userAnswers).map(([qId, answer]) => ({
+          question_id: qId,
+          answer,
+        })),
+        started_at: new Date().toISOString(),
+        completed_at: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('Error saving quiz attempt:', err);
+    }
+  };
+
+  if (loading) return <div className="page-loading">Loading quiz...</div>;
+  if (!quiz || questions.length === 0) return <div className="page-loading">No quiz available</div>;
+
+  if (submitted && results) {
+    return (
+      <div className="quiz-results">
+        <div className={`results-card ${results.passed ? 'passed' : 'failed'}`}>
+          <h2>{results.passed ? '✓ Quiz Passed!' : '✗ Quiz Failed'}</h2>
+          <div className="results-score">
+            <div className="score-display">{results.percentage}%</div>
+            <div className="score-detail">
+              {results.score} out of {results.total} questions correct
+            </div>
+          </div>
+
+          <div className="passing-score">
+            Passing Score: {quiz.passing_score}%
+          </div>
+
+          <button
+            className="btn-primary"
+            onClick={onComplete}
+          >
+            {results.passed ? 'Continue to Next Module' : 'Retake Quiz'}
+          </button>
+        </div>
+
+        <div className="results-review">
+          <h3>Answer Review</h3>
+          {questions.map((question, idx) => (
+            <div key={question.id} className={`question-review ${userAnswers[question.id] === question.correct_answer ? 'correct' : 'incorrect'}`}>
+              <div className="question-title">
+                {idx + 1}. {question.question_text}
+              </div>
+              <div className="your-answer">
+                Your answer: {userAnswers[question.id] || 'Not answered'}
+              </div>
+              <div className="correct-answer">
+                Correct answer: {question.correct_answer}
+              </div>
+              {question.explanation && (
+                <div className="explanation">
+                  {question.explanation}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  return (
+    <div className="quiz-container">
+      <div className="quiz-header">
+        <h2>{quiz.title}</h2>
+        <div className="quiz-progress">
+          Question {currentQuestionIndex + 1} of {questions.length}
+        </div>
+      </div>
+
+      <div className="quiz-content">
+        <div className="question-section">
+          <h3>{currentQuestion.question_text}</h3>
+
+          {currentQuestion.question_type === 'multiple_choice' && (
+            <div className="options-list">
+              {currentQuestion.options.map((option) => (
+                <label key={option.id} className="option-label">
+                  <input
+                    type="radio"
+                    name="answer"
+                    value={option.id}
+                    checked={userAnswers[currentQuestion.id] === option.id}
+                    onChange={() => handleAnswerSelect(option.id)}
+                  />
+                  <span className="option-text">{option.text}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="quiz-footer">
+        <button
+          className="btn-secondary"
+          onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+          disabled={currentQuestionIndex === 0}
+        >
+          ← Previous
+        </button>
+
+        {currentQuestionIndex === questions.length - 1 ? (
+          <button
+            className="btn-primary"
+            onClick={handleSubmitQuiz}
+            disabled={Object.keys(userAnswers).length < questions.length}
+          >
+            Submit Quiz
+          </button>
+        ) : (
+          <button
+            className="btn-primary"
+            onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+          >
+            Next →
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// COURSE RESOURCES COMPONENT
+// ============================================================================
+function CourseResources({ moduleId }) {
+  const [resources, setResources] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('course_resources')
+          .select('*')
+          .eq('module_id', moduleId);
+
+        if (error) throw error;
+        setResources(data || []);
+      } catch (err) {
+        console.error('Error fetching resources:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResources();
+  }, [moduleId]);
+
+  if (loading) return <div>Loading resources...</div>;
+  if (resources.length === 0) return <div>No additional resources available</div>;
+
+  const getIcon = (type) => {
+    switch (type) {
+      case 'video': return '🎥';
+      case 'pdf': return '📄';
+      case 'article': return '📰';
+      case 'link': return '🔗';
+      case 'code': return '💻';
+      default: return '📌';
+    }
+  };
+
+  return (
+    <div className="resources-container">
+      <h3>Additional Resources</h3>
+      <div className="resources-list">
+        {resources.map((resource) => (
+          <a
+            key={resource.id}
+            href={resource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resource-card"
+          >
+            <span className="resource-icon">{getIcon(resource.resource_type)}</span>
+            <div className="resource-info">
+              <h4>{resource.title}</h4>
+              <p>{resource.description}</p>
+            </div>
+            <span className="resource-type">{resource.resource_type}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MODULE STUDY PAGE (REPLACES MODAL)
+// ============================================================================
+function ModuleStudyPage({ moduleId, user, onBack }) {
+  const [module, setModule] = useState(null);
+  const [currentTab, setCurrentTab] = useState('lessons'); // 'lessons', 'quiz', 'resources'
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchModule = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('modules')
+          .select('*')
+          .eq('id', moduleId)
+          .single();
+
+        if (error) throw error;
+        setModule(data);
+      } catch (err) {
+        console.error('Error fetching module:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModule();
+  }, [moduleId]);
+
+  if (loading) return <div className="page-loading">Loading module...</div>;
+  if (!module) return <div className="page-loading">Module not found</div>;
+
+  return (
+    <div className="module-study-page">
+      <div className="study-header">
+        <button className="btn-back" onClick={onBack}>← Back to Modules</button>
+        <h1>{module.name}</h1>
+        <p className="module-meta">{module.hours} hours • {module.level} Level</p>
+      </div>
+
+      <div className="study-tabs">
+        <button
+          className={`tab-button ${currentTab === 'lessons' ? 'active' : ''}`}
+          onClick={() => setCurrentTab('lessons')}
+        >
+          📚 Lessons
+        </button>
+        <button
+          className={`tab-button ${currentTab === 'quiz' ? 'active' : ''}`}
+          onClick={() => setCurrentTab('quiz')}
+        >
+          ✏️ Quiz
+        </button>
+        <button
+          className={`tab-button ${currentTab === 'resources' ? 'active' : ''}`}
+          onClick={() => setCurrentTab('resources')}
+        >
+          📎 Resources
+        </button>
+      </div>
+
+      <div className="study-content">
+        {currentTab === 'lessons' && (
+          <LessonsViewer moduleId={moduleId} onComplete={() => setCurrentTab('quiz')} />
+        )}
+        {currentTab === 'quiz' && (
+          <QuizViewer moduleId={moduleId} user={user} onComplete={onBack} />
+        )}
+        {currentTab === 'resources' && (
+          <CourseResources moduleId={moduleId} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export { LessonsViewer, QuizViewer, CourseResources, ModuleStudyPage };
+
+
+// ─────────────────────────────────────────────
+// MAIN APP
+// ─────────────────────────────────────────────
+const NAV_ITEMS=[
+  {id:"dashboard",label:"Dashboard",icon:"⊞"},
+  {id:"tracks",label:"Career Tracks",icon:"◆"},
+  {id:"labs",label:"Lab Simulator",icon:"✦"},
+  {id:"badges",label:"Badges",icon:"★"},
+  {id:"profile",label:"My Profile",icon:"◎"},
+];
+
+export default function App(){
+  const [session,setSession]=useState(null);
+  const [profile,setProfile]=useState(null);
+  const [loading,setLoading]=useState(true);
+  const [page,setPage]=useState("dashboard");
+  const [trackId,setTrackId]=useState(null);
+  const [selectedModule,setSelectedModule]=useState(null);
+  const [tracks,setTracks]=useState([]);
+  const [pillars,setPillars]=useState([]);
+  const [modules,setModules]=useState([]);
+  const [labTickets,setLabTickets]=useState([]);
+  const [userTracks,setUserTracks]=useState([]);
+  const [userModules,setUserModules]=useState([]);
+  const [badges,setBadges]=useState([]);
+  const [userBadges,setUserBadges]=useState([]);
+  const [badgeToast,setBadgeToast]=useState(null);
+  const ref=useRef(null);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session:s}})=>{
+      setSession(s);
+      if(s?.user)loadEverything(s.user.id);
+      else setLoading(false);
+    });
+    const{data:{subscription}}=supabase.auth.onAuthStateChange((_ev,s)=>{
+      setSession(s);
+      if(s?.user)loadEverything(s.user.id);
+      else{setProfile(null);setLoading(false);}
+    });
+    return()=>subscription.unsubscribe();
+  },[]);
+
+  const loadEverything=async(userId)=>{
+    setLoading(true);
+    const{data:prof}=await supabase.from("profiles").select("*").eq("id",userId).single();
+    setProfile(prof);
+    const{data:tr}=await supabase.from("tracks").select("*").order("sort_order");
+    const{data:mods}=await supabase.from("modules").select("*").eq("is_active",true).order("sort_order");
+    setModules(mods||[]);
+    if(tr&&mods){
+      setTracks(tr.map(t=>({...t,module_count:mods.filter(m=>m.track_id===t.id).length})));
+    }else{setTracks(tr||[]);}
+    const{data:pils}=await supabase.from("pillars").select("*").order("sort_order");
+    setPillars(pils||[]);
+    const{data:labs}=await supabase.from("lab_tickets").select("*").eq("is_active",true).order("sort_order");
+    setLabTickets(labs||[]);
+    const{data:uts}=await supabase.from("user_tracks").select("*").eq("user_id",userId);
+    setUserTracks(uts||[]);
+    const{data:ums}=await supabase.from("user_modules").select("*").eq("user_id",userId);
+    setUserModules(ums||[]);
+    const{data:bdg}=await supabase.from("badges").select("*").order("sort_order");
+    setBadges(bdg||[]);
+    const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
+    setUserBadges(ubdg||[]);
+    setLoading(false);
+  };
+
+  const refreshProgress=useCallback(async()=>{
+    if(!session?.user)return;
+    const userId=session.user.id;
+    const{data:uts}=await supabase.from("user_tracks").select("*").eq("user_id",userId);
+    setUserTracks(uts||[]);
+    const{data:ums}=await supabase.from("user_modules").select("*").eq("user_id",userId);
+    setUserModules(ums||[]);
+    const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
+    setUserBadges(ubdg||[]);
+  },[session]);
+
+  const checkBadges=useCallback(async(completedModules,totalHours,completedTracks,userTracksList)=>{
+    if(!session?.user||!badges.length)return;
+    const userId=session.user.id;
+    const{data:currentUB}=await supabase.from("user_badges").select("badge_id").eq("user_id",userId);
+    const earnedIds=new Set((currentUB||[]).map(ub=>ub.badge_id));
+    const newlyEarned=[];
+    for(const badge of badges){
+      if(earnedIds.has(badge.id))continue;
+      let earned=false;
+      if(badge.criteria_type==="modules_completed"&&completedModules>=badge.criteria_value)earned=true;
+      if(badge.criteria_type==="hours_logged"&&totalHours>=badge.criteria_value)earned=true;
+      if(badge.criteria_type==="track_completed"&&badge.criteria_track_id){
+        const ut=userTracksList.find(u=>u.track_id===badge.criteria_track_id);
+        if(ut&&ut.progress_pct>=100)earned=true;
+      }
+      if(earned){
+        await supabase.from("user_badges").insert({user_id:userId,badge_id:badge.id});
+        newlyEarned.push(badge);
+      }
+    }
+    if(newlyEarned.length>0){
+      setBadgeToast(newlyEarned[0]);
+      setTimeout(()=>setBadgeToast(null),4000);
+      const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
+      setUserBadges(ubdg||[]);
+    }
+  },[session,badges]);
+
+  const handleLogout=async()=>{
+    await supabase.auth.signOut();
+    setSession(null);setProfile(null);setPage("dashboard");
+  };
+
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[page,trackId]);
+  const navigate=(pg,tid)=>{setPage(pg);setTrackId(tid||null)};
+
+  if(loading)return(
+    <div style={{height:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",color:T.cyan,fontFamily:"'JetBrains Mono',monospace",fontSize:16}}>Loading TierShift Academy...</div>
+  );
+  if(!session)return <AuthPage onAuth={(user)=>{setSession({user});loadEverything(user.id)}}/>;
+
+  const user=session.user;
+  const displayName=profile?.full_name||user?.email?.split("@")[0]||"Learner";
+  const initials=displayName.split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2);
+const pages={
+  dashboard:<div><h1>Dashboard</h1><p>Welcome to TierShift Academy</p></div>,
+  tracks:<SimpleTracksPage modules={modules} user={user} onStudyClick={(mod) => { setSelectedModule(mod); setPage("module-study"); }}/>,
+  "module-study":<ModuleStudyPage moduleId={selectedModule?.id} user={user} onBack={() => setPage("tracks")}/>,
+};
+
+    
+
+ 
+  
+
+
+  return <div style={{display:"flex",height:"100vh",background:T.bg,color:T.text,fontFamily:"'Outfit',sans-serif"}}>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>{`*{margin:0;padding:0;box-sizing:border-box}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}input:focus{outline:none;border-color:${T.cyan}!important}`}</style>
+
+    <nav style={{width:230,minWidth:230,background:T.surface,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",padding:"18px 0"}}>
+      <div style={{padding:"0 18px 16px",borderBottom:`1px solid ${T.border}`,marginBottom:6}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:30,height:30,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:900,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>TS</div>
+          <div><div style={{fontSize:15,fontWeight:800,lineHeight:1.1}}>Tier<span style={{color:T.cyan}}>Shift</span></div><div style={{fontSize:10,color:T.muted}}>Academy</div></div>
+        </div>
+      </div>
+      {NAV_ITEMS.map(n=>(
+        <button key={n.id} onClick={()=>navigate(n.id)} style={{display:"flex",alignItems:"center",gap:10,width:"calc(100% - 14px)",padding:"10px 14px",margin:"1px 7px",borderRadius:7,background:page===n.id?dim(T.cyan,0.08):"transparent",border:page===n.id?`1px solid ${dim(T.cyan,0.18)}`:"1px solid transparent",color:page===n.id?T.cyan:T.muted,fontSize:13,fontWeight:page===n.id?700:500,cursor:"pointer",textAlign:"left",fontFamily:"inherit",transition:"all 0.15s"}}>
+          <span style={{fontSize:14,width:18,textAlign:"center"}}>{n.icon}</span>{n.label}
+        </button>
+      ))}
+      <div style={{flex:1}}/>
+      <div style={{padding:"14px 18px",borderTop:`1px solid ${T.border}`}}>
+        <div style={{display:"flex",alignItems:"center",gap:9}}>
+          <div style={{width:32,height:32,borderRadius:9,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>{initials}</div>
+          <div><div style={{fontSize:12,fontWeight:700,color:T.text}}>{displayName}</div><div style={{fontSize:10,color:T.muted}}>{profile?.organization||user?.email}</div></div>
+        </div>
+      </div>
+    </nav>
+
+    <main ref={ref} style={{flex:1,overflow:"auto",padding:"24px 32px"}}>
+      <div style={{maxWidth:900}}>{pages[page]}</div>
+     </main>
+  </div>;
+  }
