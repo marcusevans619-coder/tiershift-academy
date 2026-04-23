@@ -94,10 +94,10 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
         <p style={{color:T.muted,fontSize:15}}>Continue your IT career journey</p>
       </div>
       <div style={{display:"flex",gap:16,marginBottom:32,flexWrap:"wrap"}}>
-        <StatCard icon="ÃƒÂ¢Ã¢â‚¬â€Ã‹â€ " value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
+        <StatCard icon="M" value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
         <StatCard icon="H" value={totalHours.toFixed(1)} label="Hours" color={T.violet} sub="studied"/>
-        <StatCard icon="ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â¥" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
-        <StatCard icon="ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â " value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
+        <StatCard icon="*" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
+        <StatCard icon="+" value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
       </div>
       <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:32}}>
         <h2 style={{color:T.text,fontSize:18,fontWeight:700,marginBottom:20}}>Track Progress</h2>
