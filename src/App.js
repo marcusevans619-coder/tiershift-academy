@@ -281,8 +281,8 @@ export default function App() {
   const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
   const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); };
 
-  if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
   if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
+  if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
   if (!session) {
     if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
     return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
