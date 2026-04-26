@@ -245,8 +245,8 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("dashboard");
-  const [showLanding, setShowLanding] = useState(true);
-  const [selectedModule, setSelectedModule] = useState(null);
+  const [showLanding, setShowLanding] = useState(!sessionStorage.getItem('visited'));
+  const dismissLanding = () => { sessionStorage.setItem('visited', '1'); setShowLanding(false); };
   const [selectedLab, setSelectedLab] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
   const [modules, setModules] = useState([]);
@@ -281,10 +281,10 @@ export default function App() {
   const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
   const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); };
 
-  if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
+  if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
   if (!session) {
-    if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
+    if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
     return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
   }
 
