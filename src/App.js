@@ -249,6 +249,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [showLanding, setShowLanding] = useState(true);
   const [page, setPage] = useState("dashboard");
+  const [showLanding, setShowLanding] = useState(true);
   const [selectedModule, setSelectedModule] = useState(null);
   const [selectedLab, setSelectedLab] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
