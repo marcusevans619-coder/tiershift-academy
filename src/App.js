@@ -159,7 +159,6 @@ function LessonsViewer({ moduleId, onComplete, user }) {
   const [lessons, setLessons] = useState([]);
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => { supabase.from('lessons').select('*').eq('module_id', moduleId).order('lesson_number').then(({ data }) => { setLessons(data || []); setLoading(false); }); }, [moduleId]);
   const lesson = lessons[idx];
   if (loading) return <div style={{color:T.muted}}>Loading...</div>;
@@ -180,7 +179,6 @@ function QuizViewer({ moduleId, user, onComplete }) {
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => {
     const fetchQuiz = async () => {
       const { data: quizData } = await supabase.from('quizzes').select('*').eq('module_id', moduleId).single();
@@ -207,7 +205,6 @@ function QuizViewer({ moduleId, user, onComplete }) {
 function CourseResources({ moduleId }) {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => { supabase.from('course_resources').select('*').eq('module_id', moduleId).then(({ data }) => { setResources(data || []); setLoading(false); }); }, [moduleId]);
   const getIcon = (type) => { switch(type) { case 'video': return 'ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬'; case 'pdf': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾'; case 'article': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â°'; case 'link': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â€'; case 'code': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â»'; default: return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â'; } };
   if (loading) return <div style={{color:T.muted}}>Loading resources...</div>;
@@ -247,7 +244,6 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
   const [page, setPage] = useState("dashboard");
   const [showLanding, setShowLanding] = useState(true);
   const [selectedModule, setSelectedModule] = useState(null);
