@@ -1,5 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
+import { LabsPage, LabViewer } from "./Labs";
+import { BadgesPage } from "./Badges";
+import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
+import { ProfilePage } from "./Profile";
+import { CertificationsPage } from "./Certifications";
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -10,820 +15,309 @@ const T = {
   success:"#10b981",warning:"#f59e0b",danger:"#ef4444",
 };
 const dim=(c,a=0.10)=>c+Math.round(a*255).toString(16).padStart(2,'0');
-const TRACK_COLORS={"t1t2":T.cyan,"t2t3":T.violet,"security":T.rose,"network":T.emerald,"cloud":T.amber,"aisec":T.pink};
-const TRACK_ICONS={"t1t2":"▲","t2t3":"◆","security":"◎","network":"⬡","cloud":"☁","aisec":"⚡"};
 
-const Bar=({pct,color=T.cyan,h=4})=>(
+const Bar=({pct,color=T.cyan,h=6})=>(
   <div style={{width:"100%",height:h,borderRadius:h,background:T.border,overflow:"hidden"}}>
-    <div style={{width:`${Math.min(pct||0,100)}%`,height:"100%",borderRadius:h,background:color,transition:"width 0.5s"}}/>
+    <div style={{width:pct+"%",height:"100%",borderRadius:h,background:color,transition:"width 0.5s"}}/>
   </div>
 );
-const Tag=({children,color=T.cyan,s})=>(
-  <span style={{display:"inline-block",padding:s?"1px 7px":"2px 10px",fontSize:s?10:11,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color,background:dim(color,0.12),border:`1px solid ${dim(color,0.25)}`,borderRadius:4}}>{children}</span>
-);
-const Stat=({icon,value,label,color=T.cyan,sub})=>(
-  <div style={{padding:"18px 16px",background:T.card,border:`1px solid ${T.border}`,borderRadius:12,flex:1,minWidth:0}}>
-    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-      <span style={{fontSize:16,color}}>{icon}</span>
+
+const StatCard=({icon,value,label,color=T.cyan,sub})=>(
+  <div style={{padding:"20px",background:T.card,border:"1px solid "+T.border,borderRadius:12,flex:1,minWidth:140}}>
+    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+      <span style={{fontSize:18,color}}>{icon}</span>
       <span style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.05em",fontWeight:600}}>{label}</span>
     </div>
-    <div style={{fontSize:26,fontWeight:900,color,fontFamily:"'JetBrains Mono',monospace",lineHeight:1}}>{value}</div>
+    <div style={{fontSize:28,fontWeight:800,color,fontFamily:"'JetBrains Mono',monospace"}}>{value}</div>
     {sub&&<div style={{fontSize:12,color:T.muted,marginTop:4}}>{sub}</div>}
   </div>
 );
 
-// ─────────────────────────────────────────────
-// MODULE STUDY MODAL
-// ─────────────────────────────────────────────
-function ModuleStudyModal({mod, pillarColor, onClose}){
-
-  const color = pillarColor || T.cyan;
-
-  // Close on backdrop click
- const handleBackdrop = (e) => {
-    if(e.target === e.currentTarget) onClose();
+function AuthPage({ onAuth }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const { data, error } = isSignUp ? await supabase.auth.signUp({ email, password }) : await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      if (data.user) onAuth(data.user);
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
   };
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Outfit', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+      <div style={{ background: T.card, padding: 40, borderRadius: 16, width: 380, border: '1px solid '+T.border }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, justifyContent: 'center' }}>
+          <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: T.bg }}>TS</div>
+          <div><div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 11, color: T.muted }}>Academy</div></div>
+        </div>
+        <h2 style={{ color: T.text, marginBottom: 8, fontSize: 24, fontWeight: 700, textAlign: 'center' }}>{isSignUp ? 'Create Account' : 'Welcome Back'}</h2>
+        {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Email</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
+        </form>
+        <p style={{ marginTop: 20, color: T.muted, fontSize: 13, textAlign: 'center' }}>{isSignUp ? 'Have an account?' : "No account?"} <span onClick={() => setIsSignUp(!isSignUp)} style={{ color: T.cyan, cursor: 'pointer' }}>{isSignUp ? 'Sign In' : 'Sign Up'}</span></p>
+      </div>
+    </div>
+  );
+}
 
-  // Close on Escape key
-  useEffect(()=>{
-    const handler = (e) => { if(e.key==="Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return ()=>window.removeEventListener("keydown", handler);
-  },[onClose]);
-    if(!mod) return null;
-const c = mod.content || {};
-  const sections = [
-    {
-      id:"overview",
-      icon:"◎",
-      label:"Module Overview",
-      color: T.sky,
-      content: (
-        <p style={{fontSize:14,color:T.sub,lineHeight:1.8,margin:0}}>{mod.description||"This module covers essential concepts and practical skills for IT professionals."}</p>
-      )
-    },
-    {
-      id:"objectives",
-      icon:"◆",
-      label:"Learning Objectives",
-      color: T.violet,
-      content: mod.objectives?.length > 0 ? (
-        <div style={{display:"flex",flexDirection:"column",gap:10}}>
-          {mod.objectives.map((obj,i)=>(
-            <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
-              <div style={{minWidth:22,height:22,borderRadius:6,background:dim(T.violet,0.15),border:`1px solid ${dim(T.violet,0.3)}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:T.violet,fontFamily:"'JetBrains Mono',monospace",marginTop:1}}>{String(i+1).padStart(2,"0")}</div>
-              <span style={{fontSize:14,color:T.sub,lineHeight:1.6}}>{obj}</span>
-            </div>
-          ))}
-        </div>
-      ) : <p style={{fontSize:14,color:T.muted,margin:0}}>No objectives listed.</p>
-    },
-    {
-      id:"lab",
-      icon:"⬡",
-      label:"Lab Challenge",
-      color: T.emerald,
-      content: mod.lab_task ? (
-        <div>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-            <div style={{width:6,height:6,borderRadius:"50%",background:T.emerald,boxShadow:`0 0 8px ${T.emerald}`}}/>
-            <span style={{fontSize:11,color:T.emerald,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>Hands-On Scenario</span>
-          </div>
-          <p style={{fontSize:14,color:T.sub,lineHeight:1.8,margin:0,padding:"14px 18px",background:dim(T.emerald,0.05),border:`1px solid ${dim(T.emerald,0.15)}`,borderRadius:8,borderLeft:`3px solid ${T.emerald}`}}>{mod.lab_task}</p>
-        </div>
-      ) : <p style={{fontSize:14,color:T.muted,margin:0}}>No lab task for this module.</p>
-    },
-    mod.code_example ? {
-      id:"code",
-      icon:"▲",
-      label:"Code Reference",
-      color: T.amber,
-      content: (
-        <div style={{position:"relative"}}>
-          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
-            <div style={{width:10,height:10,borderRadius:"50%",background:"#ef4444"}}/>
-            <div style={{width:10,height:10,borderRadius:"50%",background:"#f59e0b"}}/>
-            <div style={{width:10,height:10,borderRadius:"50%",background:"#10b981"}}/>
-            <span style={{fontSize:11,color:T.muted,marginLeft:8,fontFamily:"'JetBrains Mono',monospace"}}>terminal</span>
-          </div>
-          <pre style={{margin:0,padding:"16px 18px",background:"#020812",border:`1px solid ${dim(T.amber,0.2)}`,borderRadius:8,overflowX:"auto",fontFamily:"'JetBrains Mono',monospace",fontSize:12.5,lineHeight:1.7,color:T.emerald,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
-            {mod.code_example}
-          </pre>
-        </div>
-      )
-    } : null
-  ].filter(Boolean);
+function Dashboard({ user, profile, modules, userModules, userTracks, userBadges, tracks, onModuleClick }) {
+  const name = profile?.full_name || user?.email?.split("@")[0] || "Learner";
+  const completedModules = userModules?.filter(m => m.completed)?.length || 0;
+  const totalHours = userModules?.reduce((sum, m) => sum + (m.hours_spent || 0), 0) || 0;
+  const badgeCount = userBadges?.length || 0;
+  const streak = 3;
+  const recentModuleIds = userModules?.slice(0, 5).map(um => um.module_id) || [];
+  const recentModules = modules?.filter(m => recentModuleIds.includes(m.id)) || [];
+  const trackProgress = tracks?.map(track => {
+    const trackModules = modules?.filter(m => m.track_id === track.id) || [];
+    const completedInTrack = userModules?.filter(um => um.completed && trackModules.some(tm => tm.id === um.module_id))?.length || 0;
+    const total = trackModules.length;
+    const pct = total > 0 ? Math.round((completedInTrack / total) * 100) : 0;
+    return { ...track, completedInTrack, total, pct };
+  }).filter(t => t.total > 0) || [];
+  const TRACK_COLORS = { "network": T.emerald, "security": T.rose, "cloud": T.amber, "aisec": T.pink, "t1t2": T.cyan, "t2t3": T.violet };
 
   return (
-    <div onClick={handleBackdrop} style={{position:"fixed",inset:0,background:"rgba(2,6,18,0.85)",backdropFilter:"blur(6px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"20px"}}>
-      <style>{`
-        @keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-        .modal-scroll::-webkit-scrollbar{width:5px}
-        .modal-scroll::-webkit-scrollbar-track{background:transparent}
-        .modal-scroll::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}
-      `}</style>
-      <div style={{width:"100%",maxWidth:720,maxHeight:"88vh",background:T.surface,border:`1px solid ${T.borderHi}`,borderRadius:16,overflow:"hidden",display:"flex",flexDirection:"column",animation:"modalIn 0.25s ease",boxShadow:`0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px ${dim(color,0.1)}`}}>
-
-        {/* Header */}
-        <div style={{padding:"20px 24px",borderBottom:`1px solid ${T.border}`,background:`linear-gradient(135deg,${T.card},${T.surface})`,position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,borderRadius:"50%",background:`radial-gradient(circle,${dim(color,0.12)},transparent 70%)`}}/>
-          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${color},transparent)`}}/>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,position:"relative"}}>
-            <div style={{flex:1}}>
-              <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap"}}>
-                <Tag color={color} s>{mod.hours}h</Tag>
-                <Tag color={mod.level==="Expert"?T.rose:mod.level==="Advanced"?T.amber:mod.level==="Intermediate"?T.violet:T.emerald} s>{mod.level}</Tag>
-              </div>
-              <h2 style={{fontSize:20,fontWeight:900,color:T.text,margin:0,fontFamily:"'JetBrains Mono',monospace",lineHeight:1.3}}>{mod.name}</h2>
-            </div>
-            <button onClick={onClose} style={{width:32,height:32,borderRadius:8,background:dim(T.danger,0.08),border:`1px solid ${dim(T.danger,0.2)}`,color:T.muted,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontFamily:"inherit"}}>✕</button>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="modal-scroll" style={{flex:1,overflowY:"auto",padding:"24px"}}>
-          <div style={{display:"flex",flexDirection:"column",gap:20}}>
-            {sections.map((sec,i)=>(
-              <div key={sec.id} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden"}}>
-                <div style={{padding:"14px 18px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:10,background:`linear-gradient(90deg,${dim(sec.color,0.05)},transparent)`}}>
-                  <span style={{fontSize:12,color:sec.color}}>{sec.icon}</span>
-                  <span style={{fontSize:11,fontWeight:700,color:sec.color,textTransform:"uppercase",letterSpacing:"0.08em"}}>{sec.label}</span>
-                  <div style={{flex:1,height:1,background:`linear-gradient(90deg,${dim(sec.color,0.2)},transparent)`,marginLeft:4}}/>
+    <div>
+      <div style={{marginBottom:32}}>
+        <h1 style={{color:T.text,fontSize:28,fontWeight:800,marginBottom:4}}>Welcome back, {name}!</h1>
+        <p style={{color:T.muted,fontSize:15}}>Continue your IT career journey</p>
+      </div>
+      <div style={{display:"flex",gap:16,marginBottom:32,flexWrap:"wrap"}}>
+        <StatCard icon="M" value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
+        <StatCard icon="H" value={totalHours.toFixed(1)} label="Hours" color={T.violet} sub="studied"/>
+        <StatCard icon="*" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
+        <StatCard icon="+" value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
+      </div>
+      <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:32}}>
+        <h2 style={{color:T.text,fontSize:18,fontWeight:700,marginBottom:20}}>Track Progress</h2>
+        {trackProgress.length === 0 ? (<p style={{color:T.muted}}>No tracks available yet.</p>) : (
+          <div style={{display:"grid",gap:16}}>
+            {trackProgress.slice(0, 6).map(track => (
+              <div key={track.id}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+                  <span style={{color:T.text,fontSize:14,fontWeight:500}}>{track.name || track.title || "Unknown Track"}</span>
+                  <span style={{color:T.muted,fontSize:13}}>{track.completedInTrack}/{track.total} modules</span>
                 </div>
-                <div style={{padding:"16px 18px"}}>
-                  {sec.content}
-                </div>
+                <Bar pct={track.pct} color={TRACK_COLORS[track.slug] || T.cyan} h={8}/>
               </div>
             ))}
           </div>
-
-          {/* Study tip footer */}
-          <div style={{marginTop:20,padding:"14px 18px",background:dim(T.cyan,0.04),border:`1px solid ${dim(T.cyan,0.12)}`,borderRadius:10,display:"flex",gap:12,alignItems:"flex-start"}}>
-            <span style={{fontSize:16,color:T.cyan,marginTop:1}}>💡</span>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:T.cyan,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4}}>Study Tip</div>
-              <p style={{fontSize:13,color:T.muted,margin:0,lineHeight:1.6}}>Work through the objectives in order, then attempt the lab challenge before reviewing any hints. Apply what you learn in a real or simulated environment for best retention.</p>
-            </div>
+        )}
+      </div>
+      <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24}}>
+        <h2 style={{color:T.text,fontSize:18,fontWeight:700,marginBottom:20}}>{recentModules.length > 0 ? "Continue Learning" : "Get Started"}</h2>
+        {modules?.length === 0 ? (<p style={{color:T.muted}}>No modules available yet.</p>) : recentModules.length > 0 ? (
+          <div style={{display:"grid",gap:12}}>
+            {recentModules.map(mod => {
+              const progress = userModules?.find(um => um.module_id === mod.id);
+              const pct = progress?.progress_pct || 0;
+              return (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",gap:16,padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{flex:1}}><div style={{color:T.text,fontWeight:600,marginBottom:4}}>{mod.name}</div><Bar pct={pct} color={T.cyan} h={4}/></div><div style={{color:T.cyan,fontSize:13,fontWeight:600}}>{pct}%</div></div>);
+            })}
           </div>
-        </div>
-
-        {/* Footer */}
-        <div style={{padding:"14px 24px",borderTop:`1px solid ${T.border}`,display:"flex",justifyContent:"flex-end",gap:10,background:T.card}}>
-          <button onClick={onClose} style={{padding:"9px 20px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Close</button>
-          <button onClick={onClose} style={{padding:"9px 20px",background:color,border:"none",borderRadius:8,color:T.bg,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Got it — Mark Ready</button>
-        </div>
+        ) : (
+          <div style={{display:"grid",gap:12}}>
+            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</span></div>))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
-// AUTH PAGE
-// ─────────────────────────────────────────────
-function AuthPage({onAuth}){
-  const [mode,setMode]=useState("login");
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [fullName,setFullName]=useState("");
-  const [organization,setOrganization]=useState("");
-  const [loading,setLoading]=useState(false);
-  const [error,setError]=useState("");
-  const [success,setSuccess]=useState("");
-
-  const handleLogin=async()=>{
-    setLoading(true);setError("");
-    const{data,error:err}=await supabase.auth.signInWithPassword({email,password});
-    setLoading(false);
-    if(err){setError(err.message);return;}
-    if(data.user)onAuth(data.user);
-  };
-  const handleSignup=async()=>{
-    setLoading(true);setError("");setSuccess("");
-    const{data,error:err}=await supabase.auth.signUp({email,password,options:{data:{full_name:fullName}}});
-    setLoading(false);
-    if(err){setError(err.message);return;}
-    if(data.user){
-      await supabase.from("profiles").update({full_name:fullName,organization}).eq("id",data.user.id);
-      setSuccess("Account created! Sign in below.");
-      setMode("login");
-    }
-  };
-  const submit=mode==="login"?handleLogin:handleSignup;
-  const onKey=(e)=>{if(e.key==="Enter")submit()};
-
-  return(
-    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Outfit',sans-serif"}}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-      <style>{`*{margin:0;padding:0;box-sizing:border-box}input:focus{outline:none;border-color:${T.cyan}!important}`}</style>
-      <div style={{width:"100%",maxWidth:420,padding:"0 20px"}}>
-        <div style={{textAlign:"center",marginBottom:40}}>
-          <div style={{display:"inline-flex",alignItems:"center",gap:12,marginBottom:12}}>
-            <div style={{width:42,height:42,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:900,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>TS</div>
-            <div style={{textAlign:"left"}}><div style={{fontSize:22,fontWeight:800,color:T.text}}>Tier<span style={{color:T.cyan}}>Shift</span></div><div style={{fontSize:12,color:T.muted}}>Academy</div></div>
-          </div>
-          <p style={{color:T.sub,fontSize:14,marginTop:8}}>{mode==="login"?"Sign in to continue your training":"Create your account to start learning"}</p>
+function SimpleTracksPage({ modules, onStudyClick }) {
+  return (
+    <div>
+      <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Career Tracks</h1>
+      <p style={{ color: T.muted, marginBottom: 32 }}>Choose a module to begin</p>
+      {modules.length === 0 ? <div style={{ background: T.card, padding: 40, borderRadius: 12, textAlign: 'center' }}><div style={{ fontSize: 48 }}>ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â¡</div><h3 style={{ color: T.text }}>No Modules Available</h3></div> : (
+        <div style={{ display: 'grid', gap: 16 }}>
+          {modules.map(mod => (
+            <div key={mod.id} style={{ background: T.card, padding: 24, borderRadius: 12, border: '1px solid '+T.border, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div><h3 style={{ color: T.text, margin: 0 }}>{mod.name}</h3><p style={{ color: T.muted, margin: '8px 0 0', fontSize: 14 }}>{mod.description || 'Start learning'}</p></div>
+              <button onClick={() => onStudyClick(mod)} style={{ padding: '10px 20px', background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Study</button>
+            </div>
+          ))}
         </div>
-        <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:14,padding:"32px 28px"}}>
-          <div style={{display:"flex",background:T.surface,borderRadius:8,padding:3,marginBottom:24,border:`1px solid ${T.border}`}}>
-            {["login","signup"].map(m=>(<button key={m} onClick={()=>{setMode(m);setError("");setSuccess("")}} style={{flex:1,padding:"9px 0",borderRadius:6,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",border:"none",background:mode===m?T.cyan:"transparent",color:mode===m?T.bg:T.muted}}>{m==="login"?"Sign In":"Create Account"}</button>))}
-          </div>
-          {error&&<div style={{padding:"10px 14px",background:dim(T.danger,0.08),border:`1px solid ${dim(T.danger,0.2)}`,borderRadius:8,marginBottom:16,fontSize:13,color:T.danger}}>{error}</div>}
-          {success&&<div style={{padding:"10px 14px",background:dim(T.success,0.08),border:`1px solid ${dim(T.success,0.2)}`,borderRadius:8,marginBottom:16,fontSize:13,color:T.success}}>{success}</div>}
-          {mode==="signup"&&<><label style={{display:"block",fontSize:12,fontWeight:600,color:T.sub,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Full Name</label><input value={fullName} onChange={e=>setFullName(e.target.value)} onKeyDown={onKey} placeholder="Your full name" style={{width:"100%",padding:"11px 14px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontSize:14,fontFamily:"inherit",marginBottom:16}}/><label style={{display:"block",fontSize:12,fontWeight:600,color:T.sub,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Organization</label><input value={organization} onChange={e=>setOrganization(e.target.value)} onKeyDown={onKey} placeholder="Your company" style={{width:"100%",padding:"11px 14px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontSize:14,fontFamily:"inherit",marginBottom:16}}/></>}
-          <label style={{display:"block",fontSize:12,fontWeight:600,color:T.sub,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Email</label>
-          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={onKey} placeholder="you@company.com" style={{width:"100%",padding:"11px 14px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontSize:14,fontFamily:"inherit",marginBottom:16}}/>
-          <label style={{display:"block",fontSize:12,fontWeight:600,color:T.sub,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.05em"}}>Password</label>
-          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={onKey} placeholder="Minimum 6 characters" style={{width:"100%",padding:"11px 14px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontSize:14,fontFamily:"inherit",marginBottom:24}}/>
-          <button onClick={submit} disabled={loading} style={{width:"100%",padding:"13px",background:loading?T.dim:T.cyan,color:T.bg,border:"none",borderRadius:8,fontSize:15,fontWeight:700,cursor:loading?"wait":"pointer",fontFamily:"inherit"}}>{loading?"Please wait...":mode==="login"?"Sign In":"Create Account"}</button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
-// DASHBOARD PAGE
-// ─────────────────────────────────────────────
-function DashboardPage({profile,tracks,userTracks,userModules,onNav}){
-  const totalModules=tracks.reduce((a,t)=>a+t.module_count,0);
-  const completedModules=userModules.filter(m=>m.status==="completed").length;
-  const totalHours=userModules.reduce((a,m)=>a+(m.hours_spent||0),0);
-  const activeTrack=tracks.find(t=>userTracks.some(ut=>ut.track_id===t.id&&ut.status==="in_progress"))||tracks[0];
-  const activeUT=userTracks.find(ut=>ut.track_id===activeTrack?.id);
-
-  return <div>
-    <div style={{padding:"24px 28px",background:`linear-gradient(135deg,${T.surface},#0c1428)`,border:`1px solid ${T.border}`,borderRadius:14,marginBottom:20,position:"relative",overflow:"hidden"}}>
-      <div style={{position:"absolute",top:-40,right:-40,width:150,height:150,borderRadius:"50%",background:`radial-gradient(circle,${dim(T.cyan,0.12)},transparent 70%)`}}/>
-      <div style={{position:"relative"}}>
-        <div style={{fontSize:13,color:T.muted}}>Welcome back,</div>
-        <h1 style={{fontSize:26,fontWeight:900,color:T.text,margin:"4px 0 0",fontFamily:"'JetBrains Mono',monospace"}}>{profile?.full_name||"Learner"}</h1>
-        <div style={{fontSize:14,color:T.sub,marginTop:4}}>{profile?.organization||"TierShift Academy"}</div>
-      </div>
+function LessonsViewer({ moduleId, onComplete, user }) {
+  const [lessons, setLessons] = useState([]);
+  const [idx, setIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { supabase.from('lessons').select('*').eq('module_id', moduleId).order('lesson_number').then(({ data }) => { setLessons(data || []); setLoading(false); }); }, [moduleId]);
+  const lesson = lessons[idx];
+  if (loading) return <div style={{color:T.muted}}>Loading...</div>;
+  if (!lesson) return <div style={{color:T.muted}}>No lessons available for this module yet.</div>;
+  return (
+    <div style={{display:'flex',gap:24}}>
+      <div style={{width:220,background:T.surface,borderRadius:12,padding:16}}>{lessons.map((l,i) => <div key={l.id} onClick={()=>setIdx(i)} style={{padding:10,borderRadius:8,cursor:'pointer',background:i===idx?dim(T.cyan,0.1):'transparent',color:i===idx?T.cyan:T.muted,fontSize:13,marginBottom:4}}>{l.lesson_number}. {l.title}</div>)}</div>
+      <div style={{flex:1}}><h2 style={{color:T.text}}>{lesson.title}</h2><div style={{color:T.text,marginTop:16,lineHeight:1.7}} dangerouslySetInnerHTML={{__html:lesson.content}}/><div style={{marginTop:24,display:'flex',justifyContent:'space-between'}}><button onClick={()=>setIdx(Math.max(0,idx-1))} disabled={idx===0} style={{padding:'10px 20px',background:T.surface,color:T.text,border:'1px solid '+T.border,borderRadius:8,cursor:'pointer',opacity:idx===0?0.5:1}}>Previous</button><button onClick={()=>{if(idx<lessons.length-1)setIdx(idx+1);else onComplete?.();}} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{idx===lessons.length-1?'Complete':'Next'}</button></div></div>
     </div>
-
-    <div style={{display:"flex",gap:12,marginBottom:20}}>
-      <Stat icon="⏱" value={`${Math.round(totalHours)}h`} label="Hours Logged" color={T.cyan} sub={`of ${tracks.reduce((a,t)=>a+t.total_hours,0)}h total`}/>
-      <Stat icon="✓" value={completedModules} label="Modules Done" color={T.emerald} sub={`of ${totalModules} total`}/>
-      <Stat icon="◆" value={userTracks.length} label="Tracks Enrolled" color={T.violet} sub={`of ${tracks.length} available`}/>
-      <Stat icon="✦" value={tracks.reduce((a,t)=>a+t.total_labs,0)} label="Lab Scenarios" color={T.amber} sub="across all tracks"/>
-    </div>
-
-    {activeTrack&&activeUT&&(
-      <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"20px",marginBottom:20}}>
-        <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:700,marginBottom:12}}>Continue Learning</div>
-        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
-          <span style={{fontSize:26,color:TRACK_COLORS[activeTrack.id]}}>{TRACK_ICONS[activeTrack.id]}</span>
-          <div style={{flex:1}}>
-            <div style={{fontWeight:700,color:T.text,fontSize:16}}>{activeTrack.title}</div>
-            <div style={{fontSize:13,color:T.sub}}>{activeUT.progress_pct}% complete · {Math.round(activeUT.hours_logged||0)}h logged</div>
-          </div>
-          <button onClick={()=>onNav("tracks",activeTrack.id)} style={{padding:"8px 16px",background:dim(T.cyan,0.12),border:`1px solid ${dim(T.cyan,0.25)}`,borderRadius:8,color:T.cyan,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>View Track →</button>
-        </div>
-        <Bar pct={activeUT.progress_pct} color={TRACK_COLORS[activeTrack.id]} h={6}/>
-      </div>
-    )}
-
-    <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"20px"}}>
-      <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:700,marginBottom:12}}>All Career Tracks</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-        {tracks.map(t=>{
-          const ut=userTracks.find(u=>u.track_id===t.id);
-          const enrolled=!!ut;
-          const color=TRACK_COLORS[t.id]||T.cyan;
-          return(
-            <div key={t.id} onClick={()=>onNav("tracks",t.id)} style={{padding:"16px",background:dim(color,0.04),border:`1px solid ${dim(color,0.2)}`,borderRadius:10,cursor:"pointer"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                <span style={{fontSize:20,color}}>{TRACK_ICONS[t.id]||"◆"}</span>
-                <div style={{fontWeight:700,color:T.text,fontSize:13}}>{t.title}</div>
-              </div>
-              {enrolled?<><Bar pct={ut.progress_pct} color={color} h={4}/><div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:11}}><span style={{color:T.muted}}>{Math.round(ut.hours_logged||0)}h logged</span><span style={{color,fontWeight:600}}>{ut.progress_pct}%</span></div></>
-              :<div style={{fontSize:12,color:T.muted}}>{t.total_hours}h · {t.total_modules} modules · Click to enroll</div>}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>;
+  );
 }
 
-// ─────────────────────────────────────────────
-// TRACKS PAGE
-// ─────────────────────────────────────────────
-function TracksPage({tracks,pillars,modules,userTracks,userModules,userId,initialTrack,onRefresh,onCheckBadges}){
-  const [sel,setSel]=useState(initialTrack||null);
-  const [expPillar,setExpPillar]=useState(null);
-  const [saving,setSaving]=useState(false);
-  const [studyMod,setStudyMod]=useState(null);
-  const [studyColor,setStudyColor]=useState(T.cyan);
-  const track=sel?tracks.find(t=>t.id===sel):null;
-
-  const enrollInTrack=async(trackId)=>{
-    setSaving(true);
-    await supabase.from("user_tracks").upsert({user_id:userId,track_id:trackId,status:"in_progress"},{onConflict:"user_id,track_id"});
-    await onRefresh();
-    setSaving(false);
-  };
-
-  const toggleModule=async(mod,currentStatus)=>{
-    setSaving(true);
-    const newStatus=currentStatus==="completed"?"in_progress":"completed";
-    const now=new Date().toISOString();
-    await supabase.from("user_modules").upsert({
-      user_id:userId,module_id:mod.id,track_id:mod.track_id,
-      status:newStatus,
-      score:newStatus==="completed"?Math.floor(Math.random()*15)+85:null,
-      hours_spent:mod.hours,
-      started_at:now,
-      completed_at:newStatus==="completed"?now:null,
-    },{onConflict:"user_id,module_id"});
-
-    const trackMods=modules.filter(m=>m.track_id===mod.track_id);
-    const{data:completedMods}=await supabase.from("user_modules").select("id").eq("user_id",userId).eq("track_id",mod.track_id).eq("status","completed");
-    const pct=trackMods.length>0?Math.round(((completedMods?.length||0)/trackMods.length)*100):0;
-    const totalHrs=(completedMods?.length||0)*mod.hours;
-    await supabase.from("user_tracks").upsert({
-      user_id:userId,track_id:mod.track_id,status:pct>=100?"completed":"in_progress",progress_pct:pct,hours_logged:totalHrs
-    },{onConflict:"user_id,track_id"});
-
-    await onRefresh();
-    if(newStatus==="completed"&&onCheckBadges){
-      const{data:allCompleted}=await supabase.from("user_modules").select("id,hours_spent").eq("user_id",userId).eq("status","completed");
-      const{data:allUts}=await supabase.from("user_tracks").select("*").eq("user_id",userId);
-      const totalHrsAll=(allCompleted||[]).reduce((a,m)=>a+(m.hours_spent||0),0);
-      onCheckBadges(allCompleted?.length||0,totalHrsAll,0,allUts||[]);
-    }
-    setSaving(false);
-  };
-
-  const openStudy=(mod,color)=>{
-    setStudyMod(mod);
-    setStudyColor(color);
-  };
-
-  if(track){
-    const trackPillars=pillars.filter(p=>p.track_id===track.id).sort((a,b)=>a.sort_order-b.sort_order);
-    const trackModules=modules.filter(m=>m.track_id===track.id);
-    const ut=userTracks.find(u=>u.track_id===track.id);
-    const enrolled=!!ut;
-    const color=TRACK_COLORS[track.id]||T.cyan;
-
-    return <div>
-      {studyMod&&<ModuleStudyModal mod={studyMod} pillarColor={studyColor} onClose={()=>setStudyMod(null)}/>}
-      <button onClick={()=>{setSel(null);setExpPillar(null)}} style={{background:"none",border:"none",color:T.cyan,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",padding:0,marginBottom:16}}>← All Tracks</button>
-      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:20}}>
-        <span style={{fontSize:30,color}}>{TRACK_ICONS[track.id]}</span>
-        <div style={{flex:1}}>
-          <h2 style={{fontSize:22,fontWeight:900,color:T.text,margin:0,fontFamily:"'JetBrains Mono',monospace"}}>{track.title}</h2>
-          <div style={{fontSize:13,color:T.sub,marginTop:2}}>{trackModules.length} modules · {track.total_hours}h · {track.total_labs} labs</div>
-        </div>
-        {enrolled?<Tag color={color}>{ut.progress_pct}%</Tag>
-        :<button onClick={()=>enrollInTrack(track.id)} disabled={saving} style={{padding:"10px 20px",background:color,color:T.bg,border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Enrolling...":"Enroll in Track"}</button>}
-      </div>
-      {enrolled&&<Bar pct={ut.progress_pct} color={color} h={6}/>}
-      <div style={{fontSize:14,color:T.sub,marginTop:12,lineHeight:1.6,marginBottom:20}}>{track.description}</div>
-
-      {trackPillars.map((pil,pi)=>{
-        const pillarMods=trackModules.filter(m=>m.pillar_id===pil.id).sort((a,b)=>a.sort_order-b.sort_order);
-        const completedInPillar=pillarMods.filter(m=>userModules.some(um=>um.module_id===m.id&&um.status==="completed")).length;
-        const pillarPct=pillarMods.length>0?Math.round((completedInPillar/pillarMods.length)*100):0;
-        return(
-          <div key={pil.id} style={{background:T.card,border:`1px solid ${expPillar===pi?dim(pil.color||color,0.4):T.border}`,borderRadius:10,marginBottom:12,overflow:"hidden"}}>
-            <div onClick={()=>setExpPillar(expPillar===pi?null:pi)} style={{padding:"16px 20px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,userSelect:"none"}}>
-              <div style={{width:8,height:8,borderRadius:"50%",background:pil.color||color}}/>
-              <div style={{flex:1}}>
-                <div style={{fontWeight:700,color:T.text,fontSize:15}}>{pil.name}</div>
-                <div style={{fontSize:12,color:T.muted}}>{pillarMods.length} modules · {completedInPillar} completed</div>
-              </div>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:60}}><Bar pct={pillarPct} color={pil.color||color} h={4}/></div>
-                <span style={{fontSize:12,color:pillarPct===100?T.success:T.muted,fontWeight:600,minWidth:30}}>{pillarPct}%</span>
-                <span style={{color:pil.color||color,fontSize:16,transform:expPillar===pi?"rotate(90deg)":"rotate(0)",transition:"transform 0.2s"}}>▶</span>
-              </div>
-            </div>
-            {expPillar===pi&&<div style={{padding:"0 20px 20px"}}>
-              <div style={{height:1,background:`linear-gradient(90deg,transparent,${pil.color||color},transparent)`,marginBottom:16}}/>
-              {pillarMods.map((mod,mi)=>{
-                const um=userModules.find(u=>u.module_id===mod.id);
-                const status=um?.status||"not_started";
-                const isComplete=status==="completed";
-                const pilColor=pil.color||color;
-                return(
-                  <div key={mod.id} style={{padding:"14px 16px",background:isComplete?dim(T.success,0.04):T.bg,border:`1px solid ${isComplete?dim(T.success,0.2):T.border}`,borderRadius:8,marginBottom:mi<pillarMods.length-1?8:0}}>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8,flexWrap:"wrap",gap:6}}>
-                      <div style={{display:"flex",alignItems:"center",gap:10}}>
-                        {enrolled&&<button onClick={()=>toggleModule(mod,status)} disabled={saving} style={{width:24,height:24,borderRadius:6,border:`2px solid ${isComplete?T.success:T.border}`,background:isComplete?T.success:"transparent",color:isComplete?"#fff":T.dim,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,fontWeight:700,padding:0}}>{isComplete?"✓":""}</button>}
-                        <div style={{fontWeight:700,color:T.text,fontSize:14}}>{mod.name}</div>
-                      </div>
-                      <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                        {um?.score&&<span style={{fontSize:12,fontWeight:700,color:T.success,fontFamily:"'JetBrains Mono',monospace"}}>{um.score}%</span>}
-                        <Tag color={pilColor} s>{mod.hours}h</Tag>
-                        <Tag color={mod.level==="Expert"?T.rose:mod.level==="Advanced"?T.amber:T.violet} s>{mod.level}</Tag>
-                        {/* STUDY BUTTON */}
-                        <button
-                          onClick={()=>openStudy(mod,pilColor)}
-                          style={{padding:"3px 10px",background:dim(pilColor,0.1),border:`1px solid ${dim(pilColor,0.3)}`,borderRadius:5,color:pilColor,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.04em",transition:"all 0.15s"}}
-                          onMouseEnter={e=>{e.currentTarget.style.background=dim(pilColor,0.2);e.currentTarget.style.borderColor=dim(pilColor,0.5);}}
-                          onMouseLeave={e=>{e.currentTarget.style.background=dim(pilColor,0.1);e.currentTarget.style.borderColor=dim(pilColor,0.3);}}
-                        >STUDY →</button>
-                      </div>
-                    </div>
-                    {mod.objectives&&mod.objectives.length>0&&<div style={{display:"flex",flexDirection:"column",gap:4,marginBottom:10}}>
-                      {mod.objectives.map((o,oi)=><div key={oi} style={{display:"flex",gap:8,fontSize:12.5,color:T.sub,lineHeight:1.5}}>
-                        <span style={{color:pilColor,fontSize:8,marginTop:5}}>●</span><span>{o}</span>
-                      </div>)}
-                    </div>}
-                    {mod.lab_task&&<div style={{padding:"10px 14px",background:dim(pilColor,0.06),border:`1px solid ${dim(pilColor,0.15)}`,borderRadius:6}}>
-                      <div style={{fontSize:10,color:pilColor,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:3}}>✦ Lab</div>
-                      <div style={{fontSize:12.5,color:T.sub,lineHeight:1.5}}>{mod.lab_task}</div>
-                    </div>}
-                  </div>
-                );
-              })}
-            </div>}
-          </div>
-        );
-      })}
-    </div>;
-  }
-
-  return <div>
-    <h2 style={{fontSize:22,fontWeight:900,color:T.text,margin:"0 0 6px",fontFamily:"'JetBrains Mono',monospace"}}>Career Tracks</h2>
-    <p style={{color:T.sub,fontSize:14,marginBottom:20}}>Click any track to explore modules or enroll.</p>
-    <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-      {tracks.map(t=>{
-        const ut=userTracks.find(u=>u.track_id===t.id);
-        const color=TRACK_COLORS[t.id]||T.cyan;
-        return(
-          <div key={t.id} onClick={()=>setSel(t.id)} style={{padding:"20px",background:T.card,border:`1px solid ${dim(color,0.25)}`,borderRadius:12,cursor:"pointer",position:"relative",overflow:"hidden"}}>
-            {ut&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:color}}/>}
-            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-              <span style={{fontSize:24,color}}>{TRACK_ICONS[t.id]}</span>
-              <div><div style={{fontWeight:700,color:T.text,fontSize:16}}>{t.title}</div><div style={{fontSize:12,color:T.muted}}>{t.total_modules} modules · {t.total_hours}h · {t.total_labs} labs</div></div>
-            </div>
-            <p style={{fontSize:13,color:T.sub,lineHeight:1.55,marginBottom:12}}>{t.description}</p>
-            {ut?<><Bar pct={ut.progress_pct} color={color} h={5}/><div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:12}}><span style={{color:T.muted}}>{Math.round(ut.hours_logged||0)}h logged</span><span style={{color,fontWeight:700}}>{ut.progress_pct}%</span></div></>
-            :<div style={{padding:"8px 0",fontSize:12,color,fontWeight:600}}>Click to explore & enroll →</div>}
-          </div>
-        );
-      })}
+function QuizViewer({ moduleId, user, onComplete }) {
+  const [quiz, setQuiz] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      const { data: quizData } = await supabase.from('quizzes').select('*').eq('module_id', moduleId).single();
+      if (quizData) { setQuiz(quizData); const { data: questionsData } = await supabase.from('quiz_questions').select('*').eq('quiz_id', quizData.id).order('question_number'); setQuestions(questionsData || []); }
+      setLoading(false);
+    };
+    fetchQuiz();
+  }, [moduleId]);
+  const handleSubmit = () => { const correct = questions.filter(q => answers[q.id] === q.correct_answer).length; const pct = Math.round((correct / questions.length) * 100); setResults({ score: correct, total: questions.length, pct, passed: pct >= (quiz?.passing_score || 70) }); setSubmitted(true); };
+  if (loading) return <div style={{color:T.muted}}>Loading quiz...</div>;
+  if (!quiz || questions.length === 0) return <div style={{color:T.muted}}>No quiz available for this module yet.</div>;
+  if (submitted && results) { return (<div style={{textAlign:'center',padding:40}}><div style={{fontSize:64,marginBottom:16}}>{results.passed ? 'ÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â°' : 'ÃƒÂ°Ã…Â¸Ã‹Å“Ã¢â‚¬Â¦'}</div><h2 style={{color:results.passed?T.success:T.danger}}>{results.passed ? 'Quiz Passed!' : 'Quiz Failed'}</h2><div style={{fontSize:48,fontWeight:900,color:results.passed?T.success:T.danger,margin:'16px 0'}}>{results.pct}%</div><p style={{color:T.muted}}>{results.score} of {results.total} correct (need {quiz.passing_score}% to pass)</p><button onClick={onComplete} style={{marginTop:24,padding:'12px 24px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{results.passed ? 'Continue' : 'Try Again'}</button></div>); }
+  const q = questions[currentIdx];
+  const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+  return (
+    <div>
+      <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'center'}}><h3 style={{color:T.text,margin:0}}>{quiz.title}</h3><span style={{color:T.muted}}>Question {currentIdx+1} of {questions.length}</span></div>
+      <div style={{background:T.surface,borderRadius:12,padding:24,marginBottom:24}}><h3 style={{color:T.text,marginBottom:20}}>{q.question_text}</h3>{opts && opts.map(opt => (<label key={opt.id} style={{display:'block',padding:'12px 16px',background:answers[q.id]===opt.id?dim(T.cyan,0.15):T.card,border:answers[q.id]===opt.id?'1px solid '+T.cyan:'1px solid '+T.border,borderRadius:8,marginBottom:8,cursor:'pointer',color:T.text}}><input type="radio" name="answer" checked={answers[q.id]===opt.id} onChange={()=>setAnswers({...answers,[q.id]:opt.id})} style={{marginRight:12}}/>{opt.text}</label>))}</div>
+      <div style={{display:'flex',justifyContent:'space-between'}}><button onClick={()=>setCurrentIdx(Math.max(0,currentIdx-1))} disabled={currentIdx===0} style={{padding:'10px 20px',background:T.surface,color:T.text,border:'1px solid '+T.border,borderRadius:8,cursor:'pointer',opacity:currentIdx===0?0.5:1}}>Previous</button>{currentIdx===questions.length-1 ? (<button onClick={handleSubmit} disabled={Object.keys(answers).length<questions.length} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>Submit Quiz</button>) : (<button onClick={()=>setCurrentIdx(currentIdx+1)} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>Next</button>)}</div>
     </div>
-  </div>;
+  );
 }
 
-// ─────────────────────────────────────────────
-// LABS PAGE
-// ─────────────────────────────────────────────
-function LabsPage({tracks,labTickets}){
-  const [sel,setSel]=useState(null);
-  const [showAnswer,setShowAnswer]=useState(false);
-  const ticket=sel!==null?labTickets[sel]:null;
-
-  if(ticket){
-    const color=TRACK_COLORS[ticket.track_id]||T.cyan;
-    const trackTitle=tracks.find(t=>t.id===ticket.track_id)?.title||"";
-    return <div>
-      <button onClick={()=>{setSel(null);setShowAnswer(false)}} style={{background:"none",border:"none",color:T.cyan,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",padding:0,marginBottom:16}}>← All Labs</button>
-      <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden"}}>
-        <div style={{padding:"18px 20px",borderBottom:`1px solid ${T.border}`}}>
-          <div style={{display:"flex",gap:8,marginBottom:8}}>
-            <Tag color={ticket.severity==="P1"?T.danger:T.warning}>{ticket.severity}</Tag>
-            <Tag color={color}>{trackTitle}</Tag>
-            <Tag>{ticket.category}</Tag>
-          </div>
-          <h3 style={{fontSize:17,fontWeight:800,color:T.text,margin:0,fontFamily:"'JetBrains Mono',monospace"}}>{ticket.id}: {ticket.title}</h3>
-        </div>
-        <div style={{padding:20}}>
-          <div style={{marginBottom:18}}>
-            <div style={{fontSize:10,fontWeight:700,color:T.muted,textTransform:"uppercase",marginBottom:6}}>● Report</div>
-            <div style={{padding:"14px 16px",background:T.bg,border:`1px solid ${T.border}`,borderRadius:8,fontSize:13.5,color:T.sub,lineHeight:1.6,fontStyle:"italic"}}>"{ticket.initial_report}"</div>
-          </div>
-          <div style={{marginBottom:18}}>
-            <div style={{fontSize:10,fontWeight:700,color:T.danger,textTransform:"uppercase",marginBottom:6}}>✕ Challenge</div>
-            <div style={{padding:"14px 16px",background:dim(T.danger,0.05),border:`1px solid ${dim(T.danger,0.15)}`,borderRadius:8,fontSize:13.5,color:T.sub,lineHeight:1.6}}>{ticket.challenge}</div>
-          </div>
-          {ticket.objectives&&ticket.objectives.length>0&&<div style={{marginBottom:18}}>
-            <div style={{fontSize:10,fontWeight:700,color:T.violet,textTransform:"uppercase",marginBottom:8}}>◆ Objectives</div>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {ticket.objectives.map((obj,i)=>(
-                <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-                  <div style={{minWidth:20,height:20,borderRadius:5,background:dim(T.violet,0.15),border:`1px solid ${dim(T.violet,0.3)}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,color:T.violet,fontFamily:"'JetBrains Mono',monospace"}}>{i+1}</div>
-                  <span style={{fontSize:13.5,color:T.sub,lineHeight:1.5}}>{obj}</span>
-                </div>
-              ))}
-            </div>
-          </div>}
-          <button onClick={()=>setShowAnswer(!showAnswer)} style={{padding:"9px 18px",background:showAnswer?dim(T.success,0.1):T.card,border:`1px solid ${showAnswer?dim(T.success,0.4):T.border}`,borderRadius:6,color:showAnswer?T.success:T.muted,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace"}}>
-            {showAnswer?"▼ Hide Root Cause":"▶ Reveal Root Cause"}
-          </button>
-          {showAnswer&&<div style={{marginTop:10,padding:"14px 16px",background:dim(T.success,0.05),border:`1px solid ${dim(T.success,0.15)}`,borderRadius:8,fontSize:13.5,color:T.sub,lineHeight:1.6}}>
-            <span style={{fontWeight:700,color:T.success}}>Root Cause: </span>{ticket.root_cause}
-          </div>}
-        </div>
-      </div>
-    </div>;
-  }
-
-  const groupedByTrack=tracks.map(t=>({...t,tickets:labTickets.filter(lt=>lt.track_id===t.id).sort((a,b)=>a.sort_order-b.sort_order)})).filter(t=>t.tickets.length>0);
-
-  return <div>
-    <h2 style={{fontSize:22,fontWeight:900,color:T.text,margin:"0 0 6px",fontFamily:"'JetBrains Mono',monospace"}}>Lab Simulator</h2>
-    <p style={{color:T.sub,fontSize:14,marginBottom:20}}>{labTickets.length} scenarios across {groupedByTrack.length} tracks.</p>
-    {groupedByTrack.map(t=>(
-      <div key={t.id} style={{marginBottom:20}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-          <span style={{color:TRACK_COLORS[t.id],fontSize:16}}>{TRACK_ICONS[t.id]}</span>
-          <span style={{fontWeight:700,color:T.text,fontSize:14}}>{t.title}</span>
-          <span style={{fontSize:12,color:T.muted}}>— {t.tickets.length} scenarios</span>
-        </div>
-        {t.tickets.map(tk=>{
-          const gi=labTickets.indexOf(tk);
-          return(
-            <div key={tk.id} onClick={()=>setSel(gi)} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:T.card,border:`1px solid ${T.border}`,borderRadius:8,marginBottom:6,cursor:"pointer"}}
-              onMouseEnter={e=>e.currentTarget.style.borderColor=dim(TRACK_COLORS[t.id],0.4)}
-              onMouseLeave={e=>e.currentTarget.style.borderColor=T.border}>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:T.muted,minWidth:70}}>{tk.id}</span>
-              <div style={{flex:1,fontSize:13.5,fontWeight:500,color:T.text}}>{tk.title}</div>
-              <Tag color={tk.severity==="P1"?T.danger:T.warning} s>{tk.severity}</Tag>
-            </div>
-          );
-        })}
-      </div>
-    ))}
-  </div>;
+function CourseResources({ moduleId }) {
+  const [resources, setResources] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { supabase.from('course_resources').select('*').eq('module_id', moduleId).then(({ data }) => { setResources(data || []); setLoading(false); }); }, [moduleId]);
+  const getIcon = (type) => { switch(type) { case 'video': return 'ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬'; case 'pdf': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾'; case 'article': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â°'; case 'link': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â€'; case 'code': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â»'; default: return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â'; } };
+  if (loading) return <div style={{color:T.muted}}>Loading resources...</div>;
+  if (resources.length === 0) return <div style={{color:T.muted}}>No resources available for this module yet.</div>;
+  return (<div><h3 style={{color:T.text,marginBottom:16}}>Additional Resources</h3><div style={{display:'grid',gap:12}}>{resources.map(r => (<a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:16,padding:16,background:T.card,border:'1px solid '+T.border,borderRadius:8,textDecoration:'none'}}><span style={{fontSize:24}}>{getIcon(r.resource_type)}</span><div style={{flex:1}}><h4 style={{color:T.text,margin:0}}>{r.title}</h4><p style={{color:T.muted,margin:'4px 0 0',fontSize:13}}>{r.description}</p></div><span style={{color:T.sub,fontSize:11,textTransform:'uppercase'}}>{r.resource_type}</span></a>))}</div></div>);
 }
 
-// ─────────────────────────────────────────────
-// BADGES PAGE
-// ─────────────────────────────────────────────
-function BadgesPage({badges,userBadges}){
-  const earned=badges.filter(b=>userBadges.some(ub=>ub.badge_id===b.id)).map(b=>{
-    const ub=userBadges.find(u=>u.badge_id===b.id);
-    return{...b,earned_at:ub?.earned_at};
-  });
-  const upcoming=badges.filter(b=>!userBadges.some(ub=>ub.badge_id===b.id));
-
-  return <div>
-    <h2 style={{fontSize:22,fontWeight:900,color:T.text,margin:"0 0 6px",fontFamily:"'JetBrains Mono',monospace"}}>Badges & Achievements</h2>
-    <p style={{color:T.sub,fontSize:14,marginBottom:24}}>{earned.length} earned · {upcoming.length} remaining</p>
-
-    {earned.length>0&&<>
-      <div style={{fontSize:11,color:T.success,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:700,marginBottom:12}}>Earned ({earned.length})</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:28}}>
-        {earned.map(b=>(
-          <div key={b.id} style={{padding:"20px 16px",background:T.card,border:`1px solid ${dim(b.color||T.cyan,0.3)}`,borderRadius:12,textAlign:"center",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:b.color||T.cyan}}/>
-            <div style={{fontSize:32,marginBottom:8}}>{b.icon}</div>
-            <div style={{fontWeight:700,color:T.text,fontSize:14,marginBottom:4}}>{b.name}</div>
-            <div style={{fontSize:12,color:T.sub,marginBottom:8,lineHeight:1.4}}>{b.description}</div>
-            <div style={{fontSize:11,color:b.color||T.cyan,fontWeight:600}}>Earned {new Date(b.earned_at).toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div>
-          </div>
-        ))}
-      </div>
-    </>}
-
-    <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:700,marginBottom:12}}>Upcoming ({upcoming.length})</div>
-    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
-      {upcoming.map(b=>(
-        <div key={b.id} style={{padding:"20px 16px",background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,textAlign:"center",opacity:0.5}}>
-          <div style={{fontSize:32,marginBottom:8,filter:"grayscale(1)"}}>{b.icon}</div>
-          <div style={{fontWeight:700,color:T.text,fontSize:14,marginBottom:4}}>{b.name}</div>
-          <div style={{fontSize:12,color:T.sub,lineHeight:1.4}}>{b.description}</div>
-          <div style={{fontSize:11,color:T.dim,marginTop:8}}>
-            {b.criteria_type==="modules_completed"&&`Complete ${b.criteria_value} modules`}
-            {b.criteria_type==="hours_logged"&&`Log ${b.criteria_value} hours`}
-            {b.criteria_type==="track_completed"&&`Complete track`}
-            {b.criteria_type==="labs_completed"&&`Complete ${b.criteria_value} labs`}
-            {b.criteria_type==="streak_days"&&`${b.criteria_value}-day streak`}
-            {b.criteria_type==="pillar_completed"&&`Complete all pillar modules`}
-          </div>
-        </div>
-      ))}
+function ModuleStudyPage({ moduleId, user, onBack }) {
+  const [mod, setMod] = useState(null);
+  const [tab, setTab] = useState('lessons');
+  useEffect(() => { supabase.from('modules').select('*').eq('id', moduleId).single().then(({ data }) => setMod(data)); }, [moduleId]);
+  if (!mod) return <div style={{color:T.muted}}>Loading...</div>;
+  return (
+    <div>
+      <button onClick={onBack} style={{background:'transparent',border:'none',color:T.cyan,cursor:'pointer',marginBottom:16,fontSize:14}}>ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Back to Modules</button>
+      <h1 style={{color:T.text,marginBottom:8}}>{mod.name}</h1>
+      <p style={{color:T.muted,marginBottom:24}}>{mod.description}</p>
+      <div style={{display:'flex',gap:8,marginBottom:24}}>{['lessons','quiz','resources'].map(t=><button key={t} onClick={()=>setTab(t)} style={{padding:'10px 20px',background:tab===t?dim(T.cyan,0.1):'transparent',border:'1px solid '+(tab===t?T.cyan:T.border),borderRadius:8,color:tab===t?T.cyan:T.muted,cursor:'pointer',textTransform:'capitalize',fontWeight:tab===t?600:400}}>{t}</button>)}</div>
+      {tab==='lessons'&&<LessonsViewer moduleId={moduleId} user={user} onComplete={()=>setTab('quiz')}/>}
+      {tab==='quiz'&&<QuizViewer moduleId={moduleId} user={user} onComplete={onBack}/>}
+      {tab==='resources'&&<CourseResources moduleId={moduleId}/>}
     </div>
-  </div>;
+  );
 }
 
-// ─────────────────────────────────────────────
-// PROFILE PAGE
-// ─────────────────────────────────────────────
-function ProfilePage({user,profile,tracks,userTracks,userModules,onLogout}){
-  const displayName=profile?.full_name||user?.email?.split("@")[0];
-  const initials=displayName?.split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2)||"?";
-  const completedModules=userModules.filter(m=>m.status==="completed").length;
-  const totalHours=userModules.reduce((a,m)=>a+(m.hours_spent||0),0);
-  const scores=userModules.filter(m=>m.score).map(m=>m.score);
-  const avgScore=scores.length?Math.round(scores.reduce((a,s)=>a+s,0)/scores.length):0;
-
-  return <div>
-    <div style={{display:"flex",gap:20,marginBottom:28}}>
-      <div style={{width:70,height:70,borderRadius:16,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:900,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>{initials}</div>
-      <div style={{flex:1}}>
-        <h2 style={{fontSize:24,fontWeight:900,color:T.text,margin:0,fontFamily:"'JetBrains Mono',monospace"}}>{displayName}</h2>
-        <div style={{fontSize:14,color:T.sub,marginTop:2}}>{user?.email}</div>
-        {profile?.organization&&<div style={{fontSize:14,color:T.muted,marginTop:2}}>{profile.organization}</div>}
-        <div style={{display:"flex",gap:8,marginTop:10}}>
-          <Tag color={T.cyan}>Active Learner</Tag>
-          <Tag color={T.muted}>Joined {new Date(user?.created_at).toLocaleDateString("en-US",{month:"short",year:"numeric"})}</Tag>
-        </div>
-      </div>
-    </div>
-
-    <div style={{display:"flex",gap:12,marginBottom:24}}>
-      <Stat icon="⏱" value={`${Math.round(totalHours)}h`} label="Hours" color={T.cyan}/>
-      <Stat icon="✓" value={completedModules} label="Modules" color={T.emerald}/>
-      <Stat icon="◆" value={userTracks.length} label="Tracks" color={T.violet}/>
-      <Stat icon="◎" value={avgScore?`${avgScore}%`:"—"} label="Avg Score" color={T.amber}/>
-    </div>
-
-    {userTracks.length>0&&<div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"20px",marginBottom:20}}>
-      <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.07em",fontWeight:700,marginBottom:14}}>Track Progress</div>
-      {userTracks.map(ut=>{
-        const t=tracks.find(tr=>tr.id===ut.track_id);
-        if(!t)return null;
-        const color=TRACK_COLORS[t.id]||T.cyan;
-        return(
-          <div key={ut.track_id} style={{marginBottom:14}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}>
-              <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{color,fontSize:14}}>{TRACK_ICONS[t.id]}</span><span style={{fontWeight:600,color:T.text,fontSize:14}}>{t.title}</span></div>
-              <span style={{fontSize:13,color,fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>{ut.progress_pct}%</span>
-            </div>
-            <Bar pct={ut.progress_pct} color={color} h={5}/>
-          </div>
-        );
-      })}
-    </div>}
-
-    <button onClick={onLogout} style={{padding:"12px 24px",background:dim(T.danger,0.1),border:`1px solid ${dim(T.danger,0.25)}`,borderRadius:8,color:T.danger,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Sign Out</button>
-  </div>;
-}
-
-// ─────────────────────────────────────────────
-// MAIN APP
-// ─────────────────────────────────────────────
-const NAV_ITEMS=[
-  {id:"dashboard",label:"Dashboard",icon:"⊞"},
-  {id:"tracks",label:"Career Tracks",icon:"◆"},
-  {id:"labs",label:"Lab Simulator",icon:"✦"},
-  {id:"badges",label:"Badges",icon:"★"},
-  {id:"profile",label:"My Profile",icon:"◎"},
+const NAV = [
+  { id: "dashboard", label: "Dashboard", icon: "#" },
+  { id: "tracks", label: "Career Tracks", icon: ">" },
+  { id: "paths", label: "Learning Paths", icon: "P" },
+  { id: "labs", label: "Labs", icon: "L" },
+  { id: "badges", label: "Badges", icon: "B" },
+  { id: "certs", label: "Certifications", icon: "C" },
+  { id: "profile", label: "Profile", icon: "U" },
 ];
 
-export default function App(){
-  const [session,setSession]=useState(null);
-  const [profile,setProfile]=useState(null);
-  const [loading,setLoading]=useState(true);
-  const [page,setPage]=useState("dashboard");
-  const [trackId,setTrackId]=useState(null);
-  const [tracks,setTracks]=useState([]);
-  const [pillars,setPillars]=useState([]);
-  const [modules,setModules]=useState([]);
-  const [labTickets,setLabTickets]=useState([]);
-  const [userTracks,setUserTracks]=useState([]);
-  const [userModules,setUserModules]=useState([]);
-  const [badges,setBadges]=useState([]);
-  const [userBadges,setUserBadges]=useState([]);
-  const [badgeToast,setBadgeToast]=useState(null);
-  const ref=useRef(null);
+export default function App() {
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState("dashboard");
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedLab, setSelectedLab] = useState(null);
+  const [selectedPath, setSelectedPath] = useState(null);
+  const [modules, setModules] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [userModules, setUserModules] = useState([]);
+  const [userTracks, setUserTracks] = useState([]);
+  const [userBadges, setUserBadges] = useState([]);
 
-  useEffect(()=>{
-    supabase.auth.getSession().then(({data:{session:s}})=>{
-      setSession(s);
-      if(s?.user)loadEverything(s.user.id);
-      else setLoading(false);
-    });
-    const{data:{subscription}}=supabase.auth.onAuthStateChange((_ev,s)=>{
-      setSession(s);
-      if(s?.user)loadEverything(s.user.id);
-      else{setProfile(null);setLoading(false);}
-    });
-    return()=>subscription.unsubscribe();
-  },[]);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: s } }) => { setSession(s); if (s?.user) load(s.user.id); else setLoading(false); });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => { setSession(s); if (s?.user) load(s.user.id); else { setProfile(null); setLoading(false); } });
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const loadEverything=async(userId)=>{
+  const load = async (uid) => {
     setLoading(true);
-    const{data:prof}=await supabase.from("profiles").select("*").eq("id",userId).single();
-    setProfile(prof);
-    const{data:tr}=await supabase.from("tracks").select("*").order("sort_order");
-    const{data:mods}=await supabase.from("modules").select("*").eq("is_active",true).order("sort_order");
-    setModules(mods||[]);
-    if(tr&&mods){
-      setTracks(tr.map(t=>({...t,module_count:mods.filter(m=>m.track_id===t.id).length})));
-    }else{setTracks(tr||[]);}
-    const{data:pils}=await supabase.from("pillars").select("*").order("sort_order");
-    setPillars(pils||[]);
-    const{data:labs}=await supabase.from("lab_tickets").select("*").eq("is_active",true).order("sort_order");
-    setLabTickets(labs||[]);
-    const{data:uts}=await supabase.from("user_tracks").select("*").eq("user_id",userId);
-    setUserTracks(uts||[]);
-    const{data:ums}=await supabase.from("user_modules").select("*").eq("user_id",userId);
-    setUserModules(ums||[]);
-    const{data:bdg}=await supabase.from("badges").select("*").order("sort_order");
-    setBadges(bdg||[]);
-    const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
-    setUserBadges(ubdg||[]);
+    const { data: p } = await supabase.from("profiles").select("*").eq("id", uid).single();
+    setProfile(p);
+    const { data: m } = await supabase.from("modules").select("*").eq("is_active", true).order("sort_order");
+    setModules(m || []);
+    const { data: t } = await supabase.from("tracks").select("*").order("sort_order");
+    setTracks(t || []);
+    const { data: um } = await supabase.from("user_modules").select("*").eq("user_id", uid);
+    setUserModules(um || []);
+    const { data: ut } = await supabase.from("user_tracks").select("*").eq("user_id", uid);
+    setUserTracks(ut || []);
+    const { data: ub } = await supabase.from("user_badges").select("*").eq("user_id", uid);
+    setUserBadges(ub || []);
     setLoading(false);
   };
 
-  const refreshProgress=useCallback(async()=>{
-    if(!session?.user)return;
-    const userId=session.user.id;
-    const{data:uts}=await supabase.from("user_tracks").select("*").eq("user_id",userId);
-    setUserTracks(uts||[]);
-    const{data:ums}=await supabase.from("user_modules").select("*").eq("user_id",userId);
-    setUserModules(ums||[]);
-    const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
-    setUserBadges(ubdg||[]);
-  },[session]);
+  const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
+  const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); };
 
-  const checkBadges=useCallback(async(completedModules,totalHours,completedTracks,userTracksList)=>{
-    if(!session?.user||!badges.length)return;
-    const userId=session.user.id;
-    const{data:currentUB}=await supabase.from("user_badges").select("badge_id").eq("user_id",userId);
-    const earnedIds=new Set((currentUB||[]).map(ub=>ub.badge_id));
-    const newlyEarned=[];
-    for(const badge of badges){
-      if(earnedIds.has(badge.id))continue;
-      let earned=false;
-      if(badge.criteria_type==="modules_completed"&&completedModules>=badge.criteria_value)earned=true;
-      if(badge.criteria_type==="hours_logged"&&totalHours>=badge.criteria_value)earned=true;
-      if(badge.criteria_type==="track_completed"&&badge.criteria_track_id){
-        const ut=userTracksList.find(u=>u.track_id===badge.criteria_track_id);
-        if(ut&&ut.progress_pct>=100)earned=true;
-      }
-      if(earned){
-        await supabase.from("user_badges").insert({user_id:userId,badge_id:badge.id});
-        newlyEarned.push(badge);
-      }
-    }
-    if(newlyEarned.length>0){
-      setBadgeToast(newlyEarned[0]);
-      setTimeout(()=>setBadgeToast(null),4000);
-      const{data:ubdg}=await supabase.from("user_badges").select("*").eq("user_id",userId);
-      setUserBadges(ubdg||[]);
-    }
-  },[session,badges]);
+  if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
+  if (!session) return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
 
-  const handleLogout=async()=>{
-    await supabase.auth.signOut();
-    setSession(null);setProfile(null);setPage("dashboard");
+  const user = session.user;
+  const name = profile?.full_name || user?.email?.split("@")[0] || "User";
+  const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const renderPage = () => {
+    switch (page) {
+      case "dashboard": return <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
+      case "tracks": return <SimpleTracksPage modules={modules} onStudyClick={handleModuleClick} />;
+      case "study": return selectedModule ? <ModuleStudyPage moduleId={selectedModule.id} user={user} onBack={() => { setSelectedModule(null); setPage("tracks"); }} /> : <div>Loading...</div>;
+      case "paths": if (selectedPath) { return <LearningPathViewer path={selectedPath} user={user} onBack={() => setSelectedPath(null)} onLabClick={(lab) => { setSelectedLab(lab); setPage("labs"); }} />; } return <LearningPathsPage user={user} onPathClick={setSelectedPath} />;
+      case "labs": if (selectedLab) { return <LabViewer lab={selectedLab} user={user} onBack={() => setSelectedLab(null)} />; } return <LabsPage user={user} onLabClick={setSelectedLab} />;
+      case "badges": return <BadgesPage user={user} />;
+      case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
+      case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
+      default: return <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
+    }
   };
 
-  useEffect(()=>{if(ref.current)ref.current.scrollTop=0},[page,trackId]);
-  const navigate=(pg,tid)=>{setPage(pg);setTrackId(tid||null)};
-
-  if(loading)return(
-    <div style={{height:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",color:T.cyan,fontFamily:"'JetBrains Mono',monospace",fontSize:16}}>Loading TierShift Academy...</div>
+  return (
+    <div style={{ display: "flex", height: "100vh", background: T.bg, color: T.text, fontFamily: "'Outfit',sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      <nav style={{ width: 240, background: T.surface, borderRight: '1px solid ' + T.border, display: "flex", flexDirection: "column", padding: "18px 0" }}>
+        <div style={{ padding: "0 18px 16px", borderBottom: '1px solid ' + T.border, marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: T.bg }}>TS</div>
+          <div><div style={{ fontSize: 17, fontWeight: 800 }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 10, color: T.muted }}>Academy</div></div>
+        </div>
+        {NAV.map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
+        <div style={{ flex: 1 }} />
+        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
+        <div style={{ padding: "14px 18px", borderTop: '1px solid ' + T.border, marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: T.bg }}>{initials}</div>
+          <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
+        </div>
+      </nav>
+      <main style={{ flex: 1, overflow: "auto", padding: "24px 32px" }}><div style={{ maxWidth: 1000 }}>{renderPage()}</div></main>
+    </div>
   );
-  if(!session)return <AuthPage onAuth={(user)=>{setSession({user});loadEverything(user.id)}}/>;
-
-  const user=session.user;
-  const displayName=profile?.full_name||user?.email?.split("@")[0]||"Learner";
-  const initials=displayName.split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2);
-
-  const pages={
-    dashboard:<DashboardPage profile={profile} tracks={tracks} userTracks={userTracks} userModules={userModules} onNav={navigate}/>,
-    tracks:<TracksPage tracks={tracks} pillars={pillars} modules={modules} userTracks={userTracks} userModules={userModules} userId={user.id} initialTrack={trackId} onRefresh={refreshProgress} onCheckBadges={checkBadges}/>,
-    labs:<LabsPage tracks={tracks} labTickets={labTickets}/>,
-    badges:<BadgesPage badges={badges} userBadges={userBadges}/>,
-    profile:<ProfilePage user={user} profile={profile} tracks={tracks} userTracks={userTracks} userModules={userModules} onLogout={handleLogout}/>,
-  };
-
-  return <div style={{display:"flex",height:"100vh",background:T.bg,color:T.text,fontFamily:"'Outfit',sans-serif"}}>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <style>{`*{margin:0;padding:0;box-sizing:border-box}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}input:focus{outline:none;border-color:${T.cyan}!important}`}</style>
-
-    <nav style={{width:230,minWidth:230,background:T.surface,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",padding:"18px 0"}}>
-      <div style={{padding:"0 18px 16px",borderBottom:`1px solid ${T.border}`,marginBottom:6}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:30,height:30,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:900,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>TS</div>
-          <div><div style={{fontSize:15,fontWeight:800,lineHeight:1.1}}>Tier<span style={{color:T.cyan}}>Shift</span></div><div style={{fontSize:10,color:T.muted}}>Academy</div></div>
-        </div>
-      </div>
-      {NAV_ITEMS.map(n=>(
-        <button key={n.id} onClick={()=>navigate(n.id)} style={{display:"flex",alignItems:"center",gap:10,width:"calc(100% - 14px)",padding:"10px 14px",margin:"1px 7px",borderRadius:7,background:page===n.id?dim(T.cyan,0.08):"transparent",border:page===n.id?`1px solid ${dim(T.cyan,0.18)}`:"1px solid transparent",color:page===n.id?T.cyan:T.muted,fontSize:13,fontWeight:page===n.id?700:500,cursor:"pointer",textAlign:"left",fontFamily:"inherit",transition:"all 0.15s"}}>
-          <span style={{fontSize:14,width:18,textAlign:"center"}}>{n.icon}</span>{n.label}
-        </button>
-      ))}
-      <div style={{flex:1}}/>
-      <div style={{padding:"14px 18px",borderTop:`1px solid ${T.border}`}}>
-        <div style={{display:"flex",alignItems:"center",gap:9}}>
-          <div style={{width:32,height:32,borderRadius:9,background:`linear-gradient(135deg,${T.cyan},${T.violet})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:T.bg,fontFamily:"'JetBrains Mono',monospace"}}>{initials}</div>
-          <div><div style={{fontSize:12,fontWeight:700,color:T.text}}>{displayName}</div><div style={{fontSize:10,color:T.muted}}>{profile?.organization||user?.email}</div></div>
-        </div>
-      </div>
-    </nav>
-
-    <main ref={ref} style={{flex:1,overflow:"auto",padding:"24px 32px"}}>
-      <div style={{maxWidth:900}}>{pages[page]}</div>
-    </main>
-
-    {badgeToast&&<div style={{position:"fixed",bottom:24,right:24,padding:"16px 24px",background:T.card,border:`1px solid ${dim(badgeToast.color||T.cyan,0.4)}`,borderRadius:12,boxShadow:"0 8px 32px rgba(0,0,0,0.5)",display:"flex",alignItems:"center",gap:14,zIndex:999}}>
-      <style>{`@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
-      <div style={{fontSize:32}}>{badgeToast.icon}</div>
-      <div>
-        <div style={{fontSize:11,color:badgeToast.color||T.cyan,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em"}}>Badge Earned!</div>
-        <div style={{fontSize:16,fontWeight:800,color:T.text,marginTop:2}}>{badgeToast.name}</div>
-        <div style={{fontSize:12,color:T.sub,marginTop:2}}>{badgeToast.description}</div>
-      </div>
-    </div>}
-  </div>;
 }
+
