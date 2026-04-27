@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { LabsPage, LabViewer } from "./Labs";
 import { BadgesPage } from "./Badges";
@@ -58,14 +58,17 @@ function AuthPage({ onAuth }) {
           <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: T.bg }}>TS</div>
           <div><div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 11, color: T.muted }}>Academy</div></div>
         </div>
-        <h2 style={{ color: T.text, marginBottom: 8, fontSize: 24, fontWeight: 700, textAlign: 'center' }}>{isSignUp ? 'Create Account' : 'Welcome Back'}</h2>
+        <p style={{ color: T.muted, fontSize: 14, textAlign: 'center', marginBottom: 24 }}>Sign in to continue your training</p>
+        <div style={{ display: 'flex', marginBottom: 24, background: T.surface, borderRadius: 8, padding: 4 }}>
+          <button onClick={() => setIsSignUp(false)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: !isSignUp ? T.cyan : 'transparent', color: !isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Sign In</button>
+          <button onClick={() => setIsSignUp(true)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: isSignUp ? T.cyan : 'transparent', color: isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Create Account</button>
+        </div>
         {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Email</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
-          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>EMAIL</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>PASSWORD</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 6 characters" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
         </form>
-        <p style={{ marginTop: 20, color: T.muted, fontSize: 13, textAlign: 'center' }}>{isSignUp ? 'Have an account?' : "No account?"} <span onClick={() => setIsSignUp(!isSignUp)} style={{ color: T.cyan, cursor: 'pointer' }}>{isSignUp ? 'Sign In' : 'Sign Up'}</span></p>
       </div>
     </div>
   );
@@ -87,7 +90,6 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
     return { ...track, completedInTrack, total, pct };
   }).filter(t => t.total > 0) || [];
   const TRACK_COLORS = { "network": T.emerald, "security": T.rose, "cloud": T.amber, "aisec": T.pink, "t1t2": T.cyan, "t2t3": T.violet };
-
   return (
     <div>
       <div style={{marginBottom:32}}>
@@ -128,104 +130,10 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
           </div>
         ) : (
           <div style={{display:"grid",gap:12}}>
-            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</span></div>))}
+            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start</span></div>))}
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function SimpleTracksPage({ modules, onStudyClick }) {
-  return (
-    <div>
-      <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Career Tracks</h1>
-      <p style={{ color: T.muted, marginBottom: 32 }}>Choose a module to begin</p>
-      {modules.length === 0 ? <div style={{ background: T.card, padding: 40, borderRadius: 12, textAlign: 'center' }}><div style={{ fontSize: 48 }}>ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…Â¡</div><h3 style={{ color: T.text }}>No Modules Available</h3></div> : (
-        <div style={{ display: 'grid', gap: 16 }}>
-          {modules.map(mod => (
-            <div key={mod.id} style={{ background: T.card, padding: 24, borderRadius: 12, border: '1px solid '+T.border, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div><h3 style={{ color: T.text, margin: 0 }}>{mod.name}</h3><p style={{ color: T.muted, margin: '8px 0 0', fontSize: 14 }}>{mod.description || 'Start learning'}</p></div>
-              <button onClick={() => onStudyClick(mod)} style={{ padding: '10px 20px', background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Study</button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function LessonsViewer({ moduleId, onComplete, user }) {
-  const [lessons, setLessons] = useState([]);
-  const [idx, setIdx] = useState(0);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => { supabase.from('lessons').select('*').eq('module_id', moduleId).order('lesson_number').then(({ data }) => { setLessons(data || []); setLoading(false); }); }, [moduleId]);
-  const lesson = lessons[idx];
-  if (loading) return <div style={{color:T.muted}}>Loading...</div>;
-  if (!lesson) return <div style={{color:T.muted}}>No lessons available for this module yet.</div>;
-  return (
-    <div style={{display:'flex',gap:24}}>
-      <div style={{width:220,background:T.surface,borderRadius:12,padding:16}}>{lessons.map((l,i) => <div key={l.id} onClick={()=>setIdx(i)} style={{padding:10,borderRadius:8,cursor:'pointer',background:i===idx?dim(T.cyan,0.1):'transparent',color:i===idx?T.cyan:T.muted,fontSize:13,marginBottom:4}}>{l.lesson_number}. {l.title}</div>)}</div>
-      <div style={{flex:1}}><h2 style={{color:T.text}}>{lesson.title}</h2><div style={{color:T.text,marginTop:16,lineHeight:1.7}} dangerouslySetInnerHTML={{__html:lesson.content}}/><div style={{marginTop:24,display:'flex',justifyContent:'space-between'}}><button onClick={()=>setIdx(Math.max(0,idx-1))} disabled={idx===0} style={{padding:'10px 20px',background:T.surface,color:T.text,border:'1px solid '+T.border,borderRadius:8,cursor:'pointer',opacity:idx===0?0.5:1}}>Previous</button><button onClick={()=>{if(idx<lessons.length-1)setIdx(idx+1);else onComplete?.();}} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{idx===lessons.length-1?'Complete':'Next'}</button></div></div>
-    </div>
-  );
-}
-
-function QuizViewer({ moduleId, user, onComplete }) {
-  const [quiz, setQuiz] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchQuiz = async () => {
-      const { data: quizData } = await supabase.from('quizzes').select('*').eq('module_id', moduleId).single();
-      if (quizData) { setQuiz(quizData); const { data: questionsData } = await supabase.from('quiz_questions').select('*').eq('quiz_id', quizData.id).order('question_number'); setQuestions(questionsData || []); }
-      setLoading(false);
-    };
-    fetchQuiz();
-  }, [moduleId]);
-  const handleSubmit = () => { const correct = questions.filter(q => answers[q.id] === q.correct_answer).length; const pct = Math.round((correct / questions.length) * 100); setResults({ score: correct, total: questions.length, pct, passed: pct >= (quiz?.passing_score || 70) }); setSubmitted(true); };
-  if (loading) return <div style={{color:T.muted}}>Loading quiz...</div>;
-  if (!quiz || questions.length === 0) return <div style={{color:T.muted}}>No quiz available for this module yet.</div>;
-  if (submitted && results) { return (<div style={{textAlign:'center',padding:40}}><div style={{fontSize:64,marginBottom:16}}>{results.passed ? 'ÃƒÂ°Ã…Â¸Ã…Â½Ã¢â‚¬Â°' : 'ÃƒÂ°Ã…Â¸Ã‹Å“Ã¢â‚¬Â¦'}</div><h2 style={{color:results.passed?T.success:T.danger}}>{results.passed ? 'Quiz Passed!' : 'Quiz Failed'}</h2><div style={{fontSize:48,fontWeight:900,color:results.passed?T.success:T.danger,margin:'16px 0'}}>{results.pct}%</div><p style={{color:T.muted}}>{results.score} of {results.total} correct (need {quiz.passing_score}% to pass)</p><button onClick={onComplete} style={{marginTop:24,padding:'12px 24px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>{results.passed ? 'Continue' : 'Try Again'}</button></div>); }
-  const q = questions[currentIdx];
-  const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-  return (
-    <div>
-      <div style={{marginBottom:24,display:'flex',justifyContent:'space-between',alignItems:'center'}}><h3 style={{color:T.text,margin:0}}>{quiz.title}</h3><span style={{color:T.muted}}>Question {currentIdx+1} of {questions.length}</span></div>
-      <div style={{background:T.surface,borderRadius:12,padding:24,marginBottom:24}}><h3 style={{color:T.text,marginBottom:20}}>{q.question_text}</h3>{opts && opts.map(opt => (<label key={opt.id} style={{display:'block',padding:'12px 16px',background:answers[q.id]===opt.id?dim(T.cyan,0.15):T.card,border:answers[q.id]===opt.id?'1px solid '+T.cyan:'1px solid '+T.border,borderRadius:8,marginBottom:8,cursor:'pointer',color:T.text}}><input type="radio" name="answer" checked={answers[q.id]===opt.id} onChange={()=>setAnswers({...answers,[q.id]:opt.id})} style={{marginRight:12}}/>{opt.text}</label>))}</div>
-      <div style={{display:'flex',justifyContent:'space-between'}}><button onClick={()=>setCurrentIdx(Math.max(0,currentIdx-1))} disabled={currentIdx===0} style={{padding:'10px 20px',background:T.surface,color:T.text,border:'1px solid '+T.border,borderRadius:8,cursor:'pointer',opacity:currentIdx===0?0.5:1}}>Previous</button>{currentIdx===questions.length-1 ? (<button onClick={handleSubmit} disabled={Object.keys(answers).length<questions.length} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>Submit Quiz</button>) : (<button onClick={()=>setCurrentIdx(currentIdx+1)} style={{padding:'10px 20px',background:T.cyan,color:T.bg,border:'none',borderRadius:8,fontWeight:600,cursor:'pointer'}}>Next</button>)}</div>
-    </div>
-  );
-}
-
-function CourseResources({ moduleId }) {
-  const [resources, setResources] = useState([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => { supabase.from('course_resources').select('*').eq('module_id', moduleId).then(({ data }) => { setResources(data || []); setLoading(false); }); }, [moduleId]);
-  const getIcon = (type) => { switch(type) { case 'video': return 'ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬'; case 'pdf': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾'; case 'article': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â°'; case 'link': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â€'; case 'code': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â»'; default: return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â'; } };
-  if (loading) return <div style={{color:T.muted}}>Loading resources...</div>;
-  if (resources.length === 0) return <div style={{color:T.muted}}>No resources available for this module yet.</div>;
-  return (<div><h3 style={{color:T.text,marginBottom:16}}>Additional Resources</h3><div style={{display:'grid',gap:12}}>{resources.map(r => (<a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:16,padding:16,background:T.card,border:'1px solid '+T.border,borderRadius:8,textDecoration:'none'}}><span style={{fontSize:24}}>{getIcon(r.resource_type)}</span><div style={{flex:1}}><h4 style={{color:T.text,margin:0}}>{r.title}</h4><p style={{color:T.muted,margin:'4px 0 0',fontSize:13}}>{r.description}</p></div><span style={{color:T.sub,fontSize:11,textTransform:'uppercase'}}>{r.resource_type}</span></a>))}</div></div>);
-}
-
-function ModuleStudyPage({ moduleId, user, onBack }) {
-  const [mod, setMod] = useState(null);
-  const [tab, setTab] = useState('lessons');
-  useEffect(() => { supabase.from('modules').select('*').eq('id', moduleId).single().then(({ data }) => setMod(data)); }, [moduleId]);
-  if (!mod) return <div style={{color:T.muted}}>Loading...</div>;
-  return (
-    <div>
-      <button onClick={onBack} style={{background:'transparent',border:'none',color:T.cyan,cursor:'pointer',marginBottom:16,fontSize:14}}>ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Back to Modules</button>
-      <h1 style={{color:T.text,marginBottom:8}}>{mod.name}</h1>
-      <p style={{color:T.muted,marginBottom:24}}>{mod.description}</p>
-      <div style={{display:'flex',gap:8,marginBottom:24}}>{['lessons','quiz','resources'].map(t=><button key={t} onClick={()=>setTab(t)} style={{padding:'10px 20px',background:tab===t?dim(T.cyan,0.1):'transparent',border:'1px solid '+(tab===t?T.cyan:T.border),borderRadius:8,color:tab===t?T.cyan:T.muted,cursor:'pointer',textTransform:'capitalize',fontWeight:tab===t?600:400}}>{t}</button>)}</div>
-      {tab==='lessons'&&<LessonsViewer moduleId={moduleId} user={user} onComplete={()=>setTab('quiz')}/>}
-      {tab==='quiz'&&<QuizViewer moduleId={moduleId} user={user} onComplete={onBack}/>}
-      {tab==='resources'&&<CourseResources moduleId={moduleId}/>}
     </div>
   );
 }
@@ -282,13 +190,9 @@ export default function App() {
   const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
   const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); };
 
-  if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
-  if (!session) {
-    if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
-    return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
-  }
+  if (!session) return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
 
   const user = session.user;
   const name = profile?.full_name || user?.email?.split("@")[0] || "User";
@@ -297,8 +201,7 @@ export default function App() {
   const renderPage = () => {
     switch (page) {
       case "dashboard": return <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
-      case "tracks": return <SimpleTracksPage modules={modules} onStudyClick={handleModuleClick} />;
-      case "study": return selectedModule ? <ModuleStudyPage moduleId={selectedModule.id} user={user} onBack={() => { setSelectedModule(null); setPage("tracks"); }} /> : <div>Loading...</div>;
+      case "tracks": return <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
       case "paths": if (selectedPath) { return <LearningPathViewer path={selectedPath} user={user} onBack={() => setSelectedPath(null)} onLabClick={(lab) => { setSelectedLab(lab); setPage("labs"); }} />; } return <LearningPathsPage user={user} onPathClick={setSelectedPath} />;
       case "labs": if (selectedLab) { return <LabViewer lab={selectedLab} user={user} onBack={() => setSelectedLab(null)} />; } return <LabsPage user={user} onLabClick={setSelectedLab} />;
       case "badges": return <BadgesPage user={user} />;
@@ -318,7 +221,7 @@ export default function App() {
         </div>
         {NAV.map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
         <div style={{ flex: 1 }} />
-        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
+        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); setShowLanding(false); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
         <div style={{ padding: "14px 18px", borderTop: '1px solid ' + T.border, marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: T.bg }}>{initials}</div>
           <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
@@ -328,4 +231,3 @@ export default function App() {
     </div>
   );
 }
-
