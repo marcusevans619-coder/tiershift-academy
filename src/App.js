@@ -6,7 +6,6 @@ import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
 import { CertificationsPage } from "./Certifications";
 import HomePage from "./pages/HomePage";
-import HomePage from "./pages/HomePage";
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
