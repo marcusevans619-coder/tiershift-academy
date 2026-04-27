@@ -6,6 +6,7 @@ import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
 import { CertificationsPage } from "./Certifications";
 import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -159,6 +160,7 @@ function LessonsViewer({ moduleId, onComplete, user }) {
   const [lessons, setLessons] = useState([]);
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => { supabase.from('lessons').select('*').eq('module_id', moduleId).order('lesson_number').then(({ data }) => { setLessons(data || []); setLoading(false); }); }, [moduleId]);
   const lesson = lessons[idx];
   if (loading) return <div style={{color:T.muted}}>Loading...</div>;
@@ -179,6 +181,7 @@ function QuizViewer({ moduleId, user, onComplete }) {
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => {
     const fetchQuiz = async () => {
       const { data: quizData } = await supabase.from('quizzes').select('*').eq('module_id', moduleId).single();
@@ -205,6 +208,7 @@ function QuizViewer({ moduleId, user, onComplete }) {
 function CourseResources({ moduleId }) {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLanding, setShowLanding] = useState(true);
   useEffect(() => { supabase.from('course_resources').select('*').eq('module_id', moduleId).then(({ data }) => { setResources(data || []); setLoading(false); }); }, [moduleId]);
   const getIcon = (type) => { switch(type) { case 'video': return 'ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¬'; case 'pdf': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Å¾'; case 'article': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â°'; case 'link': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â€'; case 'code': return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â»'; default: return 'ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â'; } };
   if (loading) return <div style={{color:T.muted}}>Loading resources...</div>;
@@ -244,9 +248,11 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLanding, setShowLanding] = useState(true);
   const [page, setPage] = useState("dashboard");
   const [showLanding, setShowLanding] = useState(!sessionStorage.getItem('visited'));
   const dismissLanding = () => { sessionStorage.setItem('visited', '1'); setShowLanding(false); };
+  const [selectedModule, setSelectedModule] = useState(null);
   const [selectedLab, setSelectedLab] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
   const [modules, setModules] = useState([]);
@@ -281,10 +287,11 @@ export default function App() {
   const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
   const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); };
 
+  if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
   if (!session) {
-    if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
+    if (showLanding) return <HomePage onGetStarted={() => setShowLanding(false)} onSignIn={() => setShowLanding(false)} />;
     return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
   }
 
