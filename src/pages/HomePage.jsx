@@ -20,12 +20,12 @@ const features = [
 ];
 
 const tracks = [
-  {name:"Tier 1 to Tier 2",icon:"▲",color:"#00e5ff",modules:12},
-  {name:"Tier 2 to Tier 3",icon:"◆",color:"#a78bfa",modules:16},
-  {name:"Security Engineer",icon:"◉",color:"#fb7185",modules:18},
-  {name:"Network Engineer",icon:"◎",color:"#34d399",modules:14},
-  {name:"Cloud Engineer",icon:"☁",color:"#fbbf24",modules:15},
-  {name:"AI Security",icon:"△",color:"#fb7185",modules:10},
+  {name:"Tier 1 to Tier 2",icon:"▲",color:"#00e5ff",modules:12,hours:"136h",tag:"Most Popular",modalDesc:"The foundational track for helpdesk and Tier 1 support pros ready to move into a Tier 2 role. Covers everything from advanced troubleshooting to scripting and Active Directory management.",skills:["Active Directory & Group Policy","PowerShell scripting basics","Advanced Windows troubleshooting","Network fundamentals (DNS, DHCP, VPN)","Ticket escalation & documentation","Remote support tools & RMM platforms"],examples:[{label:"Lab: AD User Provisioning",text:"Create a new user in Active Directory, assign them to the correct OU, apply a Group Policy, and verify login access."},{label:"Lab: PowerShell Automation",text:"Write a script that pulls all disabled accounts from AD and exports them to a CSV report."},{label:"Exam: Tier 2 Certification",text:"15 questions covering escalation procedures, Windows event logs, network troubleshooting, and AD administration."}]},
+  {name:"Tier 2 to Tier 3",icon:"◆",color:"#a78bfa",modules:16,hours:"180h",tag:"Advanced",modalDesc:"For experienced Tier 2 engineers ready to step into a systems or infrastructure engineer role. Deep dives into server management, virtualization, and enterprise networking.",skills:["Windows Server administration","VMware/Hyper-V virtualization","Enterprise networking (BGP, OSPF, VLANs)","Linux server management","Backup & disaster recovery","ITSM frameworks (ITIL)"],examples:[{label:"Lab: VM Deployment",text:"Deploy a Windows Server 2022 VM in Hyper-V, configure networking, join it to a domain, and install IIS."},{label:"Lab: Linux Admin",text:"Troubleshoot a failed Apache web server on Ubuntu — check logs, fix config errors, and restart services."},{label:"Exam: Systems Engineer Cert",text:"15 questions covering virtualization, server roles, enterprise networking, and infrastructure best practices."}]},
+  {name:"Security Engineer",icon:"◉",color:"#fb7185",modules:18,hours:"200h",tag:"High Demand",modalDesc:"The most comprehensive track on the platform. Built for IT pros moving into cybersecurity engineering roles. Covers threat detection, incident response, and security frameworks.",skills:["SIEM tools (Splunk, Microsoft Sentinel)","Threat detection & analysis","Incident response procedures","Vulnerability scanning (Nessus, OpenVAS)","Security frameworks (NIST, ISO 27001)","Firewall & endpoint security"],examples:[{label:"Lab: SIEM Alert Triage",text:"Analyze a Splunk dashboard showing suspicious login attempts. Identify the attack pattern and document your incident response."},{label:"Lab: Vulnerability Scan",text:"Run an Nmap and Nessus scan against a test environment, analyze findings, and prioritize remediation steps."},{label:"Exam: Security Engineer Cert",text:"15 questions covering threat modeling, incident response, SIEM analysis, and security compliance frameworks."}]},
+  {name:"Network Engineer",icon:"◎",color:"#34d399",modules:14,hours:"155h",tag:"Evergreen",modalDesc:"A hands-on networking track covering everything from VLAN configuration to BGP routing. Perfect for IT pros targeting network engineering or infrastructure roles.",skills:["Cisco CLI & IOS configuration","VLAN & trunking setup","Routing protocols (OSPF, BGP, EIGRP)","Network troubleshooting methodology","Wireless networking & 802.11","Network monitoring & SNMP"],examples:[{label:"Lab: VLAN Configuration",text:"Configure VLANs on a Cisco switch, set up inter-VLAN routing on a Layer 3 switch, and verify connectivity between segments."},{label:"Lab: BGP Routing",text:"Set up a BGP peering session between two routers, advertise a network prefix, and verify route propagation."},{label:"Exam: Network Engineer Cert",text:"15 questions covering switching, routing protocols, troubleshooting methodology, and network design fundamentals."}]},
+  {name:"Cloud Engineer",icon:"☁",color:"#fbbf24",modules:15,hours:"165h",tag:"Future-Proof",modalDesc:"Covers AWS and Azure fundamentals through to deploying production infrastructure. Built for IT pros targeting cloud or DevOps-adjacent roles.",skills:["AWS core services (EC2, S3, VPC, IAM)","Azure fundamentals & resource groups","Infrastructure as Code (Terraform basics)","Cloud networking & security groups","Load balancers & auto-scaling","Cost management & billing alerts"],examples:[{label:"Lab: AWS VPC Setup",text:"Create a VPC with public and private subnets, configure route tables, set up an internet gateway, and launch an EC2 instance."},{label:"Lab: IAM Policy Creation",text:"Create an IAM role with least-privilege permissions for an S3 bucket, attach it to an EC2 instance, and test access."},{label:"Exam: Cloud Engineer Cert",text:"15 questions covering AWS and Azure core services, cloud networking, IAM, and infrastructure deployment best practices."}]},
+  {name:"AI Security",icon:"△",color:"#fb7185",modules:10,hours:"110h",tag:"Cutting Edge",modalDesc:"The newest track on the platform. Covers securing AI and ML systems — from prompt injection attacks to LLM threat modeling. Built for security pros entering the AI space.",skills:["LLM threat modeling","Prompt injection & jailbreak attacks","Securing ML pipelines","AI governance & compliance","Data poisoning detection","Red teaming AI systems"],examples:[{label:"Lab: Prompt Injection",text:"Attempt to bypass safety guardrails on a simulated LLM using various prompt injection techniques. Document each vector."},{label:"Lab: ML Pipeline Security",text:"Audit a sample ML training pipeline for data poisoning vulnerabilities and implement input validation controls."},{label:"Exam: AI Security Cert",text:"15 questions covering LLM attack vectors, AI governance frameworks, ML pipeline security, and emerging AI threats."}]},
 ];
 
 const statsBar = [
@@ -47,6 +47,61 @@ const terminalLines = [
   {text:"✓ Lab objective complete! +250 XP earned",color:"#fbbf24"},
 ];
 
+function TrackModal({track,onClose,onGetStarted}) {
+  useEffect(()=>{
+    const h=(e)=>{if(e.key==="Escape")onClose();};
+    document.addEventListener("keydown",h);
+    return ()=>document.removeEventListener("keydown",h);
+  },[onClose]);
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#0d1520",border:`1px solid ${track.color}40`,borderRadius:20,width:"100%",maxWidth:640,maxHeight:"88vh",overflowY:"auto",boxShadow:`0 24px 80px rgba(0,0,0,0.8),0 0 40px ${track.color}15`}}>
+        <div style={{padding:"28px 28px 0",position:"relative"}}>
+          <button onClick={onClose} style={{position:"absolute",top:16,right:16,background:"transparent",border:"1px solid #1e2d40",borderRadius:8,color:"#64748b",width:32,height:32,cursor:"pointer",fontSize:18,lineHeight:1}}>x</button>
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:14}}>
+            <div style={{width:52,height:52,background:`${track.color}15`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,color:track.color}}>{track.icon}</div>
+            <div>
+              <div style={{fontSize:11,color:track.color,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:3,fontFamily:"monospace"}}>{track.tag}</div>
+              <h2 style={{fontSize:21,fontWeight:800,color:"#e8edf5",margin:0}}>{track.name}</h2>
+            </div>
+          </div>
+          <p style={{fontSize:14,color:"#94a3b8",lineHeight:1.7,margin:"0 0 20px"}}>{track.modalDesc}</p>
+          <div style={{display:"flex",gap:16,marginBottom:24}}>
+            {[{v:track.modules,l:"Modules"},{v:track.hours,l:"Est. Time"},{v:"Cert",l:"Included"}].map((s,i)=>(
+              <div key={i} style={{flex:1,padding:12,background:"#111827",border:"1px solid #1e2d40",borderRadius:10,textAlign:"center"}}>
+                <div style={{fontSize:18,fontWeight:800,color:track.color,fontFamily:"monospace"}}>{s.v}</div>
+                <div style={{fontSize:11,color:"#64748b",marginTop:3}}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{padding:"0 28px 28px"}}>
+          <div style={{fontSize:11,color:"#64748b",fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:12,fontFamily:"monospace"}}>Skills You Will Learn</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:20}}>
+            {track.skills.map((s,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"#111827",border:"1px solid #1e2d40",borderRadius:8}}>
+                <span style={{color:track.color,fontSize:12}}>✓</span>
+                <span style={{fontSize:12,color:"#94a3b8"}}>{s}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{fontSize:11,color:"#64748b",fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:12,fontFamily:"monospace"}}>What You Will Do</div>
+          <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+            {track.examples.map((ex,i)=>(
+              <div key={i} style={{padding:"14px 16px",background:"#111827",border:"1px solid #1e2d40",borderRadius:10,borderLeft:`3px solid ${track.color}`}}>
+                <div style={{fontSize:12,fontWeight:700,color:track.color,marginBottom:5,fontFamily:"monospace"}}>{ex.label}</div>
+                <div style={{fontSize:13,color:"#94a3b8",lineHeight:1.65}}>{ex.text}</div>
+              </div>
+            ))}
+          </div>
+          <button onClick={onGetStarted} style={{width:"100%",padding:13,background:`linear-gradient(135deg,${track.color},#a78bfa)`,border:"none",borderRadius:10,color:"#060a12",fontSize:14,fontWeight:800,cursor:"pointer"}}>
+            Start {track.name} Track Free
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function FeatureModal({feature,onClose,onGetStarted}) {
   useEffect(()=>{
     const h=(e)=>{if(e.key==="Escape")onClose();};
@@ -99,6 +154,7 @@ export default function HomePage({onGetStarted,onSignIn}) {
   const [scrollY,setScrollY] = useState(0);
   const [activeTrack,setActiveTrack] = useState(0);
   const [selectedFeature,setSelectedFeature] = useState(null);
+  const [selectedTrack,setSelectedTrack] = useState(null);
 
   useEffect(()=>{
     const t=setInterval(()=>setVisibleLines(v=>v<terminalLines.length?v+1:v),400);
@@ -132,6 +188,7 @@ export default function HomePage({onGetStarted,onSignIn}) {
       `}</style>
 
       {selectedFeature&&<FeatureModal feature={selectedFeature} onClose={()=>setSelectedFeature(null)} onGetStarted={()=>{setSelectedFeature(null);onGetStarted();}}/>}
+      {selectedTrack&&<TrackModal track={selectedTrack} onClose={()=>setSelectedTrack(null)} onGetStarted={()=>{setSelectedTrack(null);onGetStarted();}}/>}
 
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"14px 48px",display:"flex",alignItems:"center",justifyContent:"space-between",background:scrollY>50?"rgba(6,10,18,.95)":"transparent",backdropFilter:scrollY>50?"blur(20px)":"none",borderBottom:scrollY>50?"1px solid #1e2d40":"none",transition:"all .3s"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -226,13 +283,13 @@ export default function HomePage({onGetStarted,onSignIn}) {
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             {tracks.map((t,i)=>(
-              <div key={i} onClick={()=>setActiveTrack(i)} style={{padding:"14px 18px",background:i===activeTrack?`${t.color}10`:"#111827",border:`1px solid ${i===activeTrack?t.color+"40":"#1e2d40"}`,borderRadius:10,display:"flex",alignItems:"center",gap:14,transition:"all .4s",cursor:"pointer"}}>
+              <div key={i} onClick={()=>{setActiveTrack(i);setSelectedTrack(t);}} style={{padding:"14px 18px",background:i===activeTrack?`${t.color}10`:"#111827",border:`1px solid ${i===activeTrack?t.color+"40":"#1e2d40"}`,borderRadius:10,display:"flex",alignItems:"center",gap:14,transition:"all .4s",cursor:"pointer"}}>
                 <div style={{width:34,height:34,background:`${t.color}20`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:t.color}}>{t.icon}</div>
                 <div style={{flex:1}}>
                   <div style={{fontSize:13,fontWeight:600,color:i===activeTrack?"#e8edf5":"#94a3b8"}}>{t.name}</div>
                   <div style={{fontSize:11,color:"#64748b",marginTop:1}}>{t.modules} modules</div>
                 </div>
-                {i===activeTrack&&<div style={{width:7,height:7,borderRadius:"50%",background:t.color,animation:"pulse 1.5s infinite"}}/>}
+                <div style={{fontSize:11,color:i===activeTrack?t.color:"#64748b",fontFamily:"monospace",whiteSpace:"nowrap"}}>{i===activeTrack?"View →":"→"}</div>
               </div>
             ))}
           </div>
