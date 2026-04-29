@@ -35,7 +35,7 @@ const StatCard=({icon,value,label,color=T.cyan,sub})=>(
   </div>
 );
 
-function AuthPage({ onAuth }) {
+function AuthPage({ onAuth, onBack }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -193,7 +193,7 @@ export default function App() {
 
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
-  if (!session) return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} />;
+  if (!session) return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} onBack={() => { sessionStorage.removeItem('visited'); setShowLanding(true); }} />;
 
   const user = session.user;
   const name = profile?.full_name || user?.email?.split("@")[0] || "User";
