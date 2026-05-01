@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import DemoRequestModal from "../DemoRequestModal";
 
 const C = {
   bg:"#060a12",surface:"#0d1520",card:"#111827",border:"#1e2d40",
@@ -104,6 +105,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
   const [visibleLines, setVisibleLines] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [statsStarted, setStatsStarted] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
   const [activeTab, setActiveTab] = useState("teams");
   const statsRef = useRef(null);
 
@@ -146,7 +148,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
         </div>
         <div style={{display:"flex",gap:10,alignItems:"center"}}>
           <button onClick={onSignIn} className="bs" style={{padding:"8px 18px",background:"transparent",border:"1px solid #1e2d40",borderRadius:8,color:"#94a3b8",fontSize:14,cursor:"pointer",transition:"all .2s"}}>Sign In</button>
-          <button onClick={()=>document.getElementById("demo-section")?.scrollIntoView({behavior:"smooth"})} className="bs" style={{padding:"8px 18px",background:"transparent",border:"1px solid #00e5ff60",borderRadius:8,color:"#00e5ff",fontSize:14,cursor:"pointer",transition:"all .2s"}}>Request Demo</button>
+          <button onClick={()=>setShowDemoModal(true)} className="bs" style={{padding:"8px 18px",background:"transparent",border:"1px solid #00e5ff60",borderRadius:8,color:"#00e5ff",fontSize:14,cursor:"pointer",transition:"all .2s"}}>Request Demo</button>
           <button onClick={onGetStarted} className="bp" style={{padding:"8px 18px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:8,color:"#060a12",fontSize:14,fontWeight:700,cursor:"pointer",transition:"all .2s"}}>Get Started</button>
         </div>
       </nav>
@@ -318,7 +320,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
             <h2 style={{fontSize:"clamp(1.75rem,4vw,2.25rem)",fontWeight:900,marginBottom:14}}>See TierShift in Action</h2>
             <p style={{fontSize:14,color:"#94a3b8",marginBottom:32,lineHeight:1.75,maxWidth:480,margin:"0 auto 32px"}}>Schedule a 20-minute walkthrough built around your team needs. We will show you how to assign tracks, read the progress dashboard, and run your first team certification.</p>
             <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:18}}>
-              <button onClick={onGetStarted} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>Request a Demo</button>
+              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>Request a Demo</button>
               <button onClick={onGetStarted} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Start Free Trial</button>
             </div>
             <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
