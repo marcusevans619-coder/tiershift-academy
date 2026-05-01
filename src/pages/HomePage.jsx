@@ -181,7 +181,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
               </div>
             )}
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-              <button onClick={onGetStarted} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo →":"Start Free Today →"}</button>
+              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo →":"Start Free Today →"}</button>
               <button onClick={onSignIn} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Sign In</button>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:14,marginTop:28}}>
