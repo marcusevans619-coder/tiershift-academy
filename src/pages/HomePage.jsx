@@ -295,26 +295,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
         </div>
       </section>
 
-      <section style={{padding:"80px 48px",background:"#0d1520"}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{textAlign:"center",marginBottom:48}}>
-            <div style={{fontSize:11,color:"#fbbf24",fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:12,fontFamily:"monospace"}}>What People Are Saying</div>
-            <h2 style={{fontSize:"clamp(1.75rem,3.5vw,2.25rem)",fontWeight:800,margin:0}}>IT Managers and Techs Love TierShift</h2>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
-            {testimonials.map((t,i)=>(
-              <div key={i} className="ch" style={{padding:26,background:"#111827",border:"1px solid #1e2d40",borderRadius:14,transition:"all .25s"}}>
-                <div style={{fontSize:32,color:t.color,marginBottom:14,opacity:0.5}}>"</div>
-                <p style={{fontSize:13,color:"#94a3b8",lineHeight:1.8,marginBottom:18}}>{t.quote}</p>
-                <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${t.color},#a78bfa)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:"#060a12",flexShrink:0}}>{t.initials}</div>
-                  <div><div style={{fontSize:13,fontWeight:700,color:"#e8edf5"}}>{t.name}</div><div style={{fontSize:11,color:"#64748b"}}>{t.role} · {t.company}</div></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       <section style={{padding:"80px 48px"}}>
         <div style={{maxWidth:720,margin:"0 auto"}}>
