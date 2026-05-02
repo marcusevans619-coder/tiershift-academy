@@ -6,7 +6,8 @@ import { BadgesPage } from "./Badges";
 import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
 import { CertificationsPage } from "./Certifications";
-import HomePage from "./pages/HomePage";
+
+import AdminDashboard from "./pages/AdminDashboard";
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -147,7 +148,8 @@ const NAV = [
   { id: "labs", label: "Labs", icon: "L" },
   { id: "badges", label: "Badges", icon: "B" },
   { id: "certs", label: "Certifications", icon: "C" },
-  { id: "profile", label: "Profile", icon: "U" },
+  
+  { id: "admin", label: "Admin", icon: "A" },
 ];
 
 export default function App() {
@@ -209,7 +211,8 @@ export default function App() {
       case "badges": return <BadgesPage user={user} />;
       case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
       case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
-      default: return <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
+      case "admin": return <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} />;
+       user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
     }
   };
 
