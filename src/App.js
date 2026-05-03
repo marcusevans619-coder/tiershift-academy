@@ -7,6 +7,7 @@ import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
 import { CertificationsPage } from "./Certifications";
 
+import HomePage from "./pages/HomePage";
 import AdminDashboard from "./pages/AdminDashboard";
 
 const T = {
