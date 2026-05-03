@@ -212,7 +212,6 @@ export default function App() {
       case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
       case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
       case "admin": return <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} />;
-       user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
     }
   };
 
