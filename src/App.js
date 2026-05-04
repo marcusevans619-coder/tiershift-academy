@@ -5,10 +5,9 @@ import { LabsPage, LabViewer } from "./Labs";
 import { BadgesPage } from "./Badges";
 import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
-import { CertificationsPage } from "./Certifications";
-
 import HomePage from "./pages/HomePage";
 import AdminDashboard from "./pages/AdminDashboard";
+import { CertificationsPage } from "./Certifications";
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
