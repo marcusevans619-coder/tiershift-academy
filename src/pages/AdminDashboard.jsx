@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase';
 
 const S = {
   page: { minHeight: '100vh', background: '#0a0a0f', color: '#e2e8f0', fontFamily: "'JetBrains Mono', monospace" },
