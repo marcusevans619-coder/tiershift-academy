@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LessonGenerator from './LessonGenerator';
 import { supabase } from '../supabase';
 
 const S = {
@@ -63,6 +64,9 @@ export default function AdminDashboard({ user, onSignOut }) {
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState('leads');
+  const [modules, setModules] = useState([]);
+  const [generatorModule, setGeneratorModule] = useState(null);
 
   useEffect(() => { fetchRequests(); }, []);
 
@@ -78,8 +82,12 @@ export default function AdminDashboard({ user, onSignOut }) {
 
   async function fetchRequests() {
     setLoading(true);
-    const { data, error } = await supabase.from('demo_requests').select('*').order('created_at', { ascending: false });
+    const [{ data, error }, { data: mods }] = await Promise.all([
+      supabase.from('demo_requests').select('*').order('created_at', { ascending: false }),
+      supabase.from('modules').select('id, name').order('name'),
+    ]);
     if (!error) { setRows(data); setFiltered(data); }
+    setModules(mods || []);
     setLoading(false);
   }
 
@@ -105,8 +113,16 @@ export default function AdminDashboard({ user, onSignOut }) {
         </div>
       </div>
       <div style={S.body}>
+        {/* Tabs */}
+        <div style={{ display:'flex', gap:8, marginBottom:28 }}>
+          {[['leads','Demo Requests'],['cms','Content CMS']].map(([id,label]) => (
+            <button key={id} onClick={() => setActiveTab(id)} style={{ padding:'8px 18px', borderRadius:6, border:'1px solid', fontFamily:'inherit', fontSize:13, fontWeight:600, cursor:'pointer', background: activeTab===id ? '#00d4ff' : 'transparent', color: activeTab===id ? '#0a0a0f' : '#94a3b8', borderColor: activeTab===id ? '#00d4ff' : '#334155' }}>{label}</button>
+          ))}
+        </div>
+
+        {activeTab === 'leads' && <>
         <div style={S.heading}>Demo Requests</div>
-        <div style={S.subheading}>All inbound leads from tiershiftacademy.com</div>
+        <div style={S.subheading}>All inbound leads from tiershiftacademy.com</div></>}
         <div style={S.statsRow}>
           {[
             { label: 'Total Requests', value: stats.total, sub: 'All time' },
@@ -156,6 +172,30 @@ export default function AdminDashboard({ user, onSignOut }) {
             </table>
           )}
         </div>
+      {activeTab === 'cms' && (
+        <div>
+          <div style={S.heading}>Content CMS</div>
+          <div style={S.subheading}>Generate AI lessons for each module</div>
+          <div style={{ display:'grid', gap:12 }}>
+            {modules.map(mod => (
+              <div key={mod.id} style={{ background:'#0d1117', border:'1px solid #1e293b', borderRadius:8, padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <span style={{ color:'#e2e8f0', fontSize:14 }}>{mod.name}</span>
+                <button onClick={() => setGeneratorModule(mod)} style={{ background:'#00d4ff15', border:'1px solid #00d4ff44', color:'#00d4ff', padding:'6px 14px', borderRadius:6, cursor:'pointer', fontSize:12, fontFamily:'inherit' }}>
+                  Generate Lesson
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {generatorModule && (
+        <LessonGenerator
+          module={generatorModule}
+          onClose={() => setGeneratorModule(null)}
+          onSaved={() => setGeneratorModule(null)}
+        />
+      )}
       </div>
     </div>
   );
