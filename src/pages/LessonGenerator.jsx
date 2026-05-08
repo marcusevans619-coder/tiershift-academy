@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../supabase';
 
 const YOUTUBE_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
-const ANTHROPIC_KEY = process.env.REACT_APP_ANTHROPIC_API_KEY;
+const SUPABASE_URL = 'https://bbyvxfluwsiutmoosesz.supabase.co';
 
 const S = {
   overlay: { position:'fixed', inset:0, background:'#00000088', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' },
@@ -19,10 +19,11 @@ const S = {
   videoTitle: { fontSize:14, fontWeight:600, color:'#e2e8f0', marginBottom:4 },
   videoChannel: { fontSize:12, color:'#64748b' },
   selected: { border:'2px solid #00d4ff' },
-  outline: { background:'#111827', border:'1px solid #1e293b', borderRadius:8, padding:20, fontSize:13, color:'#cbd5e1', lineHeight:1.7, whiteSpace:'pre-wrap' },
-  status: { fontSize:13, color:'#00d4ff', marginBottom:16 },
+  outline: { background:'#111827', border:'1px solid #1e293b', borderRadius:8, padding:20, fontSize:13, color:'#cbd5e1', lineHeight:1.8, whiteSpace:'pre-wrap', fontFamily:"'Outfit', sans-serif" },
+  status: { fontSize:13, color:'#00d4ff', marginBottom:16, padding:'10px 14px', background:'#00d4ff11', borderRadius:6, border:'1px solid #00d4ff33' },
   iframe: { width:'100%', height:300, borderRadius:8, border:'none', marginBottom:16 },
   closeBtn: { float:'right', background:'transparent', border:'none', color:'#64748b', fontSize:20, cursor:'pointer' },
+  transcriptBadge: { display:'inline-block', fontSize:11, padding:'2px 8px', borderRadius:4, marginBottom:12 },
 };
 
 export default function LessonGenerator({ module, onClose, onSaved }) {
@@ -30,6 +31,7 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
   const [videos, setVideos] = useState([]);
   const [selected, setSelected] = useState(null);
   const [outline, setOutline] = useState('');
+  const [usedTranscript, setUsedTranscript] = useState(false);
   const [title, setTitle] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,54 +58,42 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
     if (!selected) return;
     setLoading(true);
     setStep('generate');
-    setStatus('Generating outline with Claude...');
-    const videoTitle = selected.snippet.title;
-    const videoDesc = selected.snippet.description;
+    setStatus('Fetching transcript and generating lesson report...');
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/generate-lesson`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: `You are an IT training content writer for TierShift Academy, a platform for IT professionals.
-
-Based on this YouTube video about "${module.name}":
-Title: ${videoTitle}
-Description: ${videoDesc}
-
-Write a clear, practical lesson outline with these sections:
-1. What You Will Learn (3-4 bullet points)
-2. Key Concepts (explain 4-5 core concepts in plain language)
-3. Real-World Application (1-2 practical scenarios an IT tech would encounter)
-4. Key Takeaways (3-4 bullet points)
-
-Keep it concise, practical, and aimed at IT support professionals. Use plain language. No fluff.`
-          }]
-        })
+          videoId: selected.id.videoId,
+          videoTitle: selected.snippet.title,
+          moduleName: module.name,
+        }),
       });
+
       const data = await res.json();
-      const text = data.content?.[0]?.text || '';
-      setOutline(text);
-      setTitle(module.name + ' — ' + videoTitle.slice(0, 50));
+      if (data.error) throw new Error(data.error);
+
+      setOutline(data.outline);
+      setUsedTranscript(data.usedTranscript);
+      setTitle(module.name + ' — ' + selected.snippet.title.slice(0, 50));
       setStep('preview');
       setStatus('');
     } catch (err) {
       setStatus('Generation failed: ' + err.message);
+      setStep('pick');
     }
     setLoading(false);
   }
 
   async function saveLesson() {
     setLoading(true);
-    setStatus('Saving to Supabase...');
+    setStatus('Saving...');
     const videoId = selected.id.videoId;
     const content = `VIDEO:${videoId}\n\n${outline}`;
     const { error } = await supabase.from('lessons').insert({
@@ -126,7 +116,7 @@ Keep it concise, practical, and aimed at IT support professionals. Use plain lan
       <div style={S.modal}>
         <button style={S.closeBtn} onClick={onClose}>×</button>
         <div style={S.title}>Generate Lesson — {module.name}</div>
-        <div style={S.sub}>Find a video and auto-generate a lesson outline</div>
+        <div style={S.sub}>Find a video and generate a lesson report from its transcript</div>
 
         {status && <div style={S.status}>{status}</div>}
 
@@ -134,6 +124,7 @@ Keep it concise, practical, and aimed at IT support professionals. Use plain lan
           <div>
             <p style={{ color:'#94a3b8', fontSize:13, marginBottom:20 }}>
               Click below to search YouTube for the best video on <strong style={{color:'#e2e8f0'}}>{module.name}</strong>.
+              Claude will read the video transcript and generate a structured lesson report.
             </p>
             <button style={S.btn} onClick={searchYouTube} disabled={loading}>
               {loading ? 'Searching...' : 'Search YouTube'}
@@ -143,46 +134,60 @@ Keep it concise, practical, and aimed at IT support professionals. Use plain lan
 
         {step === 'pick' && (
           <div>
-            <div style={S.section}>
-              <span style={S.label}>Select the best video</span>
-              {videos.map(v => (
-                <div key={v.id.videoId}
-                  style={{ ...S.videoCard, ...(selected?.id?.videoId === v.id.videoId ? S.selected : {}) }}
-                  onClick={() => setSelected(v)}>
-                  <img style={S.videoThumb} src={v.snippet.thumbnails.medium.url} alt="" />
-                  <div>
-                    <div style={S.videoTitle}>{v.snippet.title}</div>
-                    <div style={S.videoChannel}>{v.snippet.channelTitle}</div>
-                  </div>
+            <span style={S.label}>Select the best video</span>
+            {videos.map(v => (
+              <div key={v.id.videoId}
+                style={{ ...S.videoCard, ...(selected?.id?.videoId === v.id.videoId ? S.selected : {}) }}
+                onClick={() => setSelected(v)}>
+                <img style={S.videoThumb} src={v.snippet.thumbnails.medium.url} alt="" />
+                <div>
+                  <div style={S.videoTitle}>{v.snippet.title}</div>
+                  <div style={S.videoChannel}>{v.snippet.channelTitle}</div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
             <div style={S.btnRow}>
               <button style={S.btn} onClick={generateOutline} disabled={!selected || loading}>
-                {loading ? 'Generating...' : 'Generate Outline'}
+                {loading ? 'Generating...' : 'Generate Lesson Report'}
               </button>
               <button style={S.btnSecondary} onClick={() => setStep('search')}>Back</button>
             </div>
           </div>
         )}
 
+        {step === 'generate' && (
+          <div style={{ textAlign:'center', padding:'40px 0', color:'#64748b', fontSize:13 }}>
+            <div style={{ fontSize:32, marginBottom:16 }}>⚡</div>
+            <div>Fetching transcript and generating lesson report...</div>
+            <div style={{ marginTop:8, fontSize:12, color:'#475569' }}>This takes about 15-20 seconds</div>
+          </div>
+        )}
+
         {step === 'preview' && (
           <div>
             <div style={S.section}>
-              <span style={S.label}>Video Preview</span>
+              <span style={S.label}>Video</span>
               <iframe style={S.iframe}
-                src={`https://www.youtube.com/embed/${selected.id.videoId}`}
+                src={`https://www.youtube.com/embed/${selected.id.videoId}?cc_load_policy=1&cc_lang_pref=en`}
                 allowFullScreen title="lesson video" />
+              <div style={{
+                ...S.transcriptBadge,
+                background: usedTranscript ? '#10b98122' : '#f59e0b22',
+                color: usedTranscript ? '#10b981' : '#f59e0b',
+                border: `1px solid ${usedTranscript ? '#10b98144' : '#f59e0b44'}`,
+              }}>
+                {usedTranscript ? '✓ Generated from video transcript' : '⚠ Generated from video title (no transcript available)'}
+              </div>
             </div>
             <div style={S.section}>
-              <span style={S.label}>Generated Outline</span>
+              <span style={S.label}>Lesson Report</span>
               <div style={S.outline}>{outline}</div>
             </div>
             <div style={S.btnRow}>
               <button style={S.btn} onClick={saveLesson} disabled={loading}>
                 {loading ? 'Saving...' : 'Save Lesson'}
               </button>
-              <button style={S.btnSecondary} onClick={() => setStep('pick')}>Back</button>
+              <button style={S.btnSecondary} onClick={() => setStep('pick')}>Pick Different Video</button>
             </div>
           </div>
         )}
