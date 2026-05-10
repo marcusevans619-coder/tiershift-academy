@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { supabase } from '../supabase';
 
 const YOUTUBE_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
@@ -181,7 +182,15 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
             </div>
             <div style={S.section}>
               <span style={S.label}>Lesson Report</span>
-              <div style={S.outline}>{outline}</div>
+              <div style={S.outline}><ReactMarkdown components={{
+  h2: ({children}) => <h2 style={{color:'#00d4ff', fontSize:15, fontWeight:700, marginTop:20, marginBottom:8, borderBottom:'1px solid #1e293b', paddingBottom:6}}>{children}</h2>,
+  h1: ({children}) => <h1 style={{color:'#f1f5f9', fontSize:17, fontWeight:800, marginBottom:12}}>{children}</h1>,
+  p: ({children}) => <p style={{color:'#cbd5e1', marginBottom:10, lineHeight:1.7}}>{children}</p>,
+  li: ({children}) => <li style={{color:'#94a3b8', marginBottom:4, lineHeight:1.6}}>{children}</li>,
+  ul: ({children}) => <ul style={{paddingLeft:20, marginBottom:10}}>{children}</ul>,
+  ol: ({children}) => <ol style={{paddingLeft:20, marginBottom:10}}>{children}</ol>,
+  strong: ({children}) => <strong style={{color:'#e2e8f0'}}>{children}</strong>,
+}}>{outline}</ReactMarkdown></div>
             </div>
             <div style={S.btnRow}>
               <button style={S.btn} onClick={saveLesson} disabled={loading}>
