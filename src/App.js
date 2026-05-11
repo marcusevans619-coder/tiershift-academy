@@ -6,6 +6,7 @@ import { BadgesPage } from "./Badges";
 import { LearningPathsPage, LearningPathViewer } from "./LearningPaths";
 import { ProfilePage } from "./Profile";
 import HomePage from "./pages/HomePage";
+import LessonViewer from "./pages/LessonViewer";
 import AdminDashboard from "./pages/AdminDashboard";
 import { CertificationsPage } from "./Certifications";
 
@@ -211,6 +212,7 @@ export default function App() {
       case "badges": return <BadgesPage user={user} />;
       case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
       case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
+      case "study": return selectedModule ? <LessonViewer module={selectedModule} user={user} onBack={() => { setSelectedModule(null); setPage("dashboard"); }} onComplete={() => { setSelectedModule(null); setPage("dashboard"); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
       case "admin": return <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} />;
     }
   };
