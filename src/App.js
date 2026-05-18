@@ -7,7 +7,7 @@
   const display = allModules.length > 0 ? allModules : modules;
   const filtered = display.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()) || m.description?.toLowerCase().includes(search.toLowerCase()));
   return (
-    <div>
+    <div style={{ paddingTop: isMobile ? 56 : 0 }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 4 }}>Course Library</h1>
         <p style={{ color: T.muted, fontSize: 15 }}>{display.length} modules across {tracks?.length || 0} tracks</p>
@@ -63,8 +63,6 @@ export default function App() {
   const [userModules, setUserModules] = useState([]);
   const [userTracks, setUserTracks] = useState([]);
   const [userBadges, setUserBadges] = useState([]);
-  const [navOpen, setNavOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [navOpen, setNavOpen] = useState(false);
 
@@ -72,12 +70,6 @@ export default function App() {
     supabase.auth.getSession().then(({ data: { session: s } }) => { setSession(s); if (s?.user) load(s.user.id); else setLoading(false); });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => { setSession(s); if (s?.user) load(s.user.id); else { setProfile(null); setLoading(false); } });
     return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const load = async (uid) => {
@@ -126,32 +118,22 @@ export default function App() {
   return (
     <div style={{ display: "flex", height: "100vh", background: T.bg, color: T.text, fontFamily: "'Outfit',sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      {isMobile && navOpen && (<div onClick={() => setNavOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 40 }} />)}
-      <nav style={{ width: 240, background: T.surface, borderRight: '1px solid ' + T.border, display: "flex", flexDirection: "column", padding: "18px 0", ...(isMobile ? { position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 50, transform: navOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.25s ease' } : {}) }}>
+      {isMobile && navOpen && <div onClick={() => setNavOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 40 }} />}
+      {isMobile && <button onClick={() => setNavOpen(o => !o)} style={{ position: 'fixed', top: 12, left: 12, zIndex: 60, background: T.card, border: '1px solid ' + T.border, borderRadius: 8, color: T.cyan, fontSize: 20, width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{navOpen ? 'X' : '='}</button>}
+      <nav style={{ width: 240, background: T.surface, borderRight: "1px solid " + T.border, display: "flex", flexDirection: "column", padding: "18px 0", ...(isMobile ? { position: "fixed", top: 0, left: navOpen ? 0 : -260, height: "100vh", zIndex: 50, transition: "left 0.25s ease", boxShadow: "4px 0 24px rgba(0,0,0,0.5)" } : {}) }}>
         <div style={{ padding: "0 18px 16px", borderBottom: '1px solid ' + T.border, marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: T.bg }}>TS</div>
           <div><div style={{ fontSize: 17, fontWeight: 800 }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 10, color: T.muted }}>Academy</div></div>
         </div>
         {NAV.map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
         <div style={{ flex: 1 }} />
-        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: '1px solid ' + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
+        <button onClick={async () => { await supabase.auth.signOut(); setSession(null); setShowLanding(false); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
         <div style={{ padding: "14px 18px", borderTop: '1px solid ' + T.border, marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: T.bg }}>{initials}</div>
           <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
         </div>
       </nav>
-      <main style={{ flex: 1, overflow: "auto", padding: isMobile ? '16px' : '24px 32px' }}>
-        {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid ' + T.border }}>
-            <button onClick={() => setNavOpen(true)} style={{ background: 'transparent', border: 'none', color: T.text, fontSize: 22, cursor: 'pointer', padding: '4px 6px', lineHeight: 1 }}>{String.fromCharCode(9776)}</button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900, color: T.bg }}>TS</div>
-              <div style={{ fontSize: 15, fontWeight: 800 }}>Tier<span style={{ color: T.cyan }}>Shift</span></div>
-            </div>
-          </div>
-        )}
-        <div style={{ maxWidth: 1000 }}>{renderPage()}</div>
-      </main>
+      <main style={{ flex: 1, overflow: "auto", padding: isMobile ? "64px 16px 24px" : "24px 32px" }}><div style={{ maxWidth: 1000 }}>{renderPage()}</div></main>
     </div>
   );
 }
