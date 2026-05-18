@@ -1,4 +1,4 @@
-﻿function SimpleTracksPage({ modules, tracks, onStudyClick }) {
+﻿function SimpleTracksPage({ modules, tracks, onStudyClick, isMobile }) {
   const [search, setSearch] = useState('');
   const [allModules, setAllModules] = useState([]);
   useEffect(() => {
