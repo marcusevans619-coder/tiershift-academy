@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -95,6 +95,8 @@ export function LabsPage({ user, onLabClick }) {
   const [userLabs, setUserLabs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
 
   useEffect(() => {
     const fetchLabs = async () => {
@@ -133,7 +135,7 @@ export function LabsPage({ user, onLabClick }) {
           {filteredLabs.map(lab => {
             const completed = userLabs.some(ul => ul.lab_id === lab.id && ul.completed_at);
             return (
-              <div key={lab.id} onClick={() => onLabClick(lab)} style={{background:T.card,padding:24,borderRadius:12,border:"1px solid "+T.border,cursor:"pointer",display:"flex",gap:20,alignItems:"center"}}>
+              <div key={lab.id} onClick={() => onLabClick(lab)} style={{background:T.card,padding:isMobile?16:24,borderRadius:12,border:"1px solid "+T.border,cursor:"pointer",display:"flex",gap:16,alignItems:"center",flexWrap:"wrap"}}>
                 <div style={{width:48,height:48,borderRadius:12,background:dim(typeColors[lab.lab_type],0.15),display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:typeColors[lab.lab_type]}}>{typeIcons[lab.lab_type]}</div>
                 <div style={{flex:1}}>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>

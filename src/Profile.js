@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -34,6 +34,8 @@ export function ProfilePage({ user, onNavigate }) {
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
@@ -216,7 +218,7 @@ export function ProfilePage({ user, onNavigate }) {
                     resize: "vertical"
                   }}
                 />
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12 }}>
                   <input
                     placeholder="Company"
                     value={formData.company || ""}

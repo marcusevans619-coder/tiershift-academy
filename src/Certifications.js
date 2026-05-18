@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -18,6 +18,8 @@ export function CertificationsPage({ user, onPathClick }) {
   const [userPaths, setUserPaths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeExam, setActiveExam] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
 
   useEffect(() => {
     const fetchData = async () => {

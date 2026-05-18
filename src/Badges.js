@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -15,6 +15,8 @@ export function BadgesPage({ user }) {
   const [userStats, setUserStats] = useState({ lessons: 0, quizzes: 0, labs: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,7 +167,7 @@ export function BadgesPage({ user }) {
       </div>
 
       {/* Badges grid */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))",gap:16}}>
+      <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(280px, 1fr))",gap:16}}>
         {filteredBadges.map(badge => {
           const earned = isEarned(badge.id);
           const earnedDate = getEarnedDate(badge.id);

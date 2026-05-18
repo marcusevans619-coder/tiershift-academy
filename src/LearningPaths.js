@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -24,6 +24,8 @@ export function LearningPathsPage({ user, onPathClick }) {
   const [userPaths, setUserPaths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +84,7 @@ export function LearningPathsPage({ user, onPathClick }) {
       {filter === "all" && paths.some(p => p.is_featured) && (
         <div style={{ marginBottom: 32 }}>
           <h2 style={{ color: T.text, fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Featured Paths</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
             {paths.filter(p => p.is_featured).map(path => {
               const progress = getUserProgress(path.id);
               return (
