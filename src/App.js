@@ -1,4 +1,4 @@
-// build: 20260427190525
+﻿// build: 20260427190525
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { LabsPage, LabViewer } from "./Labs";
@@ -28,7 +28,7 @@ const Bar=({pct,color=T.cyan,h=6})=>(
 );
 
 const StatCard=({icon,value,label,color=T.cyan,sub})=>(
-  <div style={{padding:"20px",background:T.card,border:"1px solid "+T.border,borderRadius:12,flex:1,minWidth:140}}>
+  <div style={{padding:"20px",background:T.card,border:"1px solid "+T.border,borderRadius:12,flex:1,minWidth:0}}>
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
       <span style={{fontSize:18,color}}>{icon}</span>
       <span style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:"0.05em",fontWeight:600}}>{label}</span>
@@ -239,7 +239,7 @@ export default function App() {
           <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
         </div>
       </nav>
-      <main style={{ flex: 1, overflow: "auto", padding: isMobile ? "64px 16px 24px" : "24px 32px" }}><div style={{ maxWidth: 1000 }}>{renderPage()}</div></main>
+      <main style={{ flex: 1, overflow: "auto", padding: isMobile ? "64px 16px 24px" : "24px 32px" }}><div style={{ maxWidth: 1000, width: "100%" }}>{renderPage()}</div></main>
     </div>
   );
 }
