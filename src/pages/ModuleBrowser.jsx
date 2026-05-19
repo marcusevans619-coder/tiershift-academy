@@ -1,76 +1,122 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../supabase';
-const T={bg:"#060a12",card:"#131e30",cardHi:"#182640",border:"#1c2d44",borderHi:"#263c58",cyan:"#00e5ff",emerald:"#34d399",text:"#e8edf5",sub:"#94a3b8",muted:"#64748b"};
+import { useState, useEffect } from "react";
+import { supabase } from "../supabase";
+
+const T = {
+  bg:"#060a12", surface:"#101828", card:"#131e30",
+  border:"#1c2d44", cyan:"#00e5ff", violet:"#a78bfa",
+  emerald:"#34d399", text:"#e8edf5", sub:"#94a3b8",
+  muted:"#64748b", dim:"#475569",
+};
+const dim = (c, a = 0.10) => c + Math.round(a * 255).toString(16).padStart(2, '0');
+
 export default function ModuleBrowser({ onSelectModule }) {
-  const [tracks, setTracks] = useState([]);
-  const [modules, setModules] = useState([]);
-  const [lessonsMap, setLessonsMap] = useState({});
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  useEffect(() => { loadData(); }, []);
-  async function loadData() {
-    const [tr, mo, le] = await Promise.all([
-      supabase.from('tracks').select('*').order('sort_order'),
-      supabase.from('modules').select('*').eq('is_active', true).order('sort_order'),
-      supabase.from('lessons').select('module_id'),
-    ]);
-    setTracks(tr.data || []);
-    setModules(mo.data || []);
-    const map = {};
-    (le.data || []).forEach(l => { map[l.module_id] = (map[l.module_id] || 0) + 1; });
-    setLessonsMap(map);
-    setLoading(false);
-  }
-  const byTrack = {};
-  modules.forEach(m => { if (!byTrack[m.track_id]) byTrack[m.track_id] = []; byTrack[m.track_id].push(m); });
-  const q = search.trim().toLowerCase();
-  if (loading) return <div style={{minHeight:'100vh',background:T.bg,display:'flex',alignItems:'center',justifyContent:'center',color:T.cyan,fontFamily:"'Outfit',sans-serif",fontSize:16}}>Loading modules...</div>;
+  const [allModules, setAllModules] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const r = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', r);
+    return () => window.removeEventListener('resize', r);
+  }, []);
+
+  useEffect(() => {
+    supabase.from('modules').select('*').order('sort_order')
+      .then(({ data }) => setAllModules(data || []));
+    supabase.from('tracks').select('*').order('sort_order')
+      .then(({ data }) => setTracks(data || []));
+  }, []);
+
+  const filtered = allModules.filter(m =>
+    m.name?.toLowerCase().includes(search.toLowerCase()) ||
+    m.description?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div style={{minHeight:'100vh',background:T.bg,fontFamily:"'Outfit',sans-serif",padding:'32px 24px'}}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-      <div style={{maxWidth:1100,margin:'0 auto'}}>
-        <div style={{marginBottom:28}}>
-          <h1 style={{color:T.text,fontSize:26,fontWeight:800,margin:0}}>Course Library</h1>
-          <p style={{color:T.sub,fontSize:14,marginTop:6}}>{modules.length} modules across {tracks.length} tracks</p>
-        </div>
-        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search modules..."
-          style={{width:'100%',maxWidth:380,padding:'10px 16px',background:T.card,border:'1px solid '+T.border,borderRadius:8,color:T.text,fontSize:14,outline:'none',marginBottom:28,boxSizing:'border-box',fontFamily:'inherit'}}/>
-        <div style={{display:'flex',gap:20,marginBottom:24,fontSize:12,color:T.muted}}>
-          <span><span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',background:T.emerald,marginRight:6}}/>Lessons available</span>
-          <span><span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',background:T.border,marginRight:6}}/>Coming soon</span>
-        </div>
-        {tracks.map(track => {
-          const mods = (byTrack[track.id]||[]).filter(m => !q || m.name.toLowerCase().includes(q));
-          if (!mods.length) return null;
-          return (
-            <div key={track.id} style={{marginBottom:36}}>
-              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
-                <h2 style={{color:T.cyan,fontSize:15,fontWeight:700,margin:0,whiteSpace:'nowrap'}}>{track.name}</h2>
-                <div style={{flex:1,height:1,background:T.border}}/>
-                <span style={{color:T.muted,fontSize:12,whiteSpace:'nowrap'}}>{mods.length} modules</span>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(250px,1fr))',gap:10}}>
-                {mods.map(m => {
-                  const count = lessonsMap[m.id]||0;
-                  const has = count > 0;
-                  return (
-                    <div key={m.id} onClick={()=>has&&onSelectModule(m)}
-                      style={{background:T.card,border:'1px solid '+(has?T.borderHi:T.border),borderRadius:10,padding:'14px 16px',cursor:has?'pointer':'default',opacity:has?1:0.55,transition:'all 0.15s'}}
-                      onMouseEnter={e=>{if(has){e.currentTarget.style.background=T.cardHi;e.currentTarget.style.borderColor=T.cyan+'55';}}}
-                      onMouseLeave={e=>{e.currentTarget.style.background=T.card;e.currentTarget.style.borderColor=has?T.borderHi:T.border;}}>
-                      <div style={{color:T.text,fontSize:13,fontWeight:600,marginBottom:8,lineHeight:1.4}}>{m.name}</div>
-                      {has
-                        ? <span style={{fontSize:11,color:T.emerald,background:T.emerald+'22',border:'1px solid '+T.emerald+'44',borderRadius:20,padding:'2px 10px',fontWeight:600}}>{count} lesson{count>1?'s':''} available</span>
-                        : <span style={{fontSize:11,color:T.muted,background:T.border+'55',borderRadius:20,padding:'2px 10px'}}>Coming soon</span>
-                      }
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+    <div style={{ paddingTop: isMobile ? 56 : 0 }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 4 }}>
+          Course Library
+        </h1>
+        <p style={{ color: T.muted, fontSize: 15 }}>
+          {allModules.length} modules across {tracks.length} tracks
+        </p>
       </div>
+
+      <input
+        type="text"
+        placeholder="Search modules..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        style={{
+          width: '100%', padding: '12px 16px', background: T.card,
+          border: '1px solid ' + T.border, borderRadius: 10, color: T.text,
+          fontSize: 14, boxSizing: 'border-box', outline: 'none', marginBottom: 16
+        }}
+      />
+
+      <div style={{ display: 'flex', gap: 20, marginBottom: 24, alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{ width: 9, height: 9, borderRadius: '50%', background: T.emerald }} />
+          <span style={{ color: T.sub, fontSize: 13 }}>Lessons available</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{ width: 9, height: 9, borderRadius: '50%', background: T.muted }} />
+          <span style={{ color: T.sub, fontSize: 13 }}>Coming soon</span>
+        </div>
+        <span style={{ color: T.dim, fontSize: 13, marginLeft: 'auto' }}>
+          {filtered.length} modules
+        </span>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div style={{ background: T.card, padding: 40, borderRadius: 12, textAlign: 'center' }}>
+          <p style={{ color: T.muted }}>No modules match your search</p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: 10 }}>
+          {filtered.map(mod => {
+            const available = mod.is_active;
+            return (
+              <div
+                key={mod.id}
+                onClick={() => available && onSelectModule(mod)}
+                style={{
+                  background: T.card, border: '1px solid ' + T.border,
+                  borderRadius: 12, padding: '18px 20px',
+                  cursor: available ? 'pointer' : 'default',
+                  opacity: available ? 1 : 0.65,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <h3 style={{ color: available ? T.text : T.sub, margin: 0, fontSize: 15, fontWeight: 600 }}>
+                    {mod.name}
+                  </h3>
+                  {available ? (
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '4px 12px', background: dim(T.emerald, 0.12),
+                      border: '1px solid ' + T.emerald, borderRadius: 20,
+                      fontSize: 11, fontWeight: 600, color: T.emerald, flexShrink: 0
+                    }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: T.emerald, display: 'inline-block' }} />
+                      Lessons available
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: 12, color: T.muted }}>Coming soon</span>
+                  )}
+                </div>
+                {mod.description && (
+                  <p style={{ color: T.muted, margin: '8px 0 0', fontSize: 13, lineHeight: 1.5 }}>
+                    {mod.description}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
