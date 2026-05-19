@@ -1,11 +1,4 @@
-function SimpleTracksPage({ modules, tracks, onStudyClick, isMobile }) {
-  const [search, setSearch] = useState('');
-  const [allModules, setAllModules] = useState([]);
-  useEffect(() => {
-    supabase.from('modules').select('*').order('sort_order').then(({ data }) => setAllModules(data || []));
-  }, []);
-  const display = allModules.length > 0 ? allModules : modules;
-  const filtered = display.filter(m => m.name?.toLowerCase().includes(search.toLowerCase()) || m.description?.toLowerCase().includes(search.toLowerCase()));
+// build: 20260427190525
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { LabsPage, LabViewer } from "./Labs";
