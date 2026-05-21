@@ -825,8 +825,7 @@ function CertificationCard({ userCert, certification, user }) {
           🏆
         </div>
         
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+        <div style={{ flex: 1, minWidth: 0 }}><div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <h3 style={{ color: T.text, margin: 0, fontSize: 20, fontWeight: 700 }}>
               {certification.name}
             </h3>

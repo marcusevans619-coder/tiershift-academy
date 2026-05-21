@@ -137,8 +137,7 @@ export function LabsPage({ user, onLabClick }) {
             return (
               <div key={lab.id} onClick={() => onLabClick(lab)} style={{background:T.card,padding:isMobile?16:24,borderRadius:12,border:"1px solid "+T.border,cursor:"pointer",display:"flex",gap:16,alignItems:"center",flexWrap:"wrap"}}>
                 <div style={{width:48,height:48,borderRadius:12,background:dim(typeColors[lab.lab_type],0.15),display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:typeColors[lab.lab_type]}}>{typeIcons[lab.lab_type]}</div>
-                <div style={{flex:1}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                <div style={{flex:1,minWidth:0}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
                     <h3 style={{color:T.text,margin:0}}>{lab.title}</h3>
                     {completed && <span style={{color:T.success,fontSize:12}}>Done</span>}
                   </div>
