@@ -137,7 +137,8 @@ export function CertificationsPage({ user, onPathClick }) {
                 border: `1px solid ${examReady ? cert.color || T.cyan : T.border}`,
                 display: "flex",
                 gap: 20,
-                alignItems: "center"
+                alignItems: "center",
+                flexWrap: "wrap"
               }}
             >
               <div style={{
@@ -153,7 +154,7 @@ export function CertificationsPage({ user, onPathClick }) {
               }}>
                 {examReady ? "📝" : "📜"}
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <h3 style={{ color: T.text, margin: 0, marginBottom: 8, fontSize: 18 }}>
                   {cert.name}
                 </h3>
