@@ -810,7 +810,7 @@ function CertificationCard({ userCert, certification, user }) {
         pointerEvents: "none"
       }} />
       
-      <div style={{ display: "flex", gap: 20, alignItems: "center", position: "relative" }}>
+      <div style={{ display: "flex", gap: 20, alignItems: "center", position: "relative", flexWrap: "wrap" }}>
         <div style={{
           width: 80,
           height: 80,
