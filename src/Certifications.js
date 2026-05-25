@@ -195,7 +195,7 @@ export function CertificationsPage({ user, onPathClick }) {
                   )}
                 </div>
               </div>
-              <div style={{ textAlign: "right", width: "100%", marginTop: 8 }}>
+              <div style={{ textAlign: "right", flexBasis: "100%", marginTop: 8 }}>
                 {examReady ? (
                   <button
                     onClick={() => setActiveExam(cert)}
