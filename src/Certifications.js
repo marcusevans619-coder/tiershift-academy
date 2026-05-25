@@ -136,11 +136,11 @@ export function CertificationsPage({ user, onPathClick }) {
                 padding: 24,
                 border: `1px solid ${examReady ? cert.color || T.cyan : T.border}`,
                 display: "flex",
-                gap: 20,
-                alignItems: "flex-start",
-                flexWrap: "wrap"
-              }}
+                flexDirection: "column",
+                gap: 16
             >
+              <div style={{display: "flex", gap: 16, alignItems: "flex-start"}}>
+              <div style={{display: "flex", gap: 16, alignItems: "flex-start"}}>
               <div style={{
                 width: 72,
                 height: 72,
@@ -195,7 +195,9 @@ export function CertificationsPage({ user, onPathClick }) {
                   )}
                 </div>
               </div>
-              <div style={{ textAlign: "right", flexBasis: "100%", marginTop: 8 }}>
+              </div>
+              <div style={{ textAlign: "right", marginTop: 8 }}>
+              <div style={{ textAlign: "right", marginTop: 8 }}>
                 {examReady ? (
                   <button
                     onClick={() => setActiveExam(cert)}
