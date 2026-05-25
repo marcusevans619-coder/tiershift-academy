@@ -137,7 +137,7 @@ export function CertificationsPage({ user, onPathClick }) {
                 border: `1px solid ${examReady ? cert.color || T.cyan : T.border}`,
                 display: "flex",
                 gap: 20,
-                alignItems: "center",
+                alignItems: "flex-start",
                 flexWrap: "wrap"
               }}
             >
