@@ -138,8 +138,8 @@ export function CertificationsPage({ user, onPathClick }) {
                 display: "flex",
                 flexDirection: "column",
                 gap: 16
+              }}
             >
-              <div style={{display: "flex", gap: 16, alignItems: "flex-start"}}>
               <div style={{display: "flex", gap: 16, alignItems: "flex-start"}}>
               <div style={{
                 width: 72,
@@ -196,7 +196,6 @@ export function CertificationsPage({ user, onPathClick }) {
                 </div>
               </div>
               </div>
-              <div style={{ textAlign: "right", marginTop: 8 }}>
               <div style={{ textAlign: "right", marginTop: 8 }}>
                 {examReady ? (
                   <button
