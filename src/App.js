@@ -239,9 +239,10 @@ export default function App() {
           <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div><div style={{ fontSize: 11, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.email}</div></div>
         </div>
       </nav>
-      <main style={{ flex: 1, overflowX: "hidden", overflowY: "auto", minWidth: 0, padding: isMobile ? "64px 16px 24px" : "24px 32px" }}><div style={{ maxWidth: 1000, width: "100%" }}>{renderPage()}</div></main>
+      <main style={{ flex: 1, overflowX: "hidden", overflowY: "auto", minWidth: 0, padding: isMobile ? "64px 20px 24px" : "24px 32px" }}><div style={{ maxWidth: 1000, width: "100%" }}>{renderPage()}</div></main>
     </div>
   );
 }
+
 
 
