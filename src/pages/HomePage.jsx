@@ -22,12 +22,12 @@ const roiStats = [
 ];
 
 const teamFeatures = [
-  {icon:"ðŸ“‹",title:"Assign Learning Paths",desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.",color:"#00e5ff"},
-  {icon:"ðŸ“ˆ",title:"Real-Time Progress Dashboard",desc:"See exactly where every tech is â€” hours logged, labs completed, certs earned. No more chasing people for updates.",color:"#a78bfa"},
-  {icon:"ðŸŽ¯",title:"Skill Gap Analysis",desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.",color:"#34d399"},
-  {icon:"ðŸ†",title:"Team Leaderboards",desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.",color:"#fbbf24"},
-  {icon:"ðŸ“„",title:"Completion Reports",desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.",color:"#fb7185"},
-  {icon:"ðŸ”§",title:"Custom Content",desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.",color:"#38bdf8"},
+  {icon:"??",title:"Assign Learning Paths",desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.",color:"#00e5ff"},
+  {icon:"??",title:"Real-Time Progress Dashboard",desc:"See exactly where every tech is � hours logged, labs completed, certs earned. No more chasing people for updates.",color:"#a78bfa"},
+  {icon:"??",title:"Skill Gap Analysis",desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.",color:"#34d399"},
+  {icon:"??",title:"Team Leaderboards",desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.",color:"#fbbf24"},
+  {icon:"??",title:"Completion Reports",desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.",color:"#fb7185"},
+  {icon:"??",title:"Custom Content",desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.",color:"#38bdf8"},
 ];
 
 const comparisonData = [
@@ -44,7 +44,7 @@ const comparisonData = [
 const faqs = [
   {q:"Can managers assign specific tracks to their techs?",a:"Yes. The team admin dashboard lets you assign any learning path to individual team members or your entire team at once. New hires get a structured path from day one."},
   {q:"How do we know if techs are actually learning?",a:"Every lab is hands-on and auto-graded. Certification exams are timed and scored automatically. The manager dashboard shows hours logged, labs completed, and certs earned per person in real time."},
-  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios â€” ticket systems, terminal commands, network configs â€” not generic tech content."},
+  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios � ticket systems, terminal commands, network configs � not generic tech content."},
   {q:"How long does a certification track take to complete?",a:"It depends on the track. Tier 1 to Tier 2 is roughly 136 hours of content. Most techs complete it in 6-8 weeks training part-time alongside their regular work."},
   {q:"Can you build custom content for our specific tools?",a:"Yes. We work with IT managers to build tracks tailored to your specific ticketing system, internal tools, and escalation procedures. Contact us to discuss."},
   {q:"How is this different from just sending techs to CompTIA courses?",a:"CompTIA teaches theory. TierShift teaches application. Your techs practice real scenarios in labs, not just memorize answers for a multiple choice test."},
@@ -59,7 +59,7 @@ const terminalLines = [
   {text:"80/tcp open  http    Apache 2.4.52",color:"#34d399"},
   {text:"$ systemctl status apache2",color:"#00e5ff"},
   {text:"apache2.service - ACTIVE (running)",color:"#34d399"},
-  {text:"âœ“ Lab complete! +250 XP earned",color:"#fbbf24"},
+  {text:"? Lab complete! +250 XP earned",color:"#fbbf24"},
 ];
 function useCountUp(target, duration, start) {
   const [count, setCount] = useState(0);
@@ -169,22 +169,22 @@ export default function HomePage({onGetStarted, onSignIn}) {
             {activeTab==="teams"?(
               <div>
                 <h1 style={{fontSize:"clamp(2.2rem,4.5vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"0 0 20px"}}>Train Your IT Team<br/><span style={{background:"linear-gradient(135deg,#00e5ff,#a78bfa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>on Real Skills</span></h1>
-                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Assign tracks, track progress, and certify your techs â€” all from one dashboard. Built for IT managers who need results, not just completion percentages.</p>
+                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Assign tracks, track progress, and certify your techs � all from one dashboard. Built for IT managers who need results, not just completion percentages.</p>
                 <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:32}}>
-                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard â€” see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>âœ“</span>{item}</div>))}
+                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard � see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
                 </div>
               </div>
             ):(
               <div>
                 <h1 style={{fontSize:"clamp(2.2rem,4.5vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"0 0 20px"}}>Level Up Your<br/><span style={{background:"linear-gradient(135deg,#00e5ff,#a78bfa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>IT Career</span></h1>
-                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Hands-on labs, certification exams, and career tracks built for IT support professionals ready to level up. No fluff â€” just real skills.</p>
+                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Hands-on labs, certification exams, and career tracks built for IT support professionals ready to level up. No fluff � just real skills.</p>
                 <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:32}}>
-                  {["60+ hands-on terminal, ticket, and config labs","9 career tracks from Tier 1 to Security Engineer","8 certification exams with downloadable credentials","Track your progress with a real-time dashboard"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>âœ“</span>{item}</div>))}
+                  {["60+ hands-on terminal, ticket, and config labs","9 career tracks from Tier 1 to Security Engineer","8 certification exams with downloadable credentials","Track your progress with a real-time dashboard"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
                 </div>
               </div>
             )}
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo â†’":"Start Free Today â†’"}</button>
+              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo ?":"Start Free Today ?"}</button>
               <button onClick={onSignIn} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Sign In</button>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:14,marginTop:28}}>
@@ -196,7 +196,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
             <div style={{background:"#111827",border:"1px solid #1e2d40",borderRadius:16,overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,.6),0 0 40px #00e5ff15"}}>
               <div style={{padding:"10px 14px",background:"#0d1520",borderBottom:"1px solid #1e2d40",display:"flex",alignItems:"center",gap:7}}>
                 <div style={{width:11,height:11,borderRadius:"50%",background:"#ef4444"}}/><div style={{width:11,height:11,borderRadius:"50%",background:"#fbbf24"}}/><div style={{width:11,height:11,borderRadius:"50%",background:"#34d399"}}/>
-                <span style={{marginLeft:8,fontSize:11,color:"#64748b",fontFamily:"monospace"}}>lab-terminal â€” Network Fundamentals</span>
+                <span style={{marginLeft:8,fontSize:11,color:"#64748b",fontFamily:"monospace"}}>lab-terminal � Network Fundamentals</span>
               </div>
               <div style={{padding:16,fontFamily:"monospace",fontSize:12,lineHeight:1.9,minHeight:220}}>
                 {terminalLines.slice(0,visibleLines).map((l,i)=>(<div key={i} style={{color:l.color}}>{l.text}</div>))}
@@ -210,7 +210,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 <span style={{fontSize:11,color:"#00e5ff",fontFamily:"monospace"}}>{Math.round((visibleLines/terminalLines.length)*100)}%</span>
               </div>
               <div style={{margin:"0 16px 16px",padding:"12px 14px",background:"#34d39910",border:"1px solid #34d39930",borderRadius:10}}>
-                <div style={{fontSize:11,color:"#34d399",fontWeight:700,marginBottom:6,fontFamily:"monospace"}}>MANAGER VIEW â€” LIVE</div>
+                <div style={{fontSize:11,color:"#34d399",fontWeight:700,marginBottom:6,fontFamily:"monospace"}}>MANAGER VIEW � LIVE</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
                   {[{l:"Completed",v:"14/18"},{l:"Avg Score",v:"87%"},{l:"Certs Earned",v:"6"}].map((s,i)=>(<div key={i} style={{textAlign:"center"}}><div style={{fontSize:15,fontWeight:800,color:"#34d399",fontFamily:"monospace"}}>{s.v}</div><div style={{fontSize:10,color:"#64748b"}}>{s.l}</div></div>))}
                 </div>
@@ -261,10 +261,10 @@ export default function HomePage({onGetStarted, onSignIn}) {
           <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)",gap:24,position:"relative"}}>
             <div style={{position:"absolute",top:24,left:"12.5%",right:"12.5%",height:1,background:"linear-gradient(90deg,#00e5ff40,#a78bfa40)",zIndex:0}}/>
             {[
-              {step:"01",icon:"ðŸ‘¤",title:"Admin Setup",role:"You (Manager)",desc:"Create your team, invite techs, assign the right learning paths to each person."},
-              {step:"02",icon:"ðŸ–¥ï¸",title:"Techs Train",role:"Your Team",desc:"Each tech works through labs, scenarios, and exams at their own pace."},
-              {step:"03",icon:"ðŸ“Š",title:"You Monitor",role:"You (Manager)",desc:"Watch progress in real time. See who is ahead, who is falling behind, and intervene early."},
-              {step:"04",icon:"ðŸ†",title:"Certs Earned",role:"Everyone Wins",desc:"Techs earn verified credentials. You get a more capable team."},
+              {step:"01",icon:"??",title:"Admin Setup",role:"You (Manager)",desc:"Create your team, invite techs, assign the right learning paths to each person."},
+              {step:"02",icon:"???",title:"Techs Train",role:"Your Team",desc:"Each tech works through labs, scenarios, and exams at their own pace."},
+              {step:"03",icon:"??",title:"You Monitor",role:"You (Manager)",desc:"Watch progress in real time. See who is ahead, who is falling behind, and intervene early."},
+              {step:"04",icon:"??",title:"Certs Earned",role:"Everyone Wins",desc:"Techs earn verified credentials. You get a more capable team."},
             ].map((s,i)=>(
               <div key={i} style={{textAlign:"center",position:"relative",zIndex:1}}>
                 <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:"#060a12",margin:"0 auto 14px",fontFamily:"monospace"}}>{s.step}</div>
@@ -293,7 +293,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
             {comparisonData.map((row,i)=>(
               <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",padding:"11px 20px",borderBottom:i<comparisonData.length-1?"1px solid #1e2d40":"none",background:i%2===0?"transparent":"#0d152060"}}>
                 <div style={{fontSize:13,color:"#94a3b8"}}>{row.feature}</div>
-                {[row.ts,row.youtube,row.cbt].map((v,j)=>(<div key={j} style={{textAlign:"center",fontSize:16}}>{v?<span style={{color:"#34d399"}}>âœ“</span>:<span style={{color:"#1e2d40"}}>â€”</span>}</div>))}
+                {[row.ts,row.youtube,row.cbt].map((v,j)=>(<div key={j} style={{textAlign:"center",fontSize:16}}>{v?<span style={{color:"#34d399"}}>?</span>:<span style={{color:"#1e2d40"}}>�</span>}</div>))}
               </div>
             ))}
           </div>}
@@ -327,7 +327,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
               <button onClick={()=>setShowDemoModal(true)} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Start Free Trial</button>
             </div>
             <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
-              {["No credit card required","Setup in under 10 minutes","Cancel anytime"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#64748b"}}><span style={{color:"#34d399"}}>âœ“</span>{item}</div>))}
+              {["No credit card required","Setup in under 10 minutes","Cancel anytime"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#64748b"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
             </div>
           </div>}
         </div>
@@ -336,7 +336,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
       <footer style={{padding:"24px 48px",borderTop:"1px solid #1e2d40",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:26,height:26,background:"linear-gradient(135deg,#00e5ff,#a78bfa)",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:"#060a12"}}>TS</div>
-          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy Â© 2025</span>
+          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy � 2025</span>
         </div>
         <div style={{fontSize:11,color:"#64748b"}}>Built for IT professionals. No fluff, just skills.</div>
       </footer>
