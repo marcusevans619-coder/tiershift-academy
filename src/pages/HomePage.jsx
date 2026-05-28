@@ -43,9 +43,9 @@ const comparisonData = [
 ];
 
 const faqs = [
-  {q:"Can managers assign specific tracks to their techs?",a:"Yes. The team admin dashboard lets you assign any learning path to individual team members or your entire team at once. New hires get a structured path from day one."},
+  {q:"Can managers assign specific tracks to their techs-",a:"Yes. The team admin dashboard lets you assign any learning path to individual team members or your entire team at once. New hires get a structured path from day one."},
   {q:"How do we know if techs are actually learning?",a:"Every lab is hands-on and auto-graded. Certification exams are timed and scored automatically. The manager dashboard shows hours logged, labs completed, and certs earned per person in real time."},
-  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios ? ticket systems, terminal commands, network configs ? not generic tech content."},
+  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios —  ticket systems, terminal commands, network configs ? not generic tech content."},
   {q:"How long does a certification track take to complete?",a:"It depends on the track. Tier 1 to Tier 2 is roughly 136 hours of content. Most techs complete it in 6-8 weeks training part-time alongside their regular work."},
   {q:"Can you build custom content for our specific tools?",a:"Yes. We work with IT managers to build tracks tailored to your specific ticketing system, internal tools, and escalation procedures. Contact us to discuss."},
   {q:"How is this different from just sending techs to CompTIA courses?",a:"CompTIA teaches theory. TierShift teaches application. Your techs practice real scenarios in labs, not just memorize answers for a multiple choice test."},
@@ -170,22 +170,22 @@ export default function HomePage({onGetStarted, onSignIn}) {
             {activeTab==="teams"?(
               <div>
                 <h1 style={{fontSize:"clamp(2.2rem,4.5vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"0 0 20px"}}>Train Your IT Team<br/><span style={{background:"linear-gradient(135deg,#00e5ff,#a78bfa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>on Real Skills</span></h1>
-                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Assign tracks, track progress, and certify your techs ? all from one dashboard. Built for IT managers who need results, not just completion percentages.</p>
+                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Assign tracks, track progress, and certify your techs - all from one dashboard. Built for IT managers who need results, not just completion percentages.</p>
                 <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:32}}>
-                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard ? see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
+                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard —  see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>✓</span>{item}</div>))}
                 </div>
               </div>
             ):(
               <div>
                 <h1 style={{fontSize:"clamp(2.2rem,4.5vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"0 0 20px"}}>Level Up Your<br/><span style={{background:"linear-gradient(135deg,#00e5ff,#a78bfa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>IT Career</span></h1>
-                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Hands-on labs, certification exams, and career tracks built for IT support professionals ready to level up. No fluff ? just real skills.</p>
+                <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Hands-on labs, certification exams, and career tracks built for IT support professionals ready to level up. No fluff —  just real skills.</p>
                 <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:32}}>
-                  {["60+ hands-on terminal, ticket, and config labs","9 career tracks from Tier 1 to Security Engineer","8 certification exams with downloadable credentials","Track your progress with a real-time dashboard"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
+                  {["60+ hands-on terminal, ticket, and config labs","9 career tracks from Tier 1 to Security Engineer","8 certification exams with downloadable credentials","Track your progress with a real-time dashboard"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>✓</span>{item}</div>))}
                 </div>
               </div>
             )}
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo ?":"Start Free Today ?"}</button>
+              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo →":"Start Free Today →"}</button>
               <button onClick={onSignIn} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Sign In</button>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:14,marginTop:28}}>
@@ -294,7 +294,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
             {comparisonData.map((row,i)=>(
               <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",padding:"11px 20px",borderBottom:i<comparisonData.length-1?"1px solid #1e2d40":"none",background:i%2===0?"transparent":"#0d152060"}}>
                 <div style={{fontSize:13,color:"#94a3b8"}}>{row.feature}</div>
-                {[row.ts,row.youtube,row.cbt].map((v,j)=>(<div key={j} style={{textAlign:"center",fontSize:16}}>{v?<span style={{color:"#34d399"}}>?</span>:<span style={{color:"#1e2d40"}}>?</span>}</div>))}
+                {[row.ts,row.youtube,row.cbt].map((v,j)=>(<div key={j} style={{textAlign:"center",fontSize:16}}>{v?<span style={{color:"#34d399"}}>✓</span>:<span style={{color:"#1e2d40"}}>?</span>}</div>))}
               </div>
             ))}
           </div>}
@@ -328,7 +328,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
               <button onClick={()=>setShowDemoModal(true)} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Start Free Trial</button>
             </div>
             <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
-              {["No credit card required","Setup in under 10 minutes","Cancel anytime"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#64748b"}}><span style={{color:"#34d399"}}>?</span>{item}</div>))}
+              {["No credit card required","Setup in under 10 minutes","Cancel anytime"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#64748b"}}><span style={{color:"#34d399"}}>✓</span>{item}</div>))}
             </div>
           </div>}
         </div>
