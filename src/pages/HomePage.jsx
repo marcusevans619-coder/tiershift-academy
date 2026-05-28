@@ -22,13 +22,12 @@ const roiStats = [
 ];
 
 const teamFeatures = [
-  const teamFeatures = [
-  {icon:"🗂️", title:"Assign Learning Paths", ...},
-  {icon:"📊", title:"Real-Time Progress Dashboard", ...},
-  {icon:"🔍", title:"Skill Gap Analysis", ...},
-  {icon:"🏆", title:"Team Leaderboards", ...},
-  {icon:"📄", title:"Completion Reports", ...},
-  {icon:"🔧", title:"Custom Content", ...},
+  {icon:"📋", title:"Assign Learning Paths", desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.", color:"#00e5ff"},
+  {icon:"📊", title:"Real-Time Progress Dashboard", desc:"See exactly where every tech is - hours logged, labs completed, certs earned. No more chasing people for updates.", color:"#a78bfa"},
+  {icon:"🔍", title:"Skill Gap Analysis", desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.", color:"#34d399"},
+  {icon:"🏆", title:"Team Leaderboards", desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.", color:"#fbbf24"},
+  {icon:"📄", title:"Completion Reports", desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.", color:"#fb7185"},
+  {icon:"🔧", title:"Custom Content", desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.", color:"#38bdf8"},
 ];
 
 const comparisonData = [
