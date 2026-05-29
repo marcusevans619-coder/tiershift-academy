@@ -42,9 +42,9 @@ const comparisonData = [
 ];
 
 const faqs = [
-  {q:"Can managers assign specific tracks to their techs-",a:"Yes. The team admin dashboard lets you assign any learning path to individual team members or your entire team at once. New hires get a structured path from day one."},
+  {q:"Can managers assign specific tracks to their techs?",a:"Yes. The team admin dashboard lets you assign any learning path to individual team members or your entire team at once. New hires get a structured path from day one."},
   {q:"How do we know if techs are actually learning?",a:"Every lab is hands-on and auto-graded. Certification exams are timed and scored automatically. The manager dashboard shows hours logged, labs completed, and certs earned per person in real time."},
-  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios -  ticket systems, terminal commands, network configs ? not generic tech content."},
+  {q:"Is this better than CBT Nuggets or Udemy for Business?",a:"TierShift is built specifically for IT support teams, not general learners. Labs mirror real helpdesk scenarios -  ticket systems, terminal commands, network configs - not generic tech content."},
   {q:"How long does a certification track take to complete?",a:"It depends on the track. Tier 1 to Tier 2 is roughly 136 hours of content. Most techs complete it in 6-8 weeks training part-time alongside their regular work."},
   {q:"Can you build custom content for our specific tools?",a:"Yes. We work with IT managers to build tracks tailored to your specific ticketing system, internal tools, and escalation procedures. Contact us to discuss."},
   {q:"How is this different from just sending techs to CompTIA courses?",a:"CompTIA teaches theory. TierShift teaches application. Your techs practice real scenarios in labs, not just memorize answers for a multiple choice test."},
@@ -59,7 +59,7 @@ const terminalLines = [
   {text:"80/tcp open  http    Apache 2.4.52",color:"#34d399"},
   {text:"$ systemctl status apache2",color:"#00e5ff"},
   {text:"apache2.service - ACTIVE (running)",color:"#34d399"},
-  {text:"? Lab complete! +250 XP earned",color:"#fbbf24"},
+  {text:"[DONE] Lab complete! +250 XP earned",color:"#fbbf24"},
 ];
 function useCountUp(target, duration, start) {
   const [count, setCount] = useState(0);
@@ -184,7 +184,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
               </div>
             )}
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo {\'\u2192\'}":"Start Free Today {\'\u2192\'}"}</button>
+              <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>{activeTab==="teams"?"Schedule a Demo >":"Start Free Today >"}</button>
               <button onClick={onSignIn} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Sign In</button>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:14,marginTop:28}}>
@@ -196,7 +196,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
             <div style={{background:"#111827",border:"1px solid #1e2d40",borderRadius:16,overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,.6),0 0 40px #00e5ff15"}}>
               <div style={{padding:"10px 14px",background:"#0d1520",borderBottom:"1px solid #1e2d40",display:"flex",alignItems:"center",gap:7}}>
                 <div style={{width:11,height:11,borderRadius:"50%",background:"#ef4444"}}/><div style={{width:11,height:11,borderRadius:"50%",background:"#fbbf24"}}/><div style={{width:11,height:11,borderRadius:"50%",background:"#34d399"}}/>
-                <span style={{marginLeft:8,fontSize:11,color:"#64748b",fontFamily:"monospace"}}>lab-terminal ? Network Fundamentals</span>
+                <span style={{marginLeft:8,fontSize:11,color:"#64748b",fontFamily:"monospace"}}>lab-terminal - Network Fundamentals</span>
               </div>
               <div style={{padding:16,fontFamily:"monospace",fontSize:12,lineHeight:1.9,minHeight:220}}>
                 {terminalLines.slice(0,visibleLines).map((l,i)=>(<div key={i} style={{color:l.color}}>{l.text}</div>))}
@@ -210,7 +210,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 <span style={{fontSize:11,color:"#00e5ff",fontFamily:"monospace"}}>{Math.round((visibleLines/terminalLines.length)*100)}%</span>
               </div>
               <div style={{margin:"0 16px 16px",padding:"12px 14px",background:"#34d39910",border:"1px solid #34d39930",borderRadius:10}}>
-                <div style={{fontSize:11,color:"#34d399",fontWeight:700,marginBottom:6,fontFamily:"monospace"}}>MANAGER VIEW ? LIVE</div>
+                <div style={{fontSize:11,color:"#34d399",fontWeight:700,marginBottom:6,fontFamily:"monospace"}}>MANAGER VIEW - LIVE</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
                   {[{l:"Completed",v:"14/18"},{l:"Avg Score",v:"87%"},{l:"Certs Earned",v:"6"}].map((s,i)=>(<div key={i} style={{textAlign:"center"}}><div style={{fontSize:15,fontWeight:800,color:"#34d399",fontFamily:"monospace"}}>{s.v}</div><div style={{fontSize:10,color:"#64748b"}}>{s.l}</div></div>))}
                 </div>
@@ -336,7 +336,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
       <footer style={{padding:"24px 48px",borderTop:"1px solid #1e2d40",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:26,height:26,background:"linear-gradient(135deg,#00e5ff,#a78bfa)",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:"#060a12"}}>TS</div>
-          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy ? 2025</span>
+          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy © 2025</span>
         </div>
         <div style={{fontSize:11,color:"#64748b"}}>Built for IT professionals. No fluff, just skills.</div>
       </footer>
