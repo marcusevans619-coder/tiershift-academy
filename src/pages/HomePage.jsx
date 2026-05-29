@@ -22,12 +22,12 @@ const roiStats = [
 ];
 
 const teamFeatures = [
-  {icon:"📋", title:"Assign Learning Paths", desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.", color:"#00e5ff"},
-  {icon:"📊", title:"Real-Time Progress Dashboard", desc:"See exactly where every tech is - hours logged, labs completed, certs earned. No more chasing people for updates.", color:"#a78bfa"},
-  {icon:"🔍", title:"Skill Gap Analysis", desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.", color:"#34d399"},
-  {icon:"🏆", title:"Team Leaderboards", desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.", color:"#fbbf24"},
-  {icon:"📄", title:"Completion Reports", desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.", color:"#fb7185"},
-  {icon:"🔧", title:"Custom Content", desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.", color:"#38bdf8"},
+  {icon:"\uD83D\uDCCB", title:"Assign Learning Paths", desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.", color:"#00e5ff"},
+  {icon:"\uD83D\uDCCA", title:"Real-Time Progress Dashboard", desc:"See exactly where every tech is - hours logged, labs completed, certs earned. No more chasing people for updates.", color:"#a78bfa"},
+  {icon:"\uD83D\uDD0D", title:"Skill Gap Analysis", desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.", color:"#34d399"},
+  {icon:"\uD83C\uDFC6", title:"Team Leaderboards", desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.", color:"#fbbf24"},
+  {icon:"\uD83D\uDCC4", title:"Completion Reports", desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.", color:"#fb7185"},
+  {icon:"\uD83D\uDD27", title:"Custom Content", desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.", color:"#38bdf8"},
 ];
 
 const comparisonData = [
@@ -59,7 +59,7 @@ const terminalLines = [
   {text:"80/tcp open  http    Apache 2.4.52",color:"#34d399"},
   {text:"$ systemctl status apache2",color:"#00e5ff"},
   {text:"apache2.service - ACTIVE (running)",color:"#34d399"},
-  {text:"[DONE] Lab complete! +250 XP earned",color:"#fbbf24"},
+  {text:"Lab complete! +250 XP earned",color:"#fbbf24"},
 ];
 function useCountUp(target, duration, start) {
   const [count, setCount] = useState(0);
@@ -171,7 +171,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 <h1 style={{fontSize:"clamp(2.2rem,4.5vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"0 0 20px"}}>Train Your IT Team<br/><span style={{background:"linear-gradient(135deg,#00e5ff,#a78bfa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>on Real Skills</span></h1>
                 <p style={{fontSize:16,color:"#94a3b8",lineHeight:1.75,marginBottom:20,maxWidth:480}}>Assign tracks, track progress, and certify your techs - all from one dashboard. Built for IT managers who need results, not just completion percentages.</p>
                 <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:32}}>
-                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard -  see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>{'\u2713'}</span>{item}</div>))}
+                  {["Assign learning paths to specific techs or your whole team","Real-time progress dashboard - see who needs a push","Auto-graded labs and certification exams","Exportable completion reports for HR and compliance"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:10,fontSize:13,color:"#94a3b8"}}><span style={{color:"#34d399"}}>{'\u2713'}</span>{item}</div>))}
                 </div>
               </div>
             ):(
