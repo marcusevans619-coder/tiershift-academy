@@ -22,12 +22,12 @@ const roiStats = [
 ];
 
 const teamFeatures = [
-  {icon:"\uD83D\uDCCB", title:"Assign Learning Paths", desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.", color:"#00e5ff"},
-  {icon:"\uD83D\uDCCA", title:"Real-Time Progress Dashboard", desc:"See exactly where every tech is - hours logged, labs completed, certs earned. No more chasing people for updates.", color:"#a78bfa"},
-  {icon:"\uD83D\uDD0D", title:"Skill Gap Analysis", desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.", color:"#34d399"},
-  {icon:"\uD83C\uDFC6", title:"Team Leaderboards", desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.", color:"#fbbf24"},
-  {icon:"\uD83D\uDCC4", title:"Completion Reports", desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.", color:"#fb7185"},
-  {icon:"\uD83D\uDD27", title:"Custom Content", desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.", color:"#38bdf8"},
+  {icon:String.fromCodePoint(0x1F4CB), title:"Assign Learning Paths", desc:"Push specific tracks to individual techs or your entire team. New hire? Assign Tier 1 to Tier 2 on day one.", color:"#00e5ff"},
+  {icon:String.fromCodePoint(0x1F4CA), title:"Real-Time Progress Dashboard", desc:"See exactly where every tech is - hours logged, labs completed, certs earned. No more chasing people for updates.", color:"#a78bfa"},
+  {icon:String.fromCodePoint(0x1F50D), title:"Skill Gap Analysis", desc:"Identify which techs need what training before problems surface. Get ahead of knowledge gaps proactively.", color:"#34d399"},
+  {icon:String.fromCodePoint(0x1F3C6), title:"Team Leaderboards", desc:"Friendly competition drives completion. See who is leading on certifications and lab completions.", color:"#fbbf24"},
+  {icon:String.fromCodePoint(0x1F4C4), title:"Completion Reports", desc:"Export certification reports for HR reviews, compliance audits, or client-facing proof of team competency.", color:"#fb7185"},
+  {icon:String.fromCodePoint(0x1F527), title:"Custom Content", desc:"Work with us to build tracks specific to your tools, ticketing system, and internal processes.", color:"#38bdf8"},
 ];
 
 const comparisonData = [
