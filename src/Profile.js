@@ -10,9 +10,9 @@ const T = {
 const dim = (c, a = 0.10) => c + Math.round(a * 255).toString(16).padStart(2, "0");
 
 const BadgeIcons = {
-  play: "'\u25B6'", "trending-up": "'\uD83D\uDCC8'", flask: "'\uD83E\uDDEA'", crown: "'\uD83D\uDC51'",
-  terminal: "'\uD83D\uDCBB'", shield: "'\uD83D\uDEE1'", "check-circle": "'\u2705'", network: "'\uD83C\uDF10'",
-  flame: "'\uD83D\uDD25'", award: "'\uD83C\uDFC6'", star: "'\u2B50'", zap: "'\u26A1'"
+  play: "\u25B6", "trending-up": "\uD83D\uDCC8", flask: "\uD83E\uDDEA", crown: "\uD83D\uDC51",
+  terminal: "\uD83D\uDCBB", shield: "\uD83D\uDEE1", "check-circle": "\u2705", network: "\uD83C\uDF10",
+  flame: "\uD83D\uDD25", award: "\uD83C\uDFC6", star: "\u2B50", zap: "\u26A1"
 };
 
 const RarityColors = {
@@ -253,8 +253,8 @@ export function ProfilePage({ user, onNavigate }) {
                   <p style={{ color: T.muted, fontSize: 14, margin: 0, marginBottom: 12, lineHeight: 1.5 }}>{profile.bio}</p>
                 )}
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap", color: T.muted, fontSize: 13 }}>
-                  {profile?.company && <span>'\uD83C\uDFE2' {profile.company}</span>}
-                  {profile?.location && <span>'\uD83D\uDCCD' {profile.location}</span>}
+                  {profile?.company && <span>{'\uD83C\uDFE2'} {profile.company}</span>}
+                  {profile?.location && <span>{'\uD83D\uDCCD'} {profile.location}</span>}
                 </div>
               </>
             )}
@@ -287,12 +287,12 @@ export function ProfilePage({ user, onNavigate }) {
         marginBottom: 32
       }}>
         {[
-          { label: "Labs Completed", value: stats.labsCompleted, color: T.cyan, icon: "'\uD83E\uDDEA'" },
-          { label: "Paths Completed", value: stats.pathsCompleted, color: T.violet, icon: "'\uD83D\uDCCD'" },
-          { label: "Badges Earned", value: stats.badgesEarned, color: T.amber, icon: "'\uD83C\uDFC6'" },
-          { label: "Total Points", value: stats.totalPoints, color: T.emerald, icon: "'\u2B50'" },
-          { label: "Current Streak", value: `${stats.currentStreak}d`, color: T.rose, icon: "'\uD83D\uDD25'" },
-          { label: "Longest Streak", value: `${stats.longestStreak}d`, color: T.warning, icon: "'\uD83D\uDCC8'" }
+          { label: "Labs Completed", value: stats.labsCompleted, color: T.cyan, icon: "\uD83E\uDDEA" },
+          { label: "Paths Completed", value: stats.pathsCompleted, color: T.violet, icon: "\uD83D\uDCCD" },
+          { label: "Badges Earned", value: stats.badgesEarned, color: T.amber, icon: "\uD83C\uDFC6" },
+          { label: "Total Points", value: stats.totalPoints, color: T.emerald, icon: "\u2B50" },
+          { label: "Current Streak", value: `${stats.currentStreak}d`, color: T.rose, icon: "\uD83D\uDD25" },
+          { label: "Longest Streak", value: `${stats.longestStreak}d`, color: T.warning, icon: "\uD83D\uDCC8" }
         ].map((stat, i) => (
           <div key={i} style={{
             background: T.card,
@@ -352,7 +352,7 @@ export function ProfilePage({ user, onNavigate }) {
                     margin: "0 auto 8px",
                     fontSize: 20
                   }}>
-                    {BadgeIcons[ub.badge?.icon] || "'\uD83C\uDFC5'"}
+                    {BadgeIcons[ub.badge?.icon] || "\uD83C\uDFC5"}
                   </div>
                   <div style={{ color: T.text, fontSize: 11, fontWeight: 600 }}>
                     {ub.badge?.name}
@@ -402,7 +402,7 @@ export function ProfilePage({ user, onNavigate }) {
                   background: T.surface,
                   borderRadius: 8
                 }}>
-                  <div style={{ fontSize: 28 }}>'\uD83D\uDCDC'</div>
+                  <div style={{ fontSize: 28 }}>{'\uD83D\uDCDC'}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ color: T.text, fontWeight: 600 }}>{uc.certification?.name}</div>
                     <div style={{ color: T.muted, fontSize: 12 }}>
@@ -601,7 +601,7 @@ export function PublicProfilePage({ userId }) {
                 alignItems: "center",
                 gap: 16
               }}>
-                <div style={{ fontSize: 36 }}>'\uD83D\uDCDC'</div>
+                <div style={{ fontSize: 36 }}>{'\uD83D\uDCDC'}</div>
                 <div>
                   <div style={{ color: T.text, fontWeight: 600 }}>{uc.certification?.name}</div>
                   <div style={{ color: T.muted, fontSize: 13 }}>
@@ -627,7 +627,7 @@ export function PublicProfilePage({ userId }) {
                 textAlign: "center",
                 minWidth: 80
               }}>
-                <div style={{ fontSize: 24, marginBottom: 4 }}>{BadgeIcons[ub.badge?.icon] || "'\uD83C\uDFC5'"}</div>
+                <div style={{ fontSize: 24, marginBottom: 4 }}>{BadgeIcons[ub.badge?.icon] || "\uD83C\uDFC5"}</div>
                 <div style={{ color: T.text, fontSize: 11, fontWeight: 600 }}>{ub.badge?.name}</div>
               </div>
             ))}

@@ -152,7 +152,7 @@ export function CertificationsPage({ user, onPathClick }) {
                 fontSize: 36,
                 flexShrink: 0
               }}>
-                {examReady ? "'\uD83D\uDCDD'" : "'\uD83D\uDCDC'"}
+                {examReady ? "\uD83D\uDCDD" : "\uD83D\uDCDC"}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h3 style={{ color: T.text, margin: 0, marginBottom: 8, fontSize: 18 }}>
@@ -189,7 +189,7 @@ export function CertificationsPage({ user, onPathClick }) {
                 )}
 
                 <div style={{ display: "flex", gap: 16, fontSize: 13, color: T.muted }}>
-                  <span>'\uD83D\uDCCA' Passing: {cert.passing_score}%</span>
+                  <span>{'\uD83D\uDCCA'} Passing: {cert.passing_score}%</span>
                   {cert.validity_months && (
                     <span>{'\u23F1'} Valid: {cert.validity_months} months</span>
                   )}
@@ -420,7 +420,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             fontSize: 48,
             margin: "0 auto 24px"
           }}>
-            {result.passed ? "'\uD83C\uDF89'" : "'\uD83D\uDCDA'"}
+            {result.passed ? "\uD83C\uDF89" : "\uD83D\uDCDA"}
           </div>
 
           <h1 style={{ 
@@ -517,7 +517,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
                       fontSize: 14,
                       fontWeight: 600
                     }}>
-                      {isCorrect ? "(check)" : "'\u2717'"} Q{idx + 1}
+                      {isCorrect ? "(check)" : "\u2717"} Q{idx + 1}
                     </span>
                   </div>
                   <p style={{ color: T.text, marginBottom: 12 }}>{q.question_text}</p>
@@ -544,7 +544,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
                       color: T.muted,
                       fontSize: 13
                     }}>
-                      '\uD83D\uDCA1' {q.explanation}
+                      {'\uD83D\uDCA1'} {q.explanation}
                     </div>
                   )}
                 </div>
@@ -824,7 +824,7 @@ function CertificationCard({ userCert, certification, user }) {
           flexShrink: 0,
           boxShadow: `0 0 20px ${certification.color || T.violet}30`
         }}>
-          '\uD83C\uDFC6'
+          {'\uD83C\uDFC6'}
         </div>
         
         <div style={{ flex: 1, minWidth: 0 }}><div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -861,8 +861,8 @@ function CertificationCard({ userCert, certification, user }) {
           </div>
           
           <div style={{ display: "flex", gap: 16, fontSize: 13, color: T.muted }}>
-            <span>'\uD83D\uDCC5' Earned: {new Date(userCert.earned_at).toLocaleDateString()}</span>
-            {userCert.score && <span>'\uD83D\uDCCA' Score: {userCert.score}%</span>}
+            <span>{'\uD83D\uDCC5'} Earned: {new Date(userCert.earned_at).toLocaleDateString()}</span>
+            {userCert.score && <span>{'\uD83D\uDCCA'} Score: {userCert.score}%</span>}
             {userCert.expires_at && (
               <span style={{ color: isExpired ? T.danger : T.muted }}>
                 {'\u23F1'} {isExpired ? "Expired" : "Valid until"}: {new Date(userCert.expires_at).toLocaleDateString()}
@@ -1021,7 +1021,7 @@ function generateCertificatePDF(userCert, certification, user) {
       <div class="academy">Academy</div>
     </div>
     
-    <div class="icon">'\uD83C\uDFC6'</div>
+    <div class="icon">{'\uD83C\uDFC6'}</div>
     
     <div class="content">
       <div class="name">${user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Graduate"}</div>
@@ -1195,7 +1195,7 @@ export function VerifyCredentialPage({ credentialId }) {
           fontSize: 40,
           margin: "0 auto 24px"
         }}>
-          '\uD83C\uDFC6'
+          {'\uD83C\uDFC6'}
         </div>
 
         <h1 style={{ color: T.text, fontSize: 24, marginBottom: 8 }}>

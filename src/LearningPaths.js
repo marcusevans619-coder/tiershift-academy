@@ -11,9 +11,9 @@ const dim = (c, a = 0.10) => c + Math.round(a * 255).toString(16).padStart(2, "0
 
 // Icons for path types
 const PathIcons = {
-  headset: "'\uD83C\uDFA7'", shield: "'\uD83D\uDEE1'", terminal: "'\uD83D\uDCBB'", cloud: "'\u2601'", 
-  network: "'\uD83C\uDF10'", lock: "'\uD83D\uDD12'", server: "'\uD83D\uDDA5'", code: "'\u2328'",
-  path: "'\uD83D\uDCCD'", award: "'\uD83C\uDFC6'", certificate: "'\uD83D\uDCDC'", flame: "'\uD83D\uDD25'"
+  headset: "\uD83C\uDFA7", shield: "\uD83D\uDEE1", terminal: "\uD83D\uDCBB", cloud: "\u2601", 
+  network: "\uD83C\uDF10", lock: "\uD83D\uDD12", server: "\uD83D\uDDA5", code: "\u2328",
+  path: "\uD83D\uDCCD", award: "\uD83C\uDFC6", certificate: "\uD83D\uDCDC", flame: "\uD83D\uDD25"
 };
 
 // ============================================
@@ -105,7 +105,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
-                    <div style={{ fontSize: 36 }}>{PathIcons[path.icon] || "'\uD83D\uDCDA'"}</div>
+                    <div style={{ fontSize: 36 }}>{PathIcons[path.icon] || "\uD83D\uDCDA"}</div>
                     <span style={{
                       padding: "4px 10px",
                       background: dim(diffColors[path.difficulty], 0.2),
@@ -201,7 +201,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   fontSize: 28,
                   flexShrink: 0
                 }}>
-                  {PathIcons[path.icon] || "'\uD83D\uDCDA'"}
+                  {PathIcons[path.icon] || "\uD83D\uDCDA"}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -343,11 +343,11 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
   const progress = items.length > 0 ? Math.round((completedCount / items.length) * 100) : 0;
 
   const itemTypeIcons = {
-    lab: "'\uD83E\uDDEA'",
-    quiz: "'\u2753'",
-    reading: "'\uD83D\uDCD6'",
-    video: "'\uD83C\uDFAC'",
-    certification_exam: "'\uD83D\uDCDC'"
+    lab: "\uD83E\uDDEA",
+    quiz: "\u2753",
+    reading: "\uD83D\uDCD6",
+    video: "\uD83C\uDFAC",
+    certification_exam: "\uD83D\uDCDC"
   };
 
   const statusColors = {
@@ -397,7 +397,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
             justifyContent: "center",
             fontSize: 48
           }}>
-            {PathIcons[path.icon] || "'\uD83D\uDCDA'"}
+            {PathIcons[path.icon] || "\uD83D\uDCDA"}
           </div>
           <div style={{ flex: 1 }}>
             <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, margin: 0, marginBottom: 8 }}>
@@ -408,7 +408,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
             </p>
             <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
               <span style={{ color: T.muted, fontSize: 13 }}>{'\u23F1'} {path.estimated_hours} hours</span>
-              <span style={{ color: T.muted, fontSize: 13 }}>'\uD83D\uDCDA' {items.length} lessons</span>
+              <span style={{ color: T.muted, fontSize: 13 }}>{'\uD83D\uDCDA'} {items.length} lessons</span>
               <span style={{
                 padding: "4px 12px",
                 background: dim(T.success, 0.15),
@@ -513,13 +513,13 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
                 fontSize: 16,
                 flexShrink: 0
               }}>
-                {status === "completed" ? "(check)" : status === "locked" ? "'\uD83D\uDD12'" : item.step_number}
+                {status === "completed" ? "(check)" : status === "locked" ? "\uD83D\uDD12" : item.step_number}
               </div>
 
               {/* Item Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 16 }}>{itemTypeIcons[item.item_type] || "'\uD83D\uDCC4'"}</span>
+                  <span style={{ fontSize: 16 }}>{itemTypeIcons[item.item_type] || "\uD83D\uDCC4"}</span>
                   <h3 style={{ color: T.text, margin: 0, fontSize: 15, fontWeight: 600 }}>
                     {item.title}
                   </h3>
@@ -573,7 +573,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
           padding: 24
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-            <span style={{ fontSize: 28 }}>'\uD83D\uDCDC'</span>
+            <span style={{ fontSize: 28 }}>{'\uD83D\uDCDC'}</span>
             <h3 style={{ color: T.text, margin: 0 }}>Certification Available</h3>
           </div>
           <p style={{ color: T.muted, margin: 0, fontSize: 14 }}>

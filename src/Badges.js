@@ -262,7 +262,7 @@ export function BadgesPage({ user }) {
 
       {filteredBadges.length === 0 && (
         <div style={{textAlign:"center",padding:60,color:T.muted}}>
-          <div style={{fontSize:48,marginBottom:16}}>'\uD83C\uDFC6'</div>
+          <div style={{fontSize:48,marginBottom:16}}>{'\uD83C\uDFC6'}</div>
           <p>No badges in this category yet.</p>
         </div>
       )}

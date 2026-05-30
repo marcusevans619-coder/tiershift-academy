@@ -55,7 +55,7 @@ function BadgeToast({ badges, onClose }) {
             justifyContent: "center",
             fontSize: 24
           }}>
-            '\uD83C\uDFC6'
+            {'\uD83C\uDFC6'}
           </div>
           <div>
             <div style={{ color: T.amber, fontSize: 12, fontWeight: 600, textTransform: "uppercase" }}>

@@ -100,7 +100,7 @@ export default function DemoRequestModal({ onClose }) {
         <div style={{ padding:"24px 28px" }}>
           {submitted ? (
             <div style={{ textAlign:"center", padding:"20px 0" }}>
-              <div style={{ fontSize:48, marginBottom:16 }}>'\uD83C\uDF89'</div>
+              <div style={{ fontSize:48, marginBottom:16 }}>{'\uD83C\uDF89'}</div>
               <h3 style={{ color:T.success, fontSize:20, fontWeight:800, marginBottom:10 }}>Request Received!</h3>
               <p style={{ color:T.sub, fontSize:14, lineHeight:1.7, marginBottom:24 }}>
                 Thanks <strong style={{ color:T.text }}>{form.name}</strong>! We will be in touch at <strong style={{ color:T.cyan }}>{form.email}</strong> within 24 hours to schedule your demo.
