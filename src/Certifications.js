@@ -517,7 +517,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
                       fontSize: 14,
                       fontWeight: 600
                     }}>
-                      {isCorrect ? "(check)" : "\u2717"} Q{idx + 1}
+                      {isCorrect ? '\u2713' : "\u2717"} Q{idx + 1}
                     </span>
                   </div>
                   <p style={{ color: T.text, marginBottom: 12 }}>{q.question_text}</p>
