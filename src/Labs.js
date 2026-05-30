@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
 const T = {
@@ -55,7 +55,7 @@ function BadgeToast({ badges, onClose }) {
             justifyContent: "center",
             fontSize: 24
           }}>
-            🏆
+            '\uD83C\uDFC6'
           </div>
           <div>
             <div style={{ color: T.amber, fontSize: 12, fontWeight: 600, textTransform: "uppercase" }}>
@@ -76,7 +76,7 @@ function BadgeToast({ badges, onClose }) {
               marginLeft: 8
             }}
           >
-            ×
+            '\u00D7'
           </button>
         </div>
       ))}
