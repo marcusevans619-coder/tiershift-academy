@@ -206,7 +206,7 @@ export function BadgesPage({ user }) {
               <div style={{marginBottom:12}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
                   <h3 style={{color:T.text,margin:0,fontSize:16,fontWeight:700}}>{badge.name}</h3>
-                  {earned && <span style={{color:T.success,fontSize:14}}>✓</span>}
+                  {earned && <span style={{color:T.success,fontSize:14}}>(check)</span>}
                 </div>
                 <p style={{color:T.muted,margin:0,fontSize:13,lineHeight:1.4}}>{badge.description}</p>
               </div>

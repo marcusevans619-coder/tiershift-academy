@@ -111,9 +111,9 @@ export default function DemoRequestModal({ onClose }) {
                 fontSize:13, color:T.sub, marginBottom:24, textAlign:"left",
               }}>
                 <div style={{ fontWeight:700, color:T.cyan, marginBottom:6, fontFamily:"monospace", fontSize:11, textTransform:"uppercase" }}>What to Expect</div>
-                {["20-minute walkthrough of the platform","We will customize it around your team size and needs","See the manager dashboard and lab experience live","No hard sell — just an honest look at the product"].map((item,i) => (
+                {["20-minute walkthrough of the platform","We will customize it around your team size and needs","See the manager dashboard and lab experience live","No hard sell - just an honest look at the product"].map((item,i) => (
                   <div key={i} style={{ display:"flex", gap:8, marginBottom:4 }}>
-                    <span style={{ color:T.success }}>✓</span>
+                    <span style={{ color:T.success }}>(check)</span>
                     <span>{item}</span>
                   </div>
                 ))}
@@ -196,7 +196,7 @@ export default function DemoRequestModal({ onClose }) {
                   transition:"all 0.2s",
                 }}
               >
-                {loading ? "Submitting..." : "Request Demo →"}
+                {loading ? "Submitting..." : "Request Demo >"}
               </button>
 
               <p style={{ textAlign:"center", fontSize:12, color:T.muted, marginTop:12 }}>

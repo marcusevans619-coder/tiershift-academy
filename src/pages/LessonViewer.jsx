@@ -137,11 +137,11 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
 
         {isLast ? (
           <button onClick={markComplete} style={{ background:T.success, color:'#fff', border:'none', padding:'12px 28px', borderRadius:8, fontWeight:700, cursor:'pointer', fontSize:14 }}>
-            ✓ Mark Complete
+            (check) Mark Complete
           </button>
         ) : (
           <button onClick={() => setCurrent(c => c + 1)} style={{ background:T.cyan, color:T.bg, border:'none', padding:'12px 28px', borderRadius:8, fontWeight:700, cursor:'pointer', fontSize:14 }}>
-            Next Lesson →
+            Next Lesson >
           </button>
         )}
       </div>

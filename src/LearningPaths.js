@@ -124,7 +124,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                     <span>⏱️ {path.estimated_hours}h</span>
                     {progress.enrolled && (
                       <span style={{ color: progress.completed ? T.success : path.color || T.cyan }}>
-                        {progress.completed ? "✓ Completed" : `${progress.progress}% complete`}
+                        {progress.completed ? "(check) Completed" : `${progress.progress}% complete`}
                       </span>
                     )}
                   </div>
@@ -206,7 +206,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <h3 style={{ color: T.text, margin: 0, fontSize: 16, fontWeight: 600 }}>{path.title}</h3>
-                    {progress.completed && <span style={{ color: T.success, fontSize: 12 }}>✓ Completed</span>}
+                    {progress.completed && <span style={{ color: T.success, fontSize: 12 }}>(check) Completed</span>}
                   </div>
                   <p style={{ color: T.muted, margin: 0, fontSize: 13 }}>{path.description}</p>
                   {progress.enrolled && !progress.completed && (
@@ -513,7 +513,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
                 fontSize: 16,
                 flexShrink: 0
               }}>
-                {status === "completed" ? "✓" : status === "locked" ? "🔒" : item.step_number}
+                {status === "completed" ? "(check)" : status === "locked" ? "🔒" : item.step_number}
               </div>
 
               {/* Item Info */}

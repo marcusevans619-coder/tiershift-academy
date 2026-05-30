@@ -327,7 +327,7 @@ export function ProfilePage({ user, onNavigate }) {
               onClick={() => onNavigate && onNavigate("badges")}
               style={{ background: "transparent", border: "none", color: T.cyan, cursor: "pointer", fontSize: 13 }}
             >
-              View All →
+              View All >
             </button>
           </div>
           {badges.length === 0 ? (
@@ -456,7 +456,7 @@ export function ProfilePage({ user, onNavigate }) {
                   justifyContent: "center",
                   color: T.success
                 }}>
-                  ✓
+                  (check)
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ color: T.text, fontWeight: 500 }}>

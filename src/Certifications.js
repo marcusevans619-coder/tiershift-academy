@@ -517,7 +517,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
                       fontSize: 14,
                       fontWeight: 600
                     }}>
-                      {isCorrect ? "✓" : "✗"} Q{idx + 1}
+                      {isCorrect ? "(check)" : "✗"} Q{idx + 1}
                     </span>
                   </div>
                   <p style={{ color: T.text, marginBottom: 12 }}>{q.question_text}</p>
@@ -753,7 +753,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
               cursor: "pointer"
             }}
           >
-            Next →
+            Next >
           </button>
         )}
       </div>
@@ -1172,7 +1172,7 @@ export function VerifyCredentialPage({ credentialId }) {
           fontSize: 14,
           marginBottom: 24
         }}>
-          {isValid ? "✓ VERIFIED" : "✗ " + (isExpired ? "EXPIRED" : "INVALID")}
+          {isValid ? "(check) VERIFIED" : "✗ " + (isExpired ? "EXPIRED" : "INVALID")}
         </div>
 
         <div style={{ marginBottom: 24 }}>
