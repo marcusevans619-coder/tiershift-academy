@@ -25,7 +25,7 @@ export default function TracksPage({ tracks, setSelectedTrack, setPage }) {
                 <span style={{fontSize:'24px'}}>{t.icon}</span>
                 <h3 style={{color: t.color || '#00d4ff', margin:0, fontSize:'18px'}}>{t.title}</h3>
               </div>
-              <p style={{color:'#aaa', margin:'10px 0', fontSize:'14px'}}>{t.total_modules} modules • {t.total_hours}h • {t.total_labs} labs</p>
+              <p style={{color:'#aaa', margin:'10px 0', fontSize:'14px'}}>{t.total_modules} modules * {t.total_hours}h * {t.total_labs} labs</p>
               <p style={{color:'#bbb', margin:'10px 0', fontSize:'14px'}}>{t.description}</p>
               <p style={{color: t.color || '#00d4ff', margin:'10px 0 0 0', fontSize:'12px', cursor:'pointer'}}>Click to explore & enroll ?</p>
             </div>

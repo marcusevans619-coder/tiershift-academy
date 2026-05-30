@@ -82,7 +82,7 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
 
       setOutline(data.outline);
       setUsedTranscript(data.usedTranscript);
-      setTitle(module.name + ' ÃƒÂ¢Ã¢â'\u20AC'šÂ¬Ã¢â‚¬Â ' + selected.snippet.title.slice(0, 50));
+      setTitle(module.name + ' �?�?�?¢�?¢â'\u20AC'š�?¬�?¢â�??¬�? ' + selected.snippet.title.slice(0, 50));
       setStep('preview');
       setStatus('');
     } catch (err) {
@@ -114,8 +114,8 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
   return (
     <div style={S.overlay}>
       <div style={S.modal}>
-        <button style={S.closeBtn} onClick={onClose}>ÃƒÆ'Ã¢â‚¬â'\u20AC'</button>
-        <div style={S.title}>Generate Lesson ÃƒÂ¢Ã¢â'\u20AC'šÂ¬Ã¢â‚¬Â {module.name}</div>
+        <button style={S.closeBtn} onClick={onClose}>�?�?�?'�?¢â�??¬â'\u20AC'</button>
+        <div style={S.title}>Generate Lesson �?�?�?¢�?¢â'\u20AC'š�?¬�?¢â�??¬�? {module.name}</div>
         <div style={S.sub}>Find a video and generate a lesson report from its transcript</div>
 
         {status && <div style={S.status}>{status}</div>}
@@ -157,7 +157,7 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
 
         {step === 'generate' && (
           <div style={{ textAlign:'center', padding:'40px 0', color:'#64748b', fontSize:13 }}>
-            <div style={{ fontSize:32, marginBottom:16 }}>ÃƒÂ¢Ã…Â¡Ã‚Â¡</div>
+            <div style={{ fontSize:32, marginBottom:16 }}>�?�?�?¢�?�?��?¡�?�??�?¡</div>
             <div>Fetching transcript and generating lesson report...</div>
             <div style={{ marginTop:8, fontSize:12, color:'#475569' }}>This takes about 15-20 seconds</div>
           </div>
@@ -176,7 +176,7 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
                 color: usedTranscript ? '#10b981' : '#f59e0b',
                 border: `1px solid ${usedTranscript ? '#10b98144' : '#f59e0b44'}`,
               }}>
-                {usedTranscript ? 'ÃƒÂ¢Ã…â'\u20AC'œÃ¢â‚¬Å" Generated from video transcript' : 'ÃƒÂ¢Ã…Â¡Ã‚Â  Generated from video title (no transcript available)'}
+                {usedTranscript ? '�?�?�?¢�?�?�â'\u20AC'�?�?¢â�??¬�?" Generated from video transcript' : '�?�?�?¢�?�?��?¡�?�??�?  Generated from video title (no transcript available)'}
               </div>
             </div>
             <div style={S.section}>
