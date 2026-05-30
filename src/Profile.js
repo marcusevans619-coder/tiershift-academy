@@ -605,7 +605,7 @@ export function PublicProfilePage({ userId }) {
                 <div>
                   <div style={{ color: T.text, fontWeight: 600 }}>{uc.certification?.name}</div>
                   <div style={{ color: T.muted, fontSize: 13 }}>
-                    Credential ID: {uc.credential_id} '\u2022' Earned {new Date(uc.earned_at).toLocaleDateString()}
+                    Credential ID: {uc.credential_id} {'\u2022'} Earned {new Date(uc.earned_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>

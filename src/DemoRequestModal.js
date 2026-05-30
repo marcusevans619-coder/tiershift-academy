@@ -78,7 +78,7 @@ export default function DemoRequestModal({ onClose }) {
               borderRadius:8, color:T.muted, width:32, height:32,
               cursor:"pointer", fontSize:18, lineHeight:1,
             }}
-          >'\u00D7'</button>
+          >{'\u00D7'}</button>
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
             <div style={{
               width:40, height:40,

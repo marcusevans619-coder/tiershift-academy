@@ -375,7 +375,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
           gap: 8
         }}
       >
-        '\u2190' Back to Learning Paths
+        {'\u2190'} Back to Learning Paths
       </button>
 
       {/* Path Header */}
@@ -407,7 +407,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
               {path.long_description || path.description}
             </p>
             <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
-              <span style={{ color: T.muted, fontSize: 13 }}>'\u23F1' {path.estimated_hours} hours</span>
+              <span style={{ color: T.muted, fontSize: 13 }}>{'\u23F1'} {path.estimated_hours} hours</span>
               <span style={{ color: T.muted, fontSize: 13 }}>'\uD83D\uDCDA' {items.length} lessons</span>
               <span style={{
                 padding: "4px 12px",

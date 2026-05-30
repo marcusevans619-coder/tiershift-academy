@@ -76,7 +76,7 @@ function BadgeToast({ badges, onClose }) {
               marginLeft: 8
             }}
           >
-            '\u00D7'
+            {'\u00D7'}
           </button>
         </div>
       ))}

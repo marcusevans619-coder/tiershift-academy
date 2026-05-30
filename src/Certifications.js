@@ -191,7 +191,7 @@ export function CertificationsPage({ user, onPathClick }) {
                 <div style={{ display: "flex", gap: 16, fontSize: 13, color: T.muted }}>
                   <span>'\uD83D\uDCCA' Passing: {cert.passing_score}%</span>
                   {cert.validity_months && (
-                    <span>'\u23F1' Valid: {cert.validity_months} months</span>
+                    <span>{'\u23F1'} Valid: {cert.validity_months} months</span>
                   )}
                 </div>
               </div>
@@ -376,7 +376,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
   if (!quiz || questions.length === 0) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 20 }}>'\u26A0'</div>
+        <div style={{ fontSize: 48, marginBottom: 20 }}>{'\u26A0'}</div>
         <h2 style={{ color: T.text, marginBottom: 12 }}>Exam Not Available</h2>
         <p style={{ color: T.muted, marginBottom: 24 }}>
           The exam for this certification is not yet available.
@@ -577,7 +577,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             {certification.name} Exam
           </h2>
           <div style={{ color: T.muted, fontSize: 13, marginTop: 4 }}>
-            Question {currentQ + 1} of {questions.length} '\u2022' {answeredCount} answered
+            Question {currentQ + 1} of {questions.length} {'\u2022'} {answeredCount} answered
           </div>
         </div>
         
@@ -591,7 +591,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             fontSize: 18,
             fontWeight: 600
           }}>
-            '\u23F1' {formatTime(timeLeft)}
+            {'\u23F1'} {formatTime(timeLeft)}
           </div>
           <button
             onClick={onCancel}
@@ -694,7 +694,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             cursor: currentQ === 0 ? "not-allowed" : "pointer"
           }}
         >
-          '\u2190' Previous
+          {'\u2190'} Previous
         </button>
 
         {/* Question dots */}
@@ -865,7 +865,7 @@ function CertificationCard({ userCert, certification, user }) {
             {userCert.score && <span>'\uD83D\uDCCA' Score: {userCert.score}%</span>}
             {userCert.expires_at && (
               <span style={{ color: isExpired ? T.danger : T.muted }}>
-                '\u23F1' {isExpired ? "Expired" : "Valid until"}: {new Date(userCert.expires_at).toLocaleDateString()}
+                {'\u23F1'} {isExpired ? "Expired" : "Valid until"}: {new Date(userCert.expires_at).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -1129,7 +1129,7 @@ export function VerifyCredentialPage({ credentialId }) {
           textAlign: "center",
           maxWidth: 400
         }}>
-          <div style={{ fontSize: 48, marginBottom: 20 }}>'\u274C'</div>
+          <div style={{ fontSize: 48, marginBottom: 20 }}>{'\u274C'}</div>
           <h1 style={{ color: T.danger, marginBottom: 12 }}>Invalid Credential</h1>
           <p style={{ color: T.muted }}>
             The credential ID "{credentialId}" was not found in our records.
