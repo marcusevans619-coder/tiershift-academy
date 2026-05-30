@@ -121,7 +121,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   <h3 style={{ color: T.text, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{path.title}</h3>
                   <p style={{ color: T.muted, fontSize: 13, lineHeight: 1.5, marginBottom: 16 }}>{path.description}</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 16, color: T.muted, fontSize: 12 }}>
-                    <span>'\u23F1' {path.estimated_hours}h</span>
+                    <span>{'\u23F1'} {path.estimated_hours}h</span>
                     {progress.enrolled && (
                       <span style={{ color: progress.completed ? T.success : path.color || T.cyan }}>
                         {progress.completed ? "(check) Completed" : `${progress.progress}% complete`}

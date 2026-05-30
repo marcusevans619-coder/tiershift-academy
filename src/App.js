@@ -222,7 +222,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: T.bg, color: T.text, fontFamily: "'Outfit',sans-serif" }}>
+    <div style={{ display: "flex", height: "100vh", background: T.bg, color: T.text, fontFamily: "'Outfit',sans-serif", overflowX: "hidden", position: "relative" }}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
       {isMobile && navOpen && <div onClick={() => setNavOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 40 }} />}
       {isMobile && <div style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100vw', height: 56, background: T.surface, borderBottom: '1px solid ' + T.border, zIndex: 60, display: 'flex', alignItems: 'center', padding: '0 12px', gap: 12, boxSizing: 'border-box' }}><button onClick={() => setNavOpen(o => !o)} style={{ background: T.card, border: '1px solid ' + T.border, borderRadius: 8, color: T.cyan, fontSize: 20, width: 40, height: 40, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, flexShrink: 0 }}>{navOpen ? 'X' : '='}</button><div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><div style={{ width: 28, height: 28, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, color: T.bg }}>TS</div><div style={{ fontSize: 15, fontWeight: 800 }}>Tier<span style={{ color: T.cyan }}>Shift</span></div></div></div>}
