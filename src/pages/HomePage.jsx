@@ -261,10 +261,10 @@ export default function HomePage({onGetStarted, onSignIn}) {
           <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)",gap:24,position:"relative"}}>
             <div style={{position:"absolute",top:24,left:"12.5%",right:"12.5%",height:1,background:"linear-gradient(90deg,#00e5ff40,#a78bfa40)",zIndex:0}}/>
             {[
-              {step:"01",icon:"??",title:"Admin Setup",role:"You (Manager)",desc:"Create your team, invite techs, assign the right learning paths to each person."},
-              {step:"02",icon:"???",title:"Techs Train",role:"Your Team",desc:"Each tech works through labs, scenarios, and exams at their own pace."},
-              {step:"03",icon:"??",title:"You Monitor",role:"You (Manager)",desc:"Watch progress in real time. See who is ahead, who is falling behind, and intervene early."},
-              {step:"04",icon:"??",title:"Certs Earned",role:"Everyone Wins",desc:"Techs earn verified credentials. You get a more capable team."},
+              {step:"01",icon:String.fromCodePoint(0x1F6E0),title:"Admin Setup",role:"You (Manager)",desc:"Create your team, invite techs, assign the right learning paths to each person."},
+              {step:"02",icon:String.fromCodePoint(0x1F4BB),title:"Techs Train",role:"Your Team",desc:"Each tech works through labs, scenarios, and exams at their own pace."},
+              {step:"03",icon:String.fromCodePoint(0x1F4CA),title:"You Monitor",role:"You (Manager)",desc:"Watch progress in real time. See who is ahead, who is falling behind, and intervene early."},
+              {step:"04",icon:String.fromCodePoint(0x1F3C6),title:"Certs Earned",role:"Everyone Wins",desc:"Techs earn verified credentials. You get a more capable team."},
             ].map((s,i)=>(
               <div key={i} style={{textAlign:"center",position:"relative",zIndex:1}}>
                 <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:"#060a12",margin:"0 auto 14px",fontFamily:"monospace"}}>{s.step}</div>
