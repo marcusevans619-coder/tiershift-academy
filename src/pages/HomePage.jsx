@@ -336,7 +336,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
       <footer style={{padding:"24px 48px",borderTop:"1px solid #1e2d40",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:26,height:26,background:"linear-gradient(135deg,#00e5ff,#a78bfa)",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:"#060a12"}}>TS</div>
-          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy © 2025</span>
+          <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy {'\u00A9'} 2025</span>
         </div>
         <div style={{fontSize:11,color:"#64748b"}}>Built for IT professionals. No fluff, just skills.</div>
       </footer>
