@@ -1,5 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
+// Emoji constants — defined as runtime values to bypass bundler escape mangling
+const EMOJI_CHART = String.fromCodePoint(0x1F4CA);
+const EMOJI_CLOCK = String.fromCodePoint(0x23F1);
+const EMOJI_CALENDAR = String.fromCodePoint(0x1F4C5);
+const EMOJI_TROPHY = String.fromCodePoint(0x1F3C6);
+const EMOJI_MEMO = String.fromCodePoint(0x1F4DD);
+const EMOJI_SCROLL = String.fromCodePoint(0x1F4DC);
+const EMOJI_BOOKS = String.fromCodePoint(0x1F4DA);
+const EMOJI_PARTY = String.fromCodePoint(0x1F389);
+const EMOJI_BULB = String.fromCodePoint(0x1F4A1);
+const EMOJI_BULLET = String.fromCodePoint(0x2022);
+const EMOJI_CHECK = String.fromCodePoint(0x2713);
+const EMOJI_CROSS = String.fromCodePoint(0x2717);
+
 
 const T = {
   bg: "#060a12", surface: "#101828", card: "#131e30", border: "#1c2d44",
@@ -189,9 +203,9 @@ export function CertificationsPage({ user, onPathClick }) {
                 )}
 
                 <div style={{ display: "flex", gap: 16, fontSize: 13, color: T.muted }}>
-                  <span>{'\uD83D\uDCCA'} Passing: {cert.passing_score}%</span>
+                  <span>{EMOJI_CHART} Passing: {cert.passing_score}%</span>
                   {cert.validity_months && (
-                    <span>{'\u23F1'} Valid: {cert.validity_months} months</span>
+                    <span>{EMOJI_CLOCK} Valid: {cert.validity_months} months</span>
                   )}
                 </div>
               </div>
@@ -544,7 +558,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
                       color: T.muted,
                       fontSize: 13
                     }}>
-                      {'\uD83D\uDCA1'} {q.explanation}
+                      {EMOJI_BULB} {q.explanation}
                     </div>
                   )}
                 </div>
@@ -577,7 +591,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             {certification.name} Exam
           </h2>
           <div style={{ color: T.muted, fontSize: 13, marginTop: 4 }}>
-            Question {currentQ + 1} of {questions.length} {'\u2022'} {answeredCount} answered
+            Question {currentQ + 1} of {questions.length} {EMOJI_BULLET} {answeredCount} answered
           </div>
         </div>
         
@@ -591,7 +605,7 @@ function CertificationExam({ certification, user, onComplete, onCancel }) {
             fontSize: 18,
             fontWeight: 600
           }}>
-            {'\u23F1'} {formatTime(timeLeft)}
+            {EMOJI_CLOCK} {formatTime(timeLeft)}
           </div>
           <button
             onClick={onCancel}
@@ -824,7 +838,7 @@ function CertificationCard({ userCert, certification, user }) {
           flexShrink: 0,
           boxShadow: `0 0 20px ${certification.color || T.violet}30`
         }}>
-          {'\uD83C\uDFC6'}
+          {EMOJI_TROPHY}
         </div>
         
         <div style={{ flex: 1, minWidth: 0 }}><div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -861,11 +875,11 @@ function CertificationCard({ userCert, certification, user }) {
           </div>
           
           <div style={{ display: "flex", gap: 16, fontSize: 13, color: T.muted }}>
-            <span>{'\uD83D\uDCC5'} Earned: {new Date(userCert.earned_at).toLocaleDateString()}</span>
-            {userCert.score && <span>{'\uD83D\uDCCA'} Score: {userCert.score}%</span>}
+            <span>{EMOJI_CALENDAR} Earned: {new Date(userCert.earned_at).toLocaleDateString()}</span>
+            {userCert.score && <span>{EMOJI_CHART} Score: {userCert.score}%</span>}
             {userCert.expires_at && (
               <span style={{ color: isExpired ? T.danger : T.muted }}>
-                {'\u23F1'} {isExpired ? "Expired" : "Valid until"}: {new Date(userCert.expires_at).toLocaleDateString()}
+                {EMOJI_CLOCK} {isExpired ? "Expired" : "Valid until"}: {new Date(userCert.expires_at).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -1021,7 +1035,7 @@ function generateCertificatePDF(userCert, certification, user) {
       <div class="academy">Academy</div>
     </div>
     
-    <div class="icon">{'\uD83C\uDFC6'}</div>
+    <div class="icon">{EMOJI_TROPHY}</div>
     
     <div class="content">
       <div class="name">${user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Graduate"}</div>
@@ -1195,7 +1209,7 @@ export function VerifyCredentialPage({ credentialId }) {
           fontSize: 40,
           margin: "0 auto 24px"
         }}>
-          {'\uD83C\uDFC6'}
+          {EMOJI_TROPHY}
         </div>
 
         <h1 style={{ color: T.text, fontSize: 24, marginBottom: 8 }}>
