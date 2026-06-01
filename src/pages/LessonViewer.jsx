@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '../supabase';
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_BOOKS = String.fromCodePoint(0x1F4DA);
+const EMOJI_PARTY = String.fromCodePoint(0x1F389);
+const EMOJI_LARROW = String.fromCodePoint(0x2190);
 const T = {
   bg:"#060a12", surface:"#101828", card:"#131e30",
   border:"#1c2d44", cyan:"#00e5ff", text:"#e8edf5",
@@ -56,9 +61,9 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
 
   if (lessons.length === 0) return (
     <div style={{ padding: 40 }}>
-      <button onClick={onBack} style={{ background:'transparent', border:'none', color:T.cyan, cursor:'pointer', fontSize:14, marginBottom:24 }}>{'\u2190'} Back to Modules</button>
+      <button onClick={onBack} style={{ background:'transparent', border:'none', color:T.cyan, cursor:'pointer', fontSize:14, marginBottom:24 }}>{EMOJI_LARROW} Back to Modules</button>
       <div style={{ background:T.card, border:'1px solid '+T.border, borderRadius:12, padding:40, textAlign:'center' }}>
-        <div style={{ fontSize:40, marginBottom:16 }}>{'\uD83D\uDCDA'}</div>
+        <div style={{ fontSize:40, marginBottom:16 }}>{EMOJI_BOOKS}</div>
         <h3 style={{ color:T.text, marginBottom:8 }}>No lessons yet</h3>
         <p style={{ color:T.muted, fontSize:14 }}>An admin needs to generate a lesson for this module first.</p>
       </div>
@@ -71,7 +76,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
 
   if (completed) return (
     <div style={{ padding:40, textAlign:'center' }}>
-      <div style={{ fontSize:64, marginBottom:16 }}>{'\uD83C\uDF89'}</div>
+      <div style={{ fontSize:64, marginBottom:16 }}>{EMOJI_PARTY}</div>
       <h2 style={{ color:T.cyan, marginBottom:8 }}>Module Complete!</h2>
       <p style={{ color:T.muted }}>Returning to dashboard...</p>
     </div>
@@ -82,7 +87,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
       {/* Header */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
         <button onClick={onBack} style={{ background:'transparent', border:'none', color:T.cyan, cursor:'pointer', fontSize:14, display:'flex', alignItems:'center', gap:6 }}>
-          {'\u2190'} Back to Modules
+          {EMOJI_LARROW} Back to Modules
         </button>
         <span style={{ fontSize:12, color:T.muted }}>
           Lesson {current + 1} of {lessons.length}
@@ -132,7 +137,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
           disabled={current === 0}
           style={{ background:'transparent', border:'1px solid '+T.border, color:T.muted, padding:'10px 20px', borderRadius:8, cursor: current===0 ? 'not-allowed' : 'pointer', fontSize:13, opacity: current===0 ? 0.4 : 1 }}
         >
-          {'\u2190'} Previous
+          {EMOJI_LARROW} Previous
         </button>
 
         {isLast ? (

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { supabase } from "./supabase";
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_PARTY = String.fromCodePoint(0x1F389);
+const EMOJI_TIMES = String.fromCodePoint(0x00D7);
 const T = {
   bg:"#060a12", surface:"#0d1520", card:"#111827", border:"#1e2d40",
   cyan:"#00e5ff", violet:"#a78bfa", text:"#e8edf5", sub:"#94a3b8", muted:"#64748b",
@@ -78,7 +82,7 @@ export default function DemoRequestModal({ onClose }) {
               borderRadius:8, color:T.muted, width:32, height:32,
               cursor:"pointer", fontSize:18, lineHeight:1,
             }}
-          >{'\u00D7'}</button>
+          >{EMOJI_TIMES}</button>
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
             <div style={{
               width:40, height:40,
@@ -100,7 +104,7 @@ export default function DemoRequestModal({ onClose }) {
         <div style={{ padding:"24px 28px" }}>
           {submitted ? (
             <div style={{ textAlign:"center", padding:"20px 0" }}>
-              <div style={{ fontSize:48, marginBottom:16 }}>{'\uD83C\uDF89'}</div>
+              <div style={{ fontSize:48, marginBottom:16 }}>{EMOJI_PARTY}</div>
               <h3 style={{ color:T.success, fontSize:20, fontWeight:800, marginBottom:10 }}>Request Received!</h3>
               <p style={{ color:T.sub, fontSize:14, lineHeight:1.7, marginBottom:24 }}>
                 Thanks <strong style={{ color:T.text }}>{form.name}</strong>! We will be in touch at <strong style={{ color:T.cyan }}>{form.email}</strong> within 24 hours to schedule your demo.

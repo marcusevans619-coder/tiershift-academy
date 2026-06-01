@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_TROPHY = String.fromCodePoint(0x1F3C6);
+const EMOJI_TIMES = String.fromCodePoint(0x00D7);
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",border:"#1c2d44",
   cyan:"#00e5ff",violet:"#a78bfa",rose:"#fb7185",emerald:"#34d399",
@@ -55,7 +59,7 @@ function BadgeToast({ badges, onClose }) {
             justifyContent: "center",
             fontSize: 24
           }}>
-            {'\uD83C\uDFC6'}
+            {EMOJI_TROPHY}
           </div>
           <div>
             <div style={{ color: T.amber, fontSize: 12, fontWeight: 600, textTransform: "uppercase" }}>
@@ -76,7 +80,7 @@ function BadgeToast({ badges, onClose }) {
               marginLeft: 8
             }}
           >
-            {'\u00D7'}
+            {EMOJI_TIMES}
           </button>
         </div>
       ))}

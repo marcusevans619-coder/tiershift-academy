@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_CLOCK = String.fromCodePoint(0x23F1);
+const EMOJI_SCROLL = String.fromCodePoint(0x1F4DC);
+const EMOJI_BOOKS = String.fromCodePoint(0x1F4DA);
+const EMOJI_LARROW = String.fromCodePoint(0x2190);
 const T = {
   bg: "#060a12", surface: "#101828", card: "#131e30", border: "#1c2d44",
   cyan: "#00e5ff", violet: "#a78bfa", rose: "#fb7185", emerald: "#34d399",
@@ -121,7 +127,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   <h3 style={{ color: T.text, fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{path.title}</h3>
                   <p style={{ color: T.muted, fontSize: 13, lineHeight: 1.5, marginBottom: 16 }}>{path.description}</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 16, color: T.muted, fontSize: 12 }}>
-                    <span>{'\u23F1'} {path.estimated_hours}h</span>
+                    <span>{EMOJI_CLOCK} {path.estimated_hours}h</span>
                     {progress.enrolled && (
                       <span style={{ color: progress.completed ? T.success : path.color || T.cyan }}>
                         {progress.completed ? "(check) Completed" : `${progress.progress}% complete`}
@@ -375,7 +381,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
           gap: 8
         }}
       >
-        {'\u2190'} Back to Learning Paths
+        {EMOJI_LARROW} Back to Learning Paths
       </button>
 
       {/* Path Header */}
@@ -407,8 +413,8 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
               {path.long_description || path.description}
             </p>
             <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
-              <span style={{ color: T.muted, fontSize: 13 }}>{'\u23F1'} {path.estimated_hours} hours</span>
-              <span style={{ color: T.muted, fontSize: 13 }}>{'\uD83D\uDCDA'} {items.length} lessons</span>
+              <span style={{ color: T.muted, fontSize: 13 }}>{EMOJI_CLOCK} {path.estimated_hours} hours</span>
+              <span style={{ color: T.muted, fontSize: 13 }}>{EMOJI_BOOKS} {items.length} lessons</span>
               <span style={{
                 padding: "4px 12px",
                 background: dim(T.success, 0.15),
@@ -573,7 +579,7 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
           padding: 24
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-            <span style={{ fontSize: 28 }}>{'\uD83D\uDCDC'}</span>
+            <span style={{ fontSize: 28 }}>{EMOJI_SCROLL}</span>
             <h3 style={{ color: T.text, margin: 0 }}>Certification Available</h3>
           </div>
           <p style={{ color: T.muted, margin: 0, fontSize: 14 }}>

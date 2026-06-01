@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_SCROLL = String.fromCodePoint(0x1F4DC);
+const EMOJI_BULLET = String.fromCodePoint(0x2022);
+const EMOJI_OFFICE = String.fromCodePoint(0x1F3E2);
+const EMOJI_PIN = String.fromCodePoint(0x1F4CD);
 const T = {
   bg: "#060a12", surface: "#101828", card: "#131e30", border: "#1c2d44",
   cyan: "#00e5ff", violet: "#a78bfa", rose: "#fb7185", emerald: "#34d399",
@@ -253,8 +259,8 @@ export function ProfilePage({ user, onNavigate }) {
                   <p style={{ color: T.muted, fontSize: 14, margin: 0, marginBottom: 12, lineHeight: 1.5 }}>{profile.bio}</p>
                 )}
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap", color: T.muted, fontSize: 13 }}>
-                  {profile?.company && <span>{'\uD83C\uDFE2'} {profile.company}</span>}
-                  {profile?.location && <span>{'\uD83D\uDCCD'} {profile.location}</span>}
+                  {profile?.company && <span>{EMOJI_OFFICE} {profile.company}</span>}
+                  {profile?.location && <span>{EMOJI_PIN} {profile.location}</span>}
                 </div>
               </>
             )}
@@ -402,7 +408,7 @@ export function ProfilePage({ user, onNavigate }) {
                   background: T.surface,
                   borderRadius: 8
                 }}>
-                  <div style={{ fontSize: 28 }}>{'\uD83D\uDCDC'}</div>
+                  <div style={{ fontSize: 28 }}>{EMOJI_SCROLL}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ color: T.text, fontWeight: 600 }}>{uc.certification?.name}</div>
                     <div style={{ color: T.muted, fontSize: 12 }}>
@@ -601,11 +607,11 @@ export function PublicProfilePage({ userId }) {
                 alignItems: "center",
                 gap: 16
               }}>
-                <div style={{ fontSize: 36 }}>{'\uD83D\uDCDC'}</div>
+                <div style={{ fontSize: 36 }}>{EMOJI_SCROLL}</div>
                 <div>
                   <div style={{ color: T.text, fontWeight: 600 }}>{uc.certification?.name}</div>
                   <div style={{ color: T.muted, fontSize: 13 }}>
-                    Credential ID: {uc.credential_id} {'\u2022'} Earned {new Date(uc.earned_at).toLocaleDateString()}
+                    Credential ID: {uc.credential_id} {EMOJI_BULLET} Earned {new Date(uc.earned_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>

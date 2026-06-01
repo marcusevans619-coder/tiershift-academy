@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+
+// Emoji constants - bypass bundler escape mangling
+const EMOJI_TROPHY = String.fromCodePoint(0x1F3C6);
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
   border:"#1c2d44",cyan:"#00e5ff",violet:"#a78bfa",rose:"#fb7185",
@@ -262,7 +265,7 @@ export function BadgesPage({ user }) {
 
       {filteredBadges.length === 0 && (
         <div style={{textAlign:"center",padding:60,color:T.muted}}>
-          <div style={{fontSize:48,marginBottom:16}}>{'\uD83C\uDFC6'}</div>
+          <div style={{fontSize:48,marginBottom:16}}>{EMOJI_TROPHY}</div>
           <p>No badges in this category yet.</p>
         </div>
       )}
