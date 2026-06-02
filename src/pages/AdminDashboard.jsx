@@ -59,6 +59,19 @@ function exportCSV(rows) {
   a.click();
 }
 
+
+// Mobile breakpoint hook
+function useIsMobile(breakpoint = 640) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= breakpoint
+  );
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= breakpoint);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
 export default function AdminDashboard({ user, onSignOut }) {
   const [rows, setRows] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -67,6 +80,7 @@ export default function AdminDashboard({ user, onSignOut }) {
   const [activeTab, setActiveTab] = useState('leads');
   const [modules, setModules] = useState([]);
   const [generatorModule, setGeneratorModule] = useState(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => { fetchRequests(); }, []);
 
@@ -101,7 +115,7 @@ export default function AdminDashboard({ user, onSignOut }) {
 
   return (
     <div style={S.page}>
-      <div style={S.topbar}>
+      <div style={{...S.topbar, ...(isMobile ? { padding: '12px 16px' } : {})}}>
         <div style={S.logo}>
           <span>TS</span>
           <span>TierShift Academy</span>
@@ -112,7 +126,7 @@ export default function AdminDashboard({ user, onSignOut }) {
           <button style={S.signOutBtn} onClick={onSignOut}>Sign Out</button>
         </div>
       </div>
-      <div style={S.body}>
+      <div style={{...S.body, ...(isMobile ? { padding: '16px' } : {})}}>
         {/* Tabs */}
         <div style={{ display:'flex', gap:8, marginBottom:28 }}>
           {[['leads','Demo Requests'],['cms','Content CMS']].map(([id,label]) => (
@@ -123,7 +137,7 @@ export default function AdminDashboard({ user, onSignOut }) {
         {activeTab === 'leads' && <>
         <div style={S.heading}>Demo Requests</div>
         <div style={S.subheading}>All inbound leads from tiershiftacademy.com</div></>}
-        <div style={S.statsRow}>
+        <div style={{...S.statsRow, ...(isMobile ? { gridTemplateColumns: '1fr 1fr', gap: '10px' } : {})}}>
           {[
             { label: 'Total Requests', value: stats.total, sub: 'All time' },
             { label: 'This Week', value: stats.thisWeek, sub: 'Last 7 days' },
@@ -137,11 +151,11 @@ export default function AdminDashboard({ user, onSignOut }) {
             </div>
           ))}
         </div>
-        <div style={S.toolbar}>
-          <input style={S.searchInput} placeholder="Search by name, email, company..." value={search} onChange={e => setSearch(e.target.value)} />
+        <div style={{...S.toolbar, ...(isMobile ? { flexDirection: 'column', gap: '10px', alignItems: 'stretch' } : {})}}>
+          <input style={{...S.searchInput, ...(isMobile ? { width: '100%' } : {})}} placeholder="Search by name, email, company..." value={search} onChange={e => setSearch(e.target.value)} />
           <button style={S.exportBtn} onClick={() => exportCSV(filtered)}>Export CSV</button>
         </div>
-        <div style={S.tableWrap}>
+        <div style={{...S.tableWrap, overflowX: 'auto'}}>
           {loading ? (
             <div style={S.empty}>Loading requests...</div>
           ) : filtered.length === 0 ? (
