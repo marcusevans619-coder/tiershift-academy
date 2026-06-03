@@ -122,7 +122,7 @@ export default function AdminDashboard({ user, onSignOut }) {
           <span style={S.badge}>ADMIN</span>
         </div>
         <div style={S.topbarRight}>
-          <span style={{ fontSize: '12px', color: '#475569' }}>{user?.email}</span>
+          <span style={{ fontSize: '12px', color: '#475569', display: isMobile ? 'none' : 'inline' }}>{user?.email}</span>
           <button style={S.signOutBtn} onClick={onSignOut}>Sign Out</button>
         </div>
       </div>
