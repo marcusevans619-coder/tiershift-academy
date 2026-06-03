@@ -115,7 +115,7 @@ export default function AdminDashboard({ user, onSignOut }) {
 
   return (
     <div style={S.page}>
-      <div style={{...S.topbar, ...(isMobile ? { padding: '12px 16px' } : {})}}>
+      <div style={{...S.topbar, ...(isMobile ? { display: 'none' } : {})}}>
         <div style={S.logo}>
           <span>TS</span>
           <span>TierShift Academy</span>
