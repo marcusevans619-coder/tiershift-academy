@@ -89,8 +89,8 @@ export default function ModuleBrowser({ onSelectModule }) {
                   opacity: available ? 1 : 0.65,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                  <h3 style={{ color: available ? T.text : T.sub, margin: 0, fontSize: 15, fontWeight: 600 }}>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 6 : 12 }}>
+                  <h3 style={{ color: available ? T.text : T.sub, margin: 0, fontSize: isMobile ? 13 : 15, fontWeight: 600 }}>
                     {mod.name}
                   </h3>
                   {available ? (
