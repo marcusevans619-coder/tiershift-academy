@@ -15,6 +15,13 @@ const EMOJI_MODULES = String.fromCodePoint(0x1F4DA);
 const EMOJI_HOURS   = String.fromCodePoint(0x23F1);
 const EMOJI_STREAK  = String.fromCodePoint(0x1F525);
 const EMOJI_BADGES  = String.fromCodePoint(0x2B50);
+const EMOJI_DASH    = String.fromCodePoint(0x1F3E0);
+const EMOJI_TRACKS  = String.fromCodePoint(0x1F5FA);
+const EMOJI_PATHS   = String.fromCodePoint(0x1F4DA);
+const EMOJI_LABS    = String.fromCodePoint(0x1F9EA);
+const EMOJI_CERTS   = String.fromCodePoint(0x1F4DC);
+const EMOJI_ADMIN   = String.fromCodePoint(0x2699);
+const EMOJI_PROFILE = String.fromCodePoint(0x1F464);
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -149,14 +156,15 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
 }
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard", icon: "#" },
-  { id: "tracks", label: "Career Tracks", icon: ">" },
-  { id: "paths", label: "Learning Paths", icon: "P" },
-  { id: "labs", label: "Labs", icon: "L" },
-  { id: "badges", label: "Badges", icon: "B" },
-  { id: "certs", label: "Certifications", icon: "C" },
+  { id: "dashboard", label: "Dashboard", icon: EMOJI_DASH },
+  { id: "tracks", label: "Career Tracks", icon: EMOJI_TRACKS },
+  { id: "paths", label: "Learning Paths", icon: EMOJI_PATHS },
+  { id: "labs", label: "Labs", icon: EMOJI_LABS },
+  { id: "badges", label: "Badges", icon: EMOJI_BADGES },
+  { id: "certs", label: "Certifications", icon: EMOJI_CERTS },
   
-  { id: "admin", label: "Admin", icon: "A" },
+  { id: "profile", label: "Profile", icon: EMOJI_PROFILE },
+  { id: "admin", label: "Admin", icon: EMOJI_ADMIN },
 ];
 
 export default function App() {
