@@ -11,6 +11,10 @@ import LessonViewer from "./pages/LessonViewer";
 import AdminDashboard from "./pages/AdminDashboard";
 import ModuleBrowser from "./pages/ModuleBrowser";
 import { CertificationsPage } from "./Certifications";
+const EMOJI_MODULES = String.fromCodePoint(0x1F4DA);
+const EMOJI_HOURS   = String.fromCodePoint(0x23F1);
+const EMOJI_STREAK  = String.fromCodePoint(0x1F525);
+const EMOJI_BADGES  = String.fromCodePoint(0x2B50);
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -103,10 +107,10 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
         <p style={{color:T.muted,fontSize:15}}>Continue your IT career journey</p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4,1fr)",gap:16,marginBottom:32}}>
-        <StatCard icon="M" value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
-        <StatCard icon="H" value={totalHours.toFixed(1)} label="Hours" color={T.violet} sub="studied"/>
-        <StatCard icon="*" value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
-        <StatCard icon="+" value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
+        <StatCard icon={EMOJI_MODULES} value={completedModules} label="Modules" color={T.cyan} sub={modules?.length ? "of "+modules.length+" total" : null}/>
+        <StatCard icon={EMOJI_HOURS} value={totalHours.toFixed(1)} label="Hours" color={T.violet} sub="studied"/>
+        <StatCard icon={EMOJI_STREAK} value={streak} label="Day Streak" color={T.amber} sub="keep it up!"/>
+        <StatCard icon={EMOJI_BADGES} value={badgeCount} label="Badges" color={T.emerald} sub="earned"/>
       </div>
       <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:32}}>
         <h2 style={{color:T.text,fontSize:18,fontWeight:700,marginBottom:20}}>Track Progress</h2>
