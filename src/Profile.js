@@ -339,7 +339,7 @@ export function ProfilePage({ user, onNavigate }) {
           {badges.length === 0 ? (
             <p style={{ color: T.muted, textAlign: "center", padding: 20 }}>No badges earned yet</p>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8, overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 4, overflow: "hidden", width: "100%" }}>
               {badges.slice(0, 8).map(ub => (
                 <div key={ub.id} style={{
                   textAlign: "center",
@@ -348,15 +348,15 @@ export function ProfilePage({ user, onNavigate }) {
                   borderRadius: 12
                 }}>
                   <div style={{
-                    width: 40,
-                    height: 40,
+                    width: 32,
+                    height: 32,
                     borderRadius: "50%",
                     background: dim(RarityColors[ub.badge?.rarity] || T.muted, 0.2),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "0 auto 8px",
-                    fontSize: 20
+                    margin: "0 auto 4px",
+                    fontSize: 15
                   }}>
                     {BadgeIcons[ub.badge?.icon] || String.fromCodePoint(0x1F3C5)}
                   </div>
@@ -596,7 +596,7 @@ export function PublicProfilePage({ userId }) {
       {/* Certifications */}
       {certifications.length > 0 && (
         <div style={{ marginBottom: 32 }}>
-          <h2 style={{ color: T.text, fontSize: 20, marginBottom: 16 }}>Certifications</h2>
+          <h2 style={{ color: T.text, fontSize: 15, marginBottom: 16 }}>Certifications</h2>
           <div style={{ display: "grid", gap: 12 }}>
             {certifications.map(uc => (
               <div key={uc.id} style={{
@@ -623,7 +623,7 @@ export function PublicProfilePage({ userId }) {
       {/* Badges */}
       {badges.length > 0 && (
         <div>
-          <h2 style={{ color: T.text, fontSize: 20, marginBottom: 16 }}>Badges</h2>
+          <h2 style={{ color: T.text, fontSize: 15, marginBottom: 16 }}>Badges</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
             {badges.map(ub => (
               <div key={ub.id} style={{
