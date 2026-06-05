@@ -16,9 +16,9 @@ const T = {
 const dim = (c, a = 0.10) => c + Math.round(a * 255).toString(16).padStart(2, "0");
 
 const BadgeIcons = {
-  play: "\u25B6", "trending-up": "\uD83D\uDCC8", flask: "\uD83E\uDDEA", crown: "\uD83D\uDC51",
-  terminal: "\uD83D\uDCBB", shield: "\uD83D\uDEE1", "check-circle": "\u2705", network: "\uD83C\uDF10",
-  flame: "\uD83D\uDD25", award: "\uD83C\uDFC6", star: "\u2B50", zap: "\u26A1"
+  play: "\u25B6", "trending-up": String.fromCodePoint(0x1F4C8), flask: String.fromCodePoint(0x1F9EA), crown: String.fromCodePoint(0x1F451),
+  terminal: String.fromCodePoint(0x1F4BB), shield: String.fromCodePoint(0x1F6E1), "check-circle": "\u2705", network: String.fromCodePoint(0x1F310),
+  flame: String.fromCodePoint(0x1F525), award: String.fromCodePoint(0x1F3C6), star: "\u2B50", zap: "\u26A1"
 };
 
 const RarityColors = {
@@ -293,12 +293,12 @@ export function ProfilePage({ user, onNavigate }) {
         marginBottom: 32
       }}>
         {[
-          { label: "Labs Completed", value: stats.labsCompleted, color: T.cyan, icon: "\uD83E\uDDEA" },
-          { label: "Paths Completed", value: stats.pathsCompleted, color: T.violet, icon: "\uD83D\uDCCD" },
-          { label: "Badges Earned", value: stats.badgesEarned, color: T.amber, icon: "\uD83C\uDFC6" },
+          { label: "Labs Completed", value: stats.labsCompleted, color: T.cyan, icon: String.fromCodePoint(0x1F9EA) },
+          { label: "Paths Completed", value: stats.pathsCompleted, color: T.violet, icon: String.fromCodePoint(0x1F4CD) },
+          { label: "Badges Earned", value: stats.badgesEarned, color: T.amber, icon: String.fromCodePoint(0x1F3C6) },
           { label: "Total Points", value: stats.totalPoints, color: T.emerald, icon: "\u2B50" },
-          { label: "Current Streak", value: `${stats.currentStreak}d`, color: T.rose, icon: "\uD83D\uDD25" },
-          { label: "Longest Streak", value: `${stats.longestStreak}d`, color: T.warning, icon: "\uD83D\uDCC8" }
+          { label: "Current Streak", value: `${stats.currentStreak}d`, color: T.rose, icon: String.fromCodePoint(0x1F525) },
+          { label: "Longest Streak", value: `${stats.longestStreak}d`, color: T.warning, icon: String.fromCodePoint(0x1F4C8) }
         ].map((stat, i) => (
           <div key={i} style={{
             background: T.card,
@@ -319,7 +319,7 @@ export function ProfilePage({ user, onNavigate }) {
       </div>
 
       {/* Two Column Layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24 }}>
         {/* Badges */}
         <div style={{
           background: T.card,
@@ -339,7 +339,7 @@ export function ProfilePage({ user, onNavigate }) {
           {badges.length === 0 ? (
             <p style={{ color: T.muted, textAlign: "center", padding: 20 }}>No badges earned yet</p>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8, overflow: "hidden" }}>
               {badges.slice(0, 8).map(ub => (
                 <div key={ub.id} style={{
                   textAlign: "center",
@@ -358,7 +358,7 @@ export function ProfilePage({ user, onNavigate }) {
                     margin: "0 auto 8px",
                     fontSize: 20
                   }}>
-                    {BadgeIcons[ub.badge?.icon] || "\uD83C\uDFC5"}
+                    {BadgeIcons[ub.badge?.icon] || String.fromCodePoint(0x1F3C5)}
                   </div>
                   <div style={{ color: T.text, fontSize: 11, fontWeight: 600 }}>
                     {ub.badge?.name}
@@ -633,7 +633,7 @@ export function PublicProfilePage({ userId }) {
                 textAlign: "center",
                 minWidth: 80
               }}>
-                <div style={{ fontSize: 24, marginBottom: 4 }}>{BadgeIcons[ub.badge?.icon] || "\uD83C\uDFC5"}</div>
+                <div style={{ fontSize: 24, marginBottom: 4 }}>{BadgeIcons[ub.badge?.icon] || String.fromCodePoint(0x1F3C5)}</div>
                 <div style={{ color: T.text, fontSize: 11, fontWeight: 600 }}>{ub.badge?.name}</div>
               </div>
             ))}
