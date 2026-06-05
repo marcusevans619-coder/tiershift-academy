@@ -7,7 +7,7 @@ const SUPABASE_URL = 'https://bbyvxfluwsiutmoosesz.supabase.co';
 
 const S = {
   overlay: { position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center' },
-  modal: { background:'#0d1117', border:'1px solid #1e293b', borderRadius:12, width:'90%', maxWidth:900, maxHeight:'90vh', overflowY:'auto', padding:32 },
+  modal: { background:'#0d1117', border:'1px solid #1e293b', borderRadius:12, width:'95%', maxWidth:900, maxHeight:'85vh', overflowY:'auto', padding:20 },
   title: { fontSize:18, fontWeight:700, color:'#f1f5f9', marginBottom:4 },
   sub: { fontSize:13, color:'#64748b', marginBottom:24 },
   btn: { background:'#00d4ff', color:'#0a0a0f', border:'none', borderRadius:6, padding:'10px 20px', fontWeight:700, cursor:'pointer', fontSize:13, fontFamily:'inherit' },
@@ -16,7 +16,7 @@ const S = {
   section: { marginBottom:24 },
   label: { fontSize:11, color:'#64748b', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:8, display:'block' },
   videoCard: { background:'#111827', border:'1px solid #1e293b', borderRadius:8, padding:16, marginBottom:12, cursor:'pointer', display:'flex', gap:16, alignItems:'flex-start' },
-  videoThumb: { width:120, height:68, borderRadius:4, objectFit:'cover', flexShrink:0 },
+  videoThumb: { width:80, height:50, borderRadius:4, objectFit:'cover', flexShrink:0 },
   videoTitle: { fontSize:14, fontWeight:600, color:'#e2e8f0', marginBottom:4 },
   videoChannel: { fontSize:12, color:'#64748b' },
   selected: { border:'2px solid #00d4ff' },
@@ -176,7 +176,7 @@ export default function LessonGenerator({ module, onClose, onSaved }) {
                 color: usedTranscript ? '#10b981' : '#f59e0b',
                 border: `1px solid ${usedTranscript ? '#10b98144' : '#f59e0b44'}`,
               }}>
-              {usedTranscript ? '\uD83E\uDD16 Generated from video transcript' : '\uD83C\uDFA5 Generated from video title (no transcript available)'}
+              {usedTranscript ? String.fromCodePoint(0x1F916) + ' Generated from video transcript' : String.fromCodePoint(0x1F3A5) + ' Generated from video title (no transcript available)'}
               </div>
             </div>
             <div style={S.section}>
