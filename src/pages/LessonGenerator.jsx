@@ -6,7 +6,7 @@ const YOUTUBE_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
 const SUPABASE_URL = 'https://bbyvxfluwsiutmoosesz.supabase.co';
 
 const S = {
-  overlay: { position:'fixed', inset:0, background:'#00000088', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' },
+  overlay: { position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center' },
   modal: { background:'#0d1117', border:'1px solid #1e293b', borderRadius:12, width:'90%', maxWidth:900, maxHeight:'90vh', overflowY:'auto', padding:32 },
   title: { fontSize:18, fontWeight:700, color:'#f1f5f9', marginBottom:4 },
   sub: { fontSize:13, color:'#64748b', marginBottom:24 },
