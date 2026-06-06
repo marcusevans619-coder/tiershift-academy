@@ -185,7 +185,7 @@ export default function App() {
   const [userBadges, setUserBadges] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [navOpen, setNavOpen] = useState(false);
-  const navigateTo = (newPage) => { setPageHistory(h => [...h, page]); setPage(newPage); };
+  const pageRef = { current: page }; const navigateTo = (newPage) => { setPageHistory(h => [...h, pageRef.current]); setPage(newPage); };
   const handleBack = () => { setPageHistory(h => { if (h.length === 0) return h; const prev = h[h.length - 1]; setPage(prev); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); return h.slice(0, -1); }); };
 
   useEffect(() => {
