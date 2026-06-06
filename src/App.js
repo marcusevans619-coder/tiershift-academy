@@ -172,6 +172,7 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState("dashboard");
+  const [pageHistory, setPageHistory] = useState([]);
   const [showLanding, setShowLanding] = useState(!sessionStorage.getItem('visited'));
   const dismissLanding = () => { sessionStorage.setItem('visited', '1'); setShowLanding(false); };
   const [selectedModule, setSelectedModule] = useState(null);
@@ -184,6 +185,8 @@ export default function App() {
   const [userBadges, setUserBadges] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [navOpen, setNavOpen] = useState(false);
+  const navigateTo = (newPage) => { setPageHistory(h => [...h, page]); setPage(newPage); };
+  const handleBack = () => { setPageHistory(h => { if (h.length === 0) return h; const prev = h[h.length - 1]; setPage(prev); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); return h.slice(0, -1); }); };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: s } }) => { setSession(s); if (s?.user) load(s.user.id); else setLoading(false); });
@@ -209,8 +212,8 @@ export default function App() {
   };
 
   useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
-  const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
-  const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); setNavOpen(false); };
+  const handleModuleClick = (mod) => { setSelectedModule(mod); navigateTo("study"); };
+  const handleNavClick = (navId) => { setPageHistory([]); setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); setNavOpen(false); };
 
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
@@ -227,9 +230,9 @@ export default function App() {
       case "paths": if (selectedPath) { return <LearningPathViewer path={selectedPath} user={user} onBack={() => setSelectedPath(null)} onLabClick={(lab) => { setSelectedLab(lab); setPage("labs"); }} />; } return <LearningPathsPage user={user} onPathClick={setSelectedPath} />;
       case "labs": if (selectedLab) { return <LabViewer lab={selectedLab} user={user} onBack={() => setSelectedLab(null)} />; } return <LabsPage user={user} onLabClick={setSelectedLab} />;
       case "badges": return <BadgesPage user={user} />;
-      case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
+      case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); navigateTo("paths"); }} />;
       case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
-      case "study": return selectedModule ? <LessonViewer module={selectedModule} user={user} onBack={() => { setSelectedModule(null); setPage("dashboard"); }} onComplete={() => { setSelectedModule(null); setPage("dashboard"); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
+      case "study": return selectedModule ? <LessonViewer module={selectedModule} user={user} onBack={() => { setSelectedModule(null); handleBack(); }} onComplete={() => { setSelectedModule(null); setPageHistory([]); setPage("dashboard"); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
       case "admin": return <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} />;
     }
   };
