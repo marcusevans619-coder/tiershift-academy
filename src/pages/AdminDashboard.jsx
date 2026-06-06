@@ -163,16 +163,16 @@ export default function AdminDashboard({ user, onSignOut }) {
           ) : (
             <table style={S.table}>
               <thead>
-                <tr>{['Name', 'Email', 'Company', 'Department', 'Submitted', ''].map(h => <th key={h} style={S.th}>{h}</th>)}</tr>
+                <tr>{(isMobile ? ['Name', 'Email'] : ['Name', 'Email', 'Company', 'Department', 'Submitted', '']).map(h => <th key={h} style={S.th}>{h}</th>)}</tr>
               </thead>
               <tbody>
                 {filtered.map(row => (
                   <tr key={row.id} onMouseEnter={e => e.currentTarget.style.background = '#111827'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <td style={S.td}>{row.name}</td>
                     <td style={S.td}><a href={'mailto:' + row.email} style={S.emailLink}>{row.email}</a></td>
-                    <td style={S.td}>{row.company}</td>
-                    <td style={S.td}><span style={S.deptBadge}>{row.department || '---'}</span></td>
-                    <td style={{ ...S.td, color: '#475569', fontSize: '12px' }}>{formatDate(row.created_at)}</td>
+                    {!isMobile && <td style={S.td}>{row.company}</td>}
+                    {!isMobile && <td style={S.td}><span style={S.deptBadge}>{row.department || '---'}</span></td>}
+                    {!isMobile && <td style={{ ...S.td, color: '#475569', fontSize: '12px' }}>{formatDate(row.created_at)}</td>}
                     <td style={S.td}>
                       <button style={S.deleteBtn} onClick={() => handleDelete(row.id)}
                         onMouseEnter={e => { e.target.style.borderColor = '#ef4444'; e.target.style.color = '#ef4444'; }}
