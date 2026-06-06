@@ -168,8 +168,8 @@ export default function AdminDashboard({ user, onSignOut }) {
               <tbody>
                 {filtered.map(row => (
                   <tr key={row.id} onMouseEnter={e => e.currentTarget.style.background = '#111827'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={S.td}>{row.name}</td>
-                    <td style={S.td}><a href={'mailto:' + row.email} style={S.emailLink}>{row.email}</a></td>
+                    <td style={{...S.td, whiteSpace: isMobile ? 'nowrap' : 'normal', maxWidth: isMobile ? 100 : 'auto', overflow: 'hidden', textOverflow: 'ellipsis'}}>{row.name}</td>
+                    <td style={{...S.td, maxWidth: isMobile ? 160 : 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}><a href={'mailto:' + row.email} style={S.emailLink}>{row.email}</a></td>
                     {!isMobile && <td style={S.td}>{row.company}</td>}
                     {!isMobile && <td style={S.td}><span style={S.deptBadge}>{row.department || '---'}</span></td>}
                     {!isMobile && <td style={{ ...S.td, color: '#475569', fontSize: '12px' }}>{formatDate(row.created_at)}</td>}
