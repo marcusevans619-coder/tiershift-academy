@@ -17,9 +17,9 @@ const dim = (c, a = 0.10) => c + Math.round(a * 255).toString(16).padStart(2, "0
 
 // Icons for path types
 const PathIcons = {
-  headset: "\uD83C\uDFA7", shield: "\uD83D\uDEE1", terminal: "\uD83D\uDCBB", cloud: "\u2601", 
-  network: "\uD83C\uDF10", lock: "\uD83D\uDD12", server: "\uD83D\uDDA5", code: "\u2328",
-  path: "\uD83D\uDCCD", award: "\uD83C\uDFC6", certificate: "\uD83D\uDCDC", flame: "\uD83D\uDD25"
+  headset: String.fromCodePoint(0x1F3A7), shield: String.fromCodePoint(0x1F6E1), terminal: String.fromCodePoint(0x1F4BB), cloud: "\u2601", 
+  network: String.fromCodePoint(0x1F310), lock: String.fromCodePoint(0x1F512), server: String.fromCodePoint(0x1F5A5), code: "\u2328",
+  path: String.fromCodePoint(0x1F4CD), award: String.fromCodePoint(0x1F3C6), certificate: String.fromCodePoint(0x1F4DC), flame: String.fromCodePoint(0x1F525)
 };
 
 // ============================================
@@ -78,7 +78,7 @@ export function LearningPathsPage({ user, onPathClick }) {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, marginBottom: 8 }}>
+        <h1 style={{ color: T.text, fontSize: isMobile ? 20 : 28, fontWeight: 800, marginBottom: 8 }}>
           Learning Paths
         </h1>
         <p style={{ color: T.muted, fontSize: 15 }}>
@@ -111,7 +111,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
-                    <div style={{ fontSize: 36 }}>{PathIcons[path.icon] || "\uD83D\uDCDA"}</div>
+                    <div style={{ fontSize: 36 }}>{PathIcons[path.icon] || String.fromCodePoint(0x1F4DA)}</div>
                     <span style={{
                       padding: "4px 10px",
                       background: dim(diffColors[path.difficulty], 0.2),
@@ -189,7 +189,7 @@ export function LearningPathsPage({ user, onPathClick }) {
                   border: `1px solid ${T.border}`,
                   cursor: "pointer",
                   display: "flex",
-                  gap: 20,
+                  gap: isMobile ? 12 : 20,
                   alignItems: "center",
                   transition: "border-color 0.2s"
                 }}
@@ -197,21 +197,21 @@ export function LearningPathsPage({ user, onPathClick }) {
                 onMouseLeave={e => e.currentTarget.style.borderColor = T.border}
               >
                 <div style={{
-                  width: 56,
-                  height: 56,
+                  width: isMobile ? 40 : 56,
+                  height: isMobile ? 40 : 56,
                   borderRadius: 12,
                   background: dim(path.color || T.cyan, 0.15),
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 28,
+                  fontSize: isMobile ? 20 : 28,
                   flexShrink: 0
                 }}>
-                  {PathIcons[path.icon] || "\uD83D\uDCDA"}
+                  {PathIcons[path.icon] || String.fromCodePoint(0x1F4DA)}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <h3 style={{ color: T.text, margin: 0, fontSize: 16, fontWeight: 600 }}>{path.title}</h3>
+                    <h3 style={{ color: T.text, margin: 0, fontSize: isMobile ? 13 : 16, fontWeight: 600 }}>{path.title}</h3>
                     {progress.completed && <span style={{ color: T.success, fontSize: 12 }}>(check) Completed</span>}
                   </div>
                   <p style={{ color: T.muted, margin: 0, fontSize: 13 }}>{path.description}</p>
@@ -403,10 +403,10 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
             justifyContent: "center",
             fontSize: 48
           }}>
-            {PathIcons[path.icon] || "\uD83D\uDCDA"}
+            {PathIcons[path.icon] || String.fromCodePoint(0x1F4DA)}
           </div>
           <div style={{ flex: 1 }}>
-            <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, margin: 0, marginBottom: 8 }}>
+            <h1 style={{ color: T.text, fontSize: isMobile ? 20 : 28, fontWeight: 800, margin: 0, marginBottom: 8 }}>
               {path.title}
             </h1>
             <p style={{ color: T.muted, fontSize: 15, lineHeight: 1.6, margin: 0, marginBottom: 16 }}>
