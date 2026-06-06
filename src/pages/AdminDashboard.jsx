@@ -193,7 +193,7 @@ export default function AdminDashboard({ user, onSignOut }) {
           <div style={{ display:'grid', gap:12 }}>
             {modules.map(mod => (
               <div key={mod.id} style={{ background:'#0d1117', border:'1px solid #1e293b', borderRadius:8, padding:'16px 20px', display:'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent:'space-between', gap: isMobile ? 8 : 0 }}>
-                <span style={{ color:'#e2e8f0', fontSize:14 }}>{mod.name}</span>
+                <span style={{ color:'#e2e8f0', fontSize: isMobile ? 12 : 14 }}>{mod.name}</span>
                 <button onClick={() => setGeneratorModule(mod)} style={{ background:'#00d4ff15', border:'1px solid #00d4ff44', color:'#00d4ff', padding:'6px 14px', borderRadius:6, cursor:'pointer', fontSize:12, fontFamily:'inherit' }}>
                   Generate Lesson
                 </button>
