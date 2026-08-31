@@ -137,12 +137,12 @@ export function LabsPage({ user, onLabClick }) {
       ) : (
         <div style={{display:"grid",gap:16}}>
           {filteredLabs.map(lab => {
-            const completed = userLabs.some(ul => ul.lab_id === lab.id && ul.completed_at);
+            const completed = userLabs.some(ul => ul.lab_ticket_id === lab.id && ul.status === "completed");
             return (
               <div key={lab.id} onClick={() => onLabClick(lab)} style={{background:T.card,padding:isMobile?16:24,borderRadius:12,border:"1px solid "+T.border,cursor:"pointer",display:"flex",gap:16,alignItems:"center",flexWrap:"wrap"}}>
                 <div style={{width:48,height:48,borderRadius:12,background:dim(typeColors[lab.lab_type],0.15),display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:typeColors[lab.lab_type]}}>{typeIcons[lab.lab_type]}</div>
                 <div style={{flex:1,minWidth:0}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-                    <h3 style={{color:T.text,margin:0}}>{lab.title}</h3>
+                    <h3 style={{color:T.text,margin:0,fontSize:isMobile?14:16,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:isMobile?"160px":"100%"}}>{lab.title}</h3>
                     {completed && <span style={{color:T.success,fontSize:12}}>Done</span>}
                   </div>
                   <p style={{color:T.muted,margin:0,fontSize:14}}>{lab.description}</p>
@@ -292,6 +292,11 @@ export function LabViewer({ lab, user, onBack }) {
   const [configResult, setConfigResult] = useState(null);
   const [earnedBadges, setEarnedBadges] = useState([]);
   const [completing, setCompleting] = useState(false);
+  const [ticketState, setTicketState] = useState("loading"); // loading | ready | submitting | scored | error
+  const [generatedTicket, setGeneratedTicket] = useState(null);
+  const [learnerResponse, setLearnerResponse] = useState("");
+  const [scoreResult, setScoreResult] = useState(null);
+  const [ticketError, setTicketError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -315,14 +320,68 @@ export function LabViewer({ lab, user, onBack }) {
     fetchData();
   }, [lab]);
 
+  useEffect(() => {
+    if (lab.lab_type !== "ticket") return;
+    const generateTicket = async () => {
+      setTicketState("loading");
+      setTicketError(null);
+      const { data, error } = await supabase.functions.invoke("generate-ticket", {
+        body: { lab_id: lab.id }
+      });
+      if (error || data?.error) {
+        setTicketError(error?.message || data?.error || "Failed to generate ticket");
+        setTicketState("error");
+        return;
+      }
+      setGeneratedTicket(data);
+      setTicketState("ready");
+    };
+    generateTicket();
+  }, [lab]);
+
+  const handleSubmitResponse = async () => {
+    if (learnerResponse.trim().length < 10) return;
+    setTicketState("submitting");
+    const { data, error } = await supabase.functions.invoke("score-ticket-response", {
+      body: {
+        ticket: generatedTicket.ticket,
+        difficulty: generatedTicket.difficulty,
+        response: learnerResponse
+      }
+    });
+    if (error || data?.error) {
+      setTicketError(error?.message || data?.error || "Failed to score response");
+      setTicketState("ready");
+      return;
+    }
+    setScoreResult(data);
+    setTicketState("scored");
+  };
+
+  const handleTicketComplete = async () => {
+    setCompleting(true);
+    await supabase.from("user_labs").insert({
+      user_id: user.id,
+      lab_ticket_id: lab.id,
+      status: "completed",
+      score: scoreResult.score,
+      feedback: JSON.stringify(scoreResult),
+      submitted_at: new Date().toISOString()
+    });
+    await handleComplete();
+  };
+
   const handleComplete = async () => {
     setCompleting(true);
-    
-    // Mark lab as complete
-    await supabase.from("user_labs").upsert(
-      { user_id: user.id, lab_id: lab.id, completed_at: new Date().toISOString(), score: 100 }, 
-      { onConflict: "user_id,lab_id" }
-    );
+
+    // Mark lab as complete using the REAL user_labs schema (lab_ticket_id/status/submitted_at,
+    // not lab_id/completed_at). Ticket-type labs already wrote their row in handleTicketComplete
+    // (with the real score/feedback), so skip writing a second, duplicate row here.
+    if (lab.lab_type !== "ticket") {
+      await supabase.from("user_labs").insert(
+        { user_id: user.id, lab_ticket_id: lab.id, status: "completed", score: 100, submitted_at: new Date().toISOString() }
+      );
+    }
 
     // Check if this lab is part of a learning path and award badges
     try {
@@ -510,38 +569,68 @@ export function LabViewer({ lab, user, onBack }) {
     );
   }
 
-  // Ticket Lab
+  // Ticket Lab â€” AI-generated, free-text response, AI-scored
   if (lab.lab_type === "ticket") {
-    const ticket = labData[step];
-    const options = typeof ticket?.resolution_options === "string" ? JSON.parse(ticket.resolution_options) : ticket?.resolution_options;
-    const priorityColors = { low: T.muted, medium: T.amber, high: T.warning, critical: T.danger };
+    const priorityColors = { Low: T.muted, Medium: T.amber, High: T.warning, Critical: T.danger };
 
-    const handleSelect = (id) => {
-      setSelected(id);
-      const correct = id === ticket.correct_resolution;
-      if (correct) setScore(score + 1);
-      setFeedback({ correct });
-    };
+    if (ticketState === "loading") {
+      return (
+        <div>
+          <button onClick={onBack} style={{background:"transparent",border:"none",color:T.cyan,cursor:"pointer",marginBottom:16}}>Back to Labs</button>
+          <h1 style={{color:T.text}}>{lab.title}</h1>
+          <div style={{color:T.muted,padding:40,textAlign:"center"}}>Generating your ticket...</div>
+        </div>
+      );
+    }
 
-    const handleNext = () => {
-      if (step < labData.length - 1) { setStep(step + 1); setSelected(null); setFeedback(null); }
-      else setDone(true);
-    };
+    if (ticketState === "error") {
+      return (
+        <div>
+          <button onClick={onBack} style={{background:"transparent",border:"none",color:T.cyan,cursor:"pointer",marginBottom:16}}>Back to Labs</button>
+          <h1 style={{color:T.text}}>{lab.title}</h1>
+          <div style={{background:dim(T.danger,0.1),border:"1px solid "+T.danger,borderRadius:12,padding:24,color:T.danger}}>
+            {ticketError || "Something went wrong generating this ticket."}
+          </div>
+        </div>
+      );
+    }
 
-    if (done) return (
-      <div style={{textAlign:"center",padding:40}}>
-        {earnedBadges.length > 0 && <BadgeToast badges={earnedBadges} onClose={closeBadgeToast} />}
-        <div style={{fontSize:48,color:T.success}}>{Math.round((score/labData.length)*100)}%</div>
-        <p style={{color:T.muted}}>{score} of {labData.length} resolved correctly</p>
-        <button onClick={handleComplete} disabled={completing} style={{marginTop:24,padding:"12px 24px",background:T.cyan,color:T.bg,border:"none",borderRadius:8,fontWeight:600,cursor:completing?"wait":"pointer",opacity:completing?0.7:1}}>
-          {completing ? "Saving..." : "Continue"}
-        </button>
-      </div>
-    );
+    const ticket = generatedTicket?.ticket;
+
+    if (ticketState === "scored" && scoreResult) {
+      return (
+        <div>
+          <button onClick={onBack} style={{background:"transparent",border:"none",color:T.cyan,cursor:"pointer",marginBottom:16}}>Back to Labs</button>
+          <h1 style={{color:T.text}}>{lab.title}</h1>
+          <div style={{textAlign:"center",padding:"24px 0"}}>
+            <div style={{fontSize:48,fontWeight:800,color:scoreResult.score>=70?T.success:scoreResult.score>=40?T.amber:T.danger}}>{scoreResult.score}</div>
+            <p style={{color:T.muted}}>out of 100</p>
+          </div>
+          <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:16}}>
+            <h4 style={{color:T.success,marginBottom:12}}>What you got right</h4>
+            <ul style={{color:T.text,margin:0,paddingLeft:20}}>
+              {scoreResult.whatGotRight?.map((item,i) => <li key={i} style={{marginBottom:6}}>{item}</li>)}
+            </ul>
+          </div>
+          <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:16}}>
+            <h4 style={{color:T.amber,marginBottom:12}}>What was missing</h4>
+            <ul style={{color:T.text,margin:0,paddingLeft:20}}>
+              {scoreResult.whatWasMissing?.map((item,i) => <li key={i} style={{marginBottom:6}}>{item}</li>)}
+            </ul>
+          </div>
+          <div style={{background:T.surface,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:24}}>
+            <h4 style={{color:T.cyan,marginBottom:12}}>Strong example response</h4>
+            <p style={{color:T.text,lineHeight:1.6,margin:0}}>{scoreResult.strongExample}</p>
+          </div>
+          <button onClick={handleTicketComplete} disabled={completing} style={{padding:"12px 24px",background:T.cyan,color:T.bg,border:"none",borderRadius:8,fontWeight:600,cursor:completing?"wait":"pointer",opacity:completing?0.7:1}}>
+            {completing ? "Saving..." : "Continue"}
+          </button>
+        </div>
+      );
+    }
 
     return (
       <div>
-        {earnedBadges.length > 0 && <BadgeToast badges={earnedBadges} onClose={closeBadgeToast} />}
         <button onClick={onBack} style={{background:"transparent",border:"none",color:T.cyan,cursor:"pointer",marginBottom:16}}>Back to Labs</button>
         <h1 style={{color:T.text}}>{lab.title}</h1>
         <div style={{background:T.card,border:"1px solid "+T.border,borderRadius:12,padding:24,marginBottom:24}}>
@@ -549,16 +638,33 @@ export function LabViewer({ lab, user, onBack }) {
             <span style={{color:T.cyan,fontFamily:"monospace"}}>{ticket?.ticket_number}</span>
             <span style={{padding:"4px 12px",background:dim(priorityColors[ticket?.priority]||T.muted,0.15),color:priorityColors[ticket?.priority]||T.muted,borderRadius:20,fontSize:12,fontWeight:600,textTransform:"uppercase"}}>{ticket?.priority}</span>
           </div>
-          <h3 style={{color:T.text,marginBottom:8}}>{ticket?.title}</h3>
-          <p style={{color:T.muted,fontSize:13,marginBottom:16}}>From: {ticket?.user_name}</p>
-          <div style={{background:T.surface,borderRadius:8,padding:16}}><p style={{color:T.text,lineHeight:1.6,margin:0}}>{ticket?.description}</p></div>
+          <h3 style={{color:T.text,marginBottom:8}}>{ticket?.subject}</h3>
+          <p style={{color:T.muted,fontSize:13,marginBottom:16}}>From: {ticket?.requester_name}</p>
+          <div style={{background:T.surface,borderRadius:8,padding:16,marginBottom:ticket?.notes?12:0}}>
+            <p style={{color:T.text,lineHeight:1.6,margin:0}}>{ticket?.body}</p>
+          </div>
+          {ticket?.notes && (
+            <div style={{background:dim(T.violet,0.08),borderRadius:8,padding:12,fontSize:13,color:T.muted}}>
+              <strong style={{color:T.violet}}>Internal notes:</strong> {ticket.notes}
+            </div>
+          )}
         </div>
-        <h4 style={{color:T.text,marginBottom:12}}>How do you respond?</h4>
-        <div style={{display:"grid",gap:12,marginBottom:24}}>
-          {options?.map(opt => <button key={opt.id} onClick={() => !feedback && handleSelect(opt.id)} disabled={!!feedback} style={{padding:16,background:selected===opt.id?(feedback?.correct?dim(T.success,0.15):dim(T.danger,0.15)):T.surface,border:"1px solid "+(selected===opt.id?(feedback?.correct?T.success:T.danger):T.border),borderRadius:8,color:T.text,textAlign:"left",cursor:feedback?"default":"pointer"}}>{opt.text}</button>)}
-        </div>
-        {feedback && <div style={{background:feedback.correct?dim(T.success,0.1):dim(T.danger,0.1),borderRadius:8,padding:16,marginBottom:24}}><strong style={{color:feedback.correct?T.success:T.danger}}>{feedback.correct ? "Good choice!" : "There was a better option."}</strong></div>}
-        {feedback && <button onClick={handleNext} style={{padding:"12px 24px",background:T.cyan,color:T.bg,border:"none",borderRadius:8,fontWeight:600,cursor:"pointer"}}>{step < labData.length - 1 ? "Next Ticket" : "Finish"}</button>}
+        <h4 style={{color:T.text,marginBottom:12}}>How do you resolve this?</h4>
+        <textarea
+          value={learnerResponse}
+          onChange={e => setLearnerResponse(e.target.value)}
+          placeholder="Type your resolution steps and response to the requester..."
+          disabled={ticketState==="submitting"}
+          style={{width:"100%",minHeight:150,padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,color:T.text,fontFamily:"inherit",fontSize:14,resize:"vertical",marginBottom:16,boxSizing:"border-box"}}
+        />
+        {ticketError && <div style={{color:T.danger,marginBottom:16}}>{ticketError}</div>}
+        <button
+          onClick={handleSubmitResponse}
+          disabled={learnerResponse.trim().length < 10 || ticketState==="submitting"}
+          style={{padding:"12px 24px",background:T.cyan,color:T.bg,border:"none",borderRadius:8,fontWeight:600,cursor:(learnerResponse.trim().length<10||ticketState==="submitting")?"not-allowed":"pointer",opacity:(learnerResponse.trim().length<10||ticketState==="submitting")?0.5:1}}
+        >
+          {ticketState === "submitting" ? "Scoring..." : "Submit Resolution"}
+        </button>
       </div>
     );
   }
