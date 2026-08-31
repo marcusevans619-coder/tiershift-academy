@@ -2,4 +2,10 @@
 .env
 .env.local
 .env.production
+.env.vercel
+.env.vercel.production
 build
+*.backup
+*.backup-*
+*.conflict-backup-*
+supabase/.temp/
