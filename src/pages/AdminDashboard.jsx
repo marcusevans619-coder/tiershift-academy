@@ -9,6 +9,7 @@ const S = {
   badge: { background: '#00d4ff22', color: '#00d4ff', border: '1px solid #00d4ff44', borderRadius: '4px', padding: '2px 8px', fontSize: '11px' },
   topbarRight: { display: 'flex', alignItems: 'center', gap: '12px' },
   signOutBtn: { background: 'transparent', border: '1px solid #334155', color: '#94a3b8', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit' },
+  resetDemoBtn: { background: '#a78bfa15', border: '1px solid #a78bfa66', color: '#a78bfa', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit' },
   body: { padding: '32px', maxWidth: '1400px', margin: '0 auto' },
   heading: { fontSize: '22px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' },
   subheading: { fontSize: '13px', color: '#64748b', marginBottom: '28px' },
@@ -111,6 +112,13 @@ export default function AdminDashboard({ user, onSignOut }) {
     setRows(prev => prev.filter(r => r.id !== id));
   }
 
+  async function handleResetDemo() {
+    if (!window.confirm('Reset the demo account to its default pitch-ready state? This wipes and re-seeds all demo progress.')) return;
+    const { data, error } = await supabase.rpc('reset_demo_account');
+    if (error) { window.alert('Reset failed: ' + error.message); return; }
+    window.alert(data || 'Demo account reset complete.');
+  }
+
   const stats = getStats(rows);
 
   return (
@@ -123,6 +131,7 @@ export default function AdminDashboard({ user, onSignOut }) {
         </div>
         <div style={S.topbarRight}>
           <span style={{ fontSize: '12px', color: '#475569', display: isMobile ? 'none' : 'inline' }}>{user?.email}</span>
+          <button style={S.resetDemoBtn} onClick={handleResetDemo}>Reset Demo</button>
           <button style={S.signOutBtn} onClick={onSignOut}>Sign Out</button>
         </div>
       </div>

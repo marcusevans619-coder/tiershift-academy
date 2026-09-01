@@ -158,7 +158,7 @@ export function ProfilePage({ user, onNavigate }) {
       <div style={{
         background: `linear-gradient(135deg, ${dim(T.cyan, 0.15)} 0%, ${T.card} 100%)`,
         borderRadius: 20,
-        padding: 32,
+        padding: isMobile ? 20 : 32,
         marginBottom: 32,
         border: `1px solid ${T.border}`
       }}>
@@ -249,7 +249,7 @@ export function ProfilePage({ user, onNavigate }) {
               </div>
             ) : (
               <>
-                <h1 style={{ color: T.text, fontSize: 28, fontWeight: 800, margin: 0, marginBottom: 4 }}>
+                <h1 style={{ color: T.text, fontSize: isMobile ? 20 : 28, fontWeight: 800, margin: 0, marginBottom: 4 }}>
                   {profile?.display_name || "User"}
                 </h1>
                 {profile?.title && (
@@ -339,7 +339,7 @@ export function ProfilePage({ user, onNavigate }) {
           {badges.length === 0 ? (
             <p style={{ color: T.muted, textAlign: "center", padding: 20 }}>No badges earned yet</p>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 4, overflow: "hidden", width: "100%" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : "repeat(4, minmax(0, 1fr))", gap: 4, overflow: "hidden", width: "100%" }}>
               {badges.slice(0, 8).map(ub => (
                 <div key={ub.id} style={{
                   textAlign: "center",
@@ -429,6 +429,7 @@ export function ProfilePage({ user, onNavigate }) {
       </div>
 
       {/* Recent Activity */}
+      {recentActivity.length > 0 && (
       <div style={{
         marginTop: 24,
         background: T.card,
@@ -487,6 +488,7 @@ export function ProfilePage({ user, onNavigate }) {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

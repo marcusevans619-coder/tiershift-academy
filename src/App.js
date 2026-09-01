@@ -22,6 +22,7 @@ const EMOJI_LABS    = String.fromCodePoint(0x1F9EA);
 const EMOJI_CERTS   = String.fromCodePoint(0x1F4DC);
 const EMOJI_ADMIN   = String.fromCodePoint(0x2699);
 const EMOJI_PROFILE = String.fromCodePoint(0x1F464);
+const ARROW_LEFT = String.fromCodePoint(0x2190);
 
 const T = {
   bg:"#060a12",surface:"#101828",card:"#131e30",cardHi:"#182640",
@@ -55,7 +56,7 @@ function AuthPage({ onAuth, onBack }) {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -70,7 +71,7 @@ function AuthPage({ onAuth, onBack }) {
     <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Outfit', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
       <div style={{ background: T.card, padding: 40, borderRadius: 16, width: 380, border: '1px solid '+T.border }}>
-        {onBack && <button onClick={onBack} style={{ display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#64748b",cursor:"pointer",fontSize:13,marginBottom:16,padding:0,fontFamily:"inherit" }}>u{2190} Back to Home</button>}
+        {onBack && <button onClick={onBack} style={{ display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#64748b",cursor:"pointer",fontSize:13,marginBottom:16,padding:0,fontFamily:"inherit" }}>{ARROW_LEFT} Back to Home</button>}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, justifyContent: 'center' }}>
           <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: T.bg }}>TS</div>
           <div><div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 11, color: T.muted }}>Academy</div></div>
@@ -83,7 +84,7 @@ function AuthPage({ onAuth, onBack }) {
         {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>EMAIL</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
-          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>PASSWORD</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 6 characters" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>PASSWORD</label><div style={{ position: 'relative' }}><input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder={isSignUp ? "Minimum 6 characters" : "Password"} required style={{ width: '100%', padding: 12, paddingRight: 44, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /><button type="button" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: T.muted, padding: 4, display: 'flex', alignItems: 'center' }}>{showPassword ? (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>) : (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>)}</button></div></div>
           <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
         </form>
       </div>
@@ -93,7 +94,7 @@ function AuthPage({ onAuth, onBack }) {
 
 function Dashboard({ user, profile, modules, userModules, userTracks, userBadges, tracks, onModuleClick, isMobile }) {
   const name = profile?.full_name || user?.email?.split("@")[0] || "Learner";
-  const completedModules = userModules?.filter(m => m.completed)?.length || 0;
+  const completedModules = userModules?.filter(m => m.status === "completed")?.length || 0;
   const totalHours = userModules?.reduce((sum, m) => sum + (m.hours_spent || 0), 0) || 0;
   const badgeCount = userBadges?.length || 0;
   const streak = 3;
@@ -101,7 +102,7 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
   const recentModules = modules?.filter(m => recentModuleIds.includes(m.id)) || [];
   const trackProgress = tracks?.map(track => {
     const trackModules = modules?.filter(m => m.track_id === track.id) || [];
-    const completedInTrack = userModules?.filter(um => um.completed && trackModules.some(tm => tm.id === um.module_id))?.length || 0;
+    const completedInTrack = userModules?.filter(um => um.status === "completed" && trackModules.some(tm => tm.id === um.module_id))?.length || 0;
     const total = trackModules.length;
     const pct = total > 0 ? Math.round((completedInTrack / total) * 100) : 0;
     return { ...track, completedInTrack, total, pct };
@@ -126,10 +127,10 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
             {trackProgress.slice(0, 6).map(track => (
               <div key={track.id}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
-                  <span style={{color:T.text,fontSize:14,fontWeight:500}}>{track.name || track.title || "Unknown Track"}</span>
+                  <span style={{color:T.text,fontSize:14,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginRight:8}}>{track.name || track.title || "Unknown Track"}</span>
                   <span style={{color:T.muted,fontSize:13}}>{track.completedInTrack}/{track.total} modules</span>
                 </div>
-                <Bar pct={track.pct} color={TRACK_COLORS[track.slug] || T.cyan} h={8}/>
+                <Bar pct={track.pct} color={TRACK_COLORS[track.id] || T.cyan} h={8}/>
               </div>
             ))}
           </div>
@@ -141,13 +142,13 @@ function Dashboard({ user, profile, modules, userModules, userTracks, userBadges
           <div style={{display:"grid",gap:12}}>
             {recentModules.map(mod => {
               const progress = userModules?.find(um => um.module_id === mod.id);
-              const pct = progress?.progress_pct || 0;
-              return (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",gap:16,padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{flex:1}}><div style={{color:T.text,fontWeight:600,marginBottom:4}}>{mod.name}</div><Bar pct={pct} color={T.cyan} h={4}/></div><div style={{color:T.cyan,fontSize:13,fontWeight:600}}>{pct}%</div></div>);
+              const pct = progress?.status === 'completed' ? 100 : (progress?.progress_pct || 0);
+              return (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",gap:16,padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer",overflow:"hidden",minWidth:0}}><div style={{flex:1,minWidth:0}}><div style={{color:T.text,fontWeight:600,marginBottom:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{mod.name}</div><Bar pct={pct} color={T.cyan} h={4}/></div><div style={{color:T.cyan,fontSize:13,fontWeight:600,flexShrink:0,minWidth:32,textAlign:"right"}}>{pct}%</div></div>);
             })}
           </div>
         ) : (
           <div style={{display:"grid",gap:12}}>
-            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start</span></div>))}
+            {modules?.slice(0, 3).map(mod => (<div key={mod.id} onClick={() => onModuleClick(mod)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:16,background:T.surface,border:"1px solid "+T.border,borderRadius:8,cursor:"pointer"}}><div style={{color:T.text,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{mod.name}</div><span style={{color:T.cyan,fontSize:13}}>Start</span></div>))}
           </div>
         )}
       </div>
@@ -185,8 +186,7 @@ export default function App() {
   const [userBadges, setUserBadges] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [navOpen, setNavOpen] = useState(false);
-  const pageRef = { current: page }; const navigateTo = (newPage) => { setPageHistory(h => [...h, pageRef.current]); setPage(newPage); };
-  const handleBack = () => { setPageHistory(h => { if (h.length === 0) return h; const prev = h[h.length - 1]; setPage(prev); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); return h.slice(0, -1); }); };
+  
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: s } }) => { setSession(s); if (s?.user) load(s.user.id); else setLoading(false); });
@@ -212,8 +212,8 @@ export default function App() {
   };
 
   useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
-  const handleModuleClick = (mod) => { setSelectedModule(mod); navigateTo("study"); };
-  const handleNavClick = (navId) => { setPageHistory([]); setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); setNavOpen(false); };
+  const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
+  const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); setNavOpen(false); };
 
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
@@ -230,10 +230,10 @@ export default function App() {
       case "paths": if (selectedPath) { return <LearningPathViewer path={selectedPath} user={user} onBack={() => setSelectedPath(null)} onLabClick={(lab) => { setSelectedLab(lab); setPage("labs"); }} />; } return <LearningPathsPage user={user} onPathClick={setSelectedPath} />;
       case "labs": if (selectedLab) { return <LabViewer lab={selectedLab} user={user} onBack={() => setSelectedLab(null)} />; } return <LabsPage user={user} onLabClick={setSelectedLab} />;
       case "badges": return <BadgesPage user={user} />;
-      case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); navigateTo("paths"); }} />;
+      case "certs": return <CertificationsPage user={user} onPathClick={(path) => { setSelectedPath(path); setPage("paths"); }} />;
       case "profile": return <ProfilePage user={user} onNavigate={handleNavClick} />;
-      case "study": return selectedModule ? <LessonViewer module={selectedModule} user={user} onBack={() => { setSelectedModule(null); handleBack(); }} onComplete={() => { setSelectedModule(null); setPageHistory([]); setPage("dashboard"); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
-      case "admin": return <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} />;
+      case "study": return selectedModule ? <LessonViewer module={selectedModule} user={user} onBack={() => { setSelectedModule(null); setPage("tracks"); }} onComplete={() => { setSelectedModule(null); setPage("tracks"); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} />;
+      case "admin": return profile?.role === "admin" ? <AdminDashboard user={user} onSignOut={async () => { await supabase.auth.signOut(); setSession(null); }} /> : <Dashboard user={user} profile={profile} modules={modules} userModules={userModules} userTracks={userTracks} userBadges={userBadges} tracks={tracks} onModuleClick={handleModuleClick} isMobile={isMobile} />;
     }
   };
 
@@ -247,7 +247,7 @@ export default function App() {
           <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,' + T.cyan + ',' + T.violet + ')', borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: T.bg }}>TS</div>
           <div><div style={{ fontSize: 17, fontWeight: 800 }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 10, color: T.muted }}>Academy</div></div>
         </div>
-        {NAV.map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
+        {NAV.filter(n => n.id !== "admin" || profile?.role === "admin").map(n => (<button key={n.id} onClick={() => handleNavClick(n.id)} style={{ display: "flex", alignItems: "center", gap: 12, width: "calc(100% - 14px)", padding: "11px 14px", margin: "2px 7px", borderRadius: 8, background: page === n.id ? dim(T.cyan, 0.1) : "transparent", border: "none", color: page === n.id ? T.cyan : T.muted, fontSize: 13, fontWeight: page === n.id ? 700 : 500, cursor: "pointer", textAlign: "left" }}><span style={{ fontSize: 16 }}>{n.icon}</span>{n.label}</button>))}
         <div style={{ flex: 1 }} />
         <button onClick={async () => { await supabase.auth.signOut(); setSession(null); setShowLanding(false); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "calc(100% - 28px)", padding: "10px 14px", margin: "4px 14px", borderRadius: 8, background: "transparent", border: "1px solid " + T.border, color: T.muted, fontSize: 13, cursor: "pointer" }}><span>X</span> Sign Out</button>
         <div style={{ padding: "14px 18px", borderTop: '1px solid ' + T.border, marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>

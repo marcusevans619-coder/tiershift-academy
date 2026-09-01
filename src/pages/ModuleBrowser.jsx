@@ -13,6 +13,7 @@ export default function ModuleBrowser({ onSelectModule }) {
   const [search, setSearch] = useState('');
   const [allModules, setAllModules] = useState([]);
   const [tracks, setTracks] = useState([]);
+  const [lessonModuleIds, setLessonModuleIds] = useState(new Set());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -26,6 +27,8 @@ export default function ModuleBrowser({ onSelectModule }) {
       .then(({ data }) => setAllModules(data || []));
     supabase.from('tracks').select('*').order('sort_order')
       .then(({ data }) => setTracks(data || []));
+    supabase.from('lessons').select('module_id')
+      .then(({ data }) => setLessonModuleIds(new Set((data || []).map(l => l.module_id))));
   }, []);
 
   const filtered = allModules.filter(m =>
@@ -77,7 +80,7 @@ export default function ModuleBrowser({ onSelectModule }) {
       ) : (
         <div style={{ display: 'grid', gap: 10 }}>
           {filtered.map(mod => {
-            const available = mod.is_active;
+            const available = lessonModuleIds.has(mod.id);
             return (
               <div
                 key={mod.id}
@@ -89,8 +92,8 @@ export default function ModuleBrowser({ onSelectModule }) {
                   opacity: available ? 1 : 0.65,
                 }}
               >
-                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 6 : 12 }}>
-                  <h3 style={{ color: available ? T.text : T.sub, margin: 0, fontSize: isMobile ? 13 : 15, fontWeight: 600 }}>
+                <div style={{ display: 'flex', width: '100%', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 6 : 12 }}>
+                  <h3 style={{ color: available ? T.text : T.sub, margin: 0, fontSize: isMobile ? 13 : 15, fontWeight: 600, flex: 1, minWidth: 0, lineHeight: 1.3 }}>
                     {mod.name}
                   </h3>
                   {available ? (

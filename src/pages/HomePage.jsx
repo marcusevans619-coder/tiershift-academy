@@ -228,7 +228,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
           </div>
           <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)",gap:16}}>
             {roiStats.map((s,i)=>(<StatCounter key={i} {...s} started={statsStarted}/>))}
-          </div>}
+          </div>
         </div>
       </section>
 
@@ -248,7 +248,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 <p style={{fontSize:13,color:"#94a3b8",lineHeight:1.65,margin:0}}>{f.desc}</p>
               </div>
             ))}
-          </div>}
+          </div>
         </div>
       </section>
 
@@ -274,7 +274,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 <div style={{fontSize:12,color:"#64748b",lineHeight:1.6}}>{s.desc}</div>
               </div>
             ))}
-          </div>}
+          </div>
         </div>
       </section>
 
@@ -296,7 +296,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
                 {[row.ts,row.youtube,row.cbt].map((v,j)=>(<div key={j} style={{textAlign:"center",fontSize:16}}>{v?<span style={{color:"#34d399"}}>{'\u2713'}</span>:<span style={{color:"#1e2d40"}}>?</span>}</div>))}
               </div>
             ))}
-          </div>}
+          </div>
         </div>
       </section>
 
@@ -310,7 +310,7 @@ export default function HomePage({onGetStarted, onSignIn}) {
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             {faqs.map((f,i)=>(<FAQItem key={i} {...f}/>))}
-          </div>}
+          </div>
         </div>
       </section>
 
@@ -324,16 +324,16 @@ export default function HomePage({onGetStarted, onSignIn}) {
             <p style={{fontSize:14,color:"#94a3b8",marginBottom:32,lineHeight:1.75,maxWidth:480,margin:"0 auto 32px"}}>Schedule a 20-minute walkthrough built around your team needs. We will show you how to assign tracks, read the progress dashboard, and run your first team certification.</p>
             <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:18}}>
               <button onClick={()=>setShowDemoModal(true)} className="bp" style={{padding:"13px 28px",background:"linear-gradient(135deg,#00e5ff,#a78bfa)",border:"none",borderRadius:10,color:"#060a12",fontSize:15,fontWeight:800,cursor:"pointer",transition:"all .2s"}}>Request a Demo</button>
-              <button onClick={()=>setShowDemoModal(true)} className="bs" style={{padding:"13px 22px",background:"transparent",border:"1px solid #1e2d40",borderRadius:10,color:"#e8edf5",fontSize:15,cursor:"pointer",transition:"all .2s"}}>Start Free Trial</button>
+              
             </div>
             <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
               {["No credit card required","Setup in under 10 minutes","Cancel anytime"].map((item,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#64748b"}}><span style={{color:"#34d399"}}>{'\u2713'}</span>{item}</div>))}
             </div>
-          </div>}
+          </div>
         </div>
       </section>
 
-      <footer style={{padding:"24px 48px",borderTop:"1px solid #1e2d40",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+      <footer style={{padding:"24px 48px",borderTop:"1px solid #1e2d40",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}><button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{background:"transparent",border:"none",color:"#00e5ff",cursor:"pointer",fontSize:13,fontWeight:600,padding:0}}>↑ Return to Top</button>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:26,height:26,background:"linear-gradient(135deg,#00e5ff,#a78bfa)",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:"#060a12"}}>TS</div>
           <span style={{fontSize:12,color:"#64748b"}}>TierShift Academy {'\u00A9'} 2025</span>

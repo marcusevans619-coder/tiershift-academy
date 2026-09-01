@@ -30,10 +30,7 @@ serve(async (req) => {
 
   try {
     const { videoId, videoTitle, moduleName } = await req.json();
-    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
-
-    console.log("Key length:", anthropicKey.length);
-    console.log("Key prefix:", anthropicKey.slice(0, 20));
+    const openrouterKey = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 
     if (!videoId || !moduleName) {
       return new Response(JSON.stringify({ error: "Missing videoId or moduleName" }), {
@@ -84,35 +81,33 @@ Relevant commands, tools, or platforms for this topic.
 ## Key Takeaways
 5-6 bullet points of the most important things to remember.`;
 
-    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+    const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${openrouterKey}`,
+        "HTTP-Referer": "https://tiershiftacademy.com",
+        "X-Title": "TierShift Academy",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1500,
+        model: "nex-agi/nex-n2-pro",
         messages: [{ role: "user", content: prompt }],
+        max_tokens: 1500,
       }),
     });
 
-    const anthropicData = await anthropicRes.json();
-    console.log("Anthropic status:", anthropicRes.status);
-    console.log("Anthropic response:", JSON.stringify(anthropicData).slice(0, 500));
+    const orData = await orRes.json();
 
-    if (!anthropicRes.ok) {
-      return new Response(JSON.stringify({ 
-        error: "Anthropic API error", 
-        status: anthropicRes.status,
-        detail: anthropicData 
+    if (!orRes.ok) {
+      return new Response(JSON.stringify({
+        error: "OpenRouter API error: " + JSON.stringify(orData),
+        status: orRes.status,
       }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
-    const outline = anthropicData.content?.[0]?.text || "No content returned";
+    const outline = orData.choices?.[0]?.message?.content || "No content returned";
 
     return new Response(JSON.stringify({ outline, usedTranscript: hasTranscript }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }

@@ -258,6 +258,8 @@ export function LearningPathViewer({ path, user, onBack, onLabClick }) {
   const [userItems, setUserItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => { const r = () => setIsMobile(window.innerWidth < 768); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
 
   useEffect(() => {
     const fetchData = async () => {

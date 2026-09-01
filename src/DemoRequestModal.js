@@ -149,7 +149,7 @@ export default function DemoRequestModal({ onClose }) {
                 <label style={labelStyle}>Full Name <span style={{ color:T.danger }}>*</span></label>
                 <input
                   name="name" type="text" required
-                  placeholder="Marcus Evans"
+                  placeholder="Your Name"
                   value={form.name} onChange={handleChange}
                   style={inputStyle}
                 />

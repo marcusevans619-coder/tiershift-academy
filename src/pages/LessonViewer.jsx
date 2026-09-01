@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { supabase } from '../supabase';
+const useIsMobile = (bp = 640) => { const [m, setM] = useState(window.innerWidth < bp); useEffect(() => { const r = () => setM(window.innerWidth < bp); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, [bp]); return m; };
 
 
 // Emoji constants - bypass bundler escape mangling
@@ -14,6 +16,7 @@ const T = {
 };
 
 export default function LessonViewer({ module, user, onBack, onComplete }) {
+  const isMobile = useIsMobile();
   const [lessons, setLessons] = useState([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -33,12 +36,24 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
   }, [module.id]);
 
   async function markComplete() {
-    await supabase.from('user_modules').upsert({
+    const { error } = await supabase.from('user_modules').upsert({
       user_id: user.id,
       module_id: module.id,
-      completed: true,
-      progress_pct: 100,
+      track_id: module.track_id,
+      status: 'completed',
+      completed_at: new Date().toISOString(),
+
     }, { onConflict: 'user_id,module_id' });
+    if (error) {
+      console.error('Failed to mark module complete:', error);
+      alert('Could not save your progress: ' + error.message);
+      return;
+    }
+    if (error) {
+      console.error('Failed to mark module complete:', error);
+      alert('Could not save your progress: ' + error.message);
+      return;
+    }
     setCompleted(true);
     setTimeout(() => onBack(), 1500);
   }
@@ -83,7 +98,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
   );
 
   return (
-    <div style={{ maxWidth:900, margin:'0 auto' }}>
+    <div style={{ maxWidth:900, margin:'0 auto', padding: isMobile ? '0 4px' : 0 }}>
       {/* Header */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
         <button onClick={onBack} style={{ background:'transparent', border:'none', color:T.cyan, cursor:'pointer', fontSize:14, display:'flex', alignItems:'center', gap:6 }}>
@@ -95,7 +110,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
       </div>
 
       {/* Module title */}
-      <h1 style={{ color:T.text, fontSize:24, fontWeight:800, marginBottom:4 }}>{module.name}</h1>
+      <h1 style={{ color:T.text, fontSize:isMobile?18:24, fontWeight:800, marginBottom:4 }}>{module.name}</h1>
       <p style={{ color:T.muted, fontSize:13, marginBottom:24 }}>{lesson.title}</p>
 
       {/* Progress bar */}
@@ -105,19 +120,19 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
 
       {/* Video */}
       {videoId && (
-        <div style={{ marginBottom:28 }}>
+        <div style={{ marginBottom:28, position:'relative', width:'100%', paddingTop:'56.25%', borderRadius:10, overflow:'hidden' }}>
           <iframe
-            width="100%" height="420"
+
             src={`https://www.youtube.com/embed/${videoId}?cc_load_policy=1&cc_lang_pref=en`}
-            style={{ borderRadius:10, border:'none' }}
+            style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', border:'none' }}
             allowFullScreen title={lesson.title}
           />
         </div>
       )}
 
       {/* Lesson Report */}
-      <div style={{ background:T.card, border:'1px solid '+T.border, borderRadius:12, padding:28, marginBottom:28 }}>
-        <ReactMarkdown components={{
+      <div style={{ background:T.card, border:'1px solid '+T.border, borderRadius:12, padding: isMobile ? 16 : 28, marginBottom:28 }}>
+        <ReactMarkdown rehypePlugins={[rehypeRaw]} components={{
           h1: ({children}) => <h1 style={{color:T.text, fontSize:20, fontWeight:800, marginBottom:16}}>{children}</h1>,
           h2: ({children}) => <h2 style={{color:T.cyan, fontSize:15, fontWeight:700, marginTop:24, marginBottom:10, borderBottom:'1px solid '+T.border, paddingBottom:6}}>{children}</h2>,
           h3: ({children}) => <h3 style={{color:T.text, fontSize:14, fontWeight:600, marginBottom:8}}>{children}</h3>,
@@ -131,7 +146,7 @@ export default function LessonViewer({ module, user, onBack, onComplete }) {
       </div>
 
       {/* Navigation */}
-      <div style={{ display:'flex', gap:12, justifyContent:'space-between', alignItems:'center' }}>
+      <div style={{ display:'flex', gap:12, justifyContent:'space-between', alignItems:'center', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
         <button
           onClick={() => setCurrent(c => c - 1)}
           disabled={current === 0}
