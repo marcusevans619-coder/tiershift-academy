@@ -57,6 +57,8 @@ function AuthPage({ onAuth, onBack }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(''); const [showPassword, setShowPassword] = useState(false);
+  const [forgotMode, setForgotMode] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -67,25 +69,92 @@ function AuthPage({ onAuth, onBack }) {
       if (data.user) onAuth(data.user);
     } catch (err) { setError(err.message); } finally { setLoading(false); }
   };
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      if (error) throw error;
+      setResetSent(true);
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
+  };
   return (
     <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Outfit', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
       <div style={{ background: T.card, padding: 40, borderRadius: 16, width: 380, border: '1px solid '+T.border }}>
-        {onBack && <button onClick={onBack} style={{ display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#64748b",cursor:"pointer",fontSize:13,marginBottom:16,padding:0,fontFamily:"inherit" }}>{ARROW_LEFT} Back to Home</button>}
+        {forgotMode
+          ? <button onClick={() => { setForgotMode(false); setResetSent(false); setError(''); }} style={{ display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#64748b",cursor:"pointer",fontSize:13,marginBottom:16,padding:0,fontFamily:"inherit" }}>{ARROW_LEFT} Back to Sign In</button>
+          : (onBack && <button onClick={onBack} style={{ display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",color:"#64748b",cursor:"pointer",fontSize:13,marginBottom:16,padding:0,fontFamily:"inherit" }}>{ARROW_LEFT} Back to Home</button>)}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, justifyContent: 'center' }}>
           <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: T.bg }}>TS</div>
           <div><div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 11, color: T.muted }}>Academy</div></div>
         </div>
-        <p style={{ color: T.muted, fontSize: 14, textAlign: 'center', marginBottom: 24 }}>Sign in to continue your training</p>
-        <div style={{ display: 'flex', marginBottom: 24, background: T.surface, borderRadius: 8, padding: 4 }}>
-          <button onClick={() => setIsSignUp(false)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: !isSignUp ? T.cyan : 'transparent', color: !isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Sign In</button>
-          <button onClick={() => setIsSignUp(true)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: isSignUp ? T.cyan : 'transparent', color: isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Create Account</button>
+        {forgotMode ? (
+          <>
+            <p style={{ color: T.muted, fontSize: 14, textAlign: 'center', marginBottom: 24 }}>{resetSent ? 'Check your email' : "Enter your email and we'll send you a link to reset your password"}</p>
+            {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
+            {resetSent ? (
+              <div style={{ color: T.success, padding: 12, background: dim(T.success, 0.1), borderRadius: 8, fontSize: 13, textAlign: 'center' }}>Sent to {email}. Didn't get it? Check spam, or <span onClick={() => setResetSent(false)} style={{ color: T.cyan, cursor: 'pointer', textDecoration: 'underline' }}>try again</span>.</div>
+            ) : (
+              <form onSubmit={handleForgotPassword}>
+                <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>EMAIL</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+                <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Sending...' : 'Send Reset Link'}</button>
+              </form>
+            )}
+          </>
+        ) : (
+          <>
+            <p style={{ color: T.muted, fontSize: 14, textAlign: 'center', marginBottom: 24 }}>Sign in to continue your training</p>
+            <div style={{ display: 'flex', marginBottom: 24, background: T.surface, borderRadius: 8, padding: 4 }}>
+              <button onClick={() => setIsSignUp(false)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: !isSignUp ? T.cyan : 'transparent', color: !isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Sign In</button>
+              <button onClick={() => setIsSignUp(true)} style={{ flex: 1, padding: '8px', borderRadius: 6, border: 'none', background: isSignUp ? T.cyan : 'transparent', color: isSignUp ? T.bg : T.muted, fontWeight: 700, cursor: 'pointer' }}>Create Account</button>
+            </div>
+            {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>EMAIL</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+              <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>PASSWORD</label><div style={{ position: 'relative' }}><input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder={isSignUp ? "Minimum 6 characters" : "Password"} required style={{ width: '100%', padding: 12, paddingRight: 44, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /><button type="button" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: T.muted, padding: 4, display: 'flex', alignItems: 'center' }}>{showPassword ? (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>) : (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>)}</button></div></div>
+              {!isSignUp && <div style={{ textAlign: 'right', marginBottom: 16 }}><span onClick={() => { setForgotMode(true); setError(''); }} style={{ color: T.muted, fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}>Forgot password?</span></div>}
+              <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ResetPasswordPage({ onDone }) {
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (password.length < 6) { setError('Password must be at least 6 characters'); return; }
+    if (password !== confirm) { setError('Passwords do not match'); return; }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      onDone();
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
+  };
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Outfit', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+      <div style={{ background: T.card, padding: 40, borderRadius: 16, width: 380, border: '1px solid '+T.border }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, justifyContent: 'center' }}>
+          <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg, '+T.cyan+', '+T.violet+')', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: T.bg }}>TS</div>
+          <div><div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>Tier<span style={{ color: T.cyan }}>Shift</span></div><div style={{ fontSize: 11, color: T.muted }}>Academy</div></div>
         </div>
+        <p style={{ color: T.muted, fontSize: 14, textAlign: 'center', marginBottom: 24 }}>Set a new password</p>
         {error && <div style={{ color: T.danger, marginBottom: 16, padding: 12, background: dim(T.danger, 0.1), borderRadius: 8, fontSize: 13 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>EMAIL</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
-          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>PASSWORD</label><div style={{ position: 'relative' }}><input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder={isSignUp ? "Minimum 6 characters" : "Password"} required style={{ width: '100%', padding: 12, paddingRight: 44, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /><button type="button" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', color: T.muted, padding: 4, display: 'flex', alignItems: 'center' }}>{showPassword ? (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>) : (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>)}</button></div></div>
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}</button>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>NEW PASSWORD</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 6 characters" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <div style={{ marginBottom: 24 }}><label style={{ display: 'block', color: T.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>CONFIRM PASSWORD</label><input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Re-enter password" required style={{ width: '100%', padding: 12, background: T.surface, border: '1px solid '+T.border, borderRadius: 8, color: T.text, fontSize: 14, boxSizing: 'border-box' }} /></div>
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: 14, background: T.cyan, color: T.bg, border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: 15 }}>{loading ? 'Saving...' : 'Set New Password'}</button>
         </form>
       </div>
     </div>
@@ -186,11 +255,11 @@ export default function App() {
   const [userBadges, setUserBadges] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [navOpen, setNavOpen] = useState(false);
-  
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: s } }) => { setSession(s); if (s?.user) load(s.user.id); else setLoading(false); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => { setSession(s); if (s?.user) load(s.user.id); else { setProfile(null); setLoading(false); } });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => { if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true); setSession(s); if (s?.user) load(s.user.id); else { setProfile(null); setLoading(false); } });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -215,6 +284,7 @@ export default function App() {
   const handleModuleClick = (mod) => { setSelectedModule(mod); setPage("study"); };
   const handleNavClick = (navId) => { setPage(navId); setSelectedModule(null); setSelectedLab(null); setSelectedPath(null); setNavOpen(false); };
 
+  if (passwordRecovery) return <ResetPasswordPage onDone={() => setPasswordRecovery(false)} />;
   if (showLanding) return <HomePage onGetStarted={dismissLanding} onSignIn={dismissLanding} />;
   if (loading) return <div style={{ height: "100vh", background: T.bg, display: "flex", alignItems: "center", justifyContent: "center", color: T.cyan }}>Loading...</div>;
   if (!session) return <AuthPage onAuth={(u) => { setSession({ user: u }); load(u.id); }} onBack={() => { sessionStorage.removeItem('visited'); setShowLanding(true); }} />;
